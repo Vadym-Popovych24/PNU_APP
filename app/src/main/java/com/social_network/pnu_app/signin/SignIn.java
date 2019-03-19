@@ -30,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.entity.Student;
 import com.social_network.pnu_app.firebase.QueriesFirebase;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
+import com.social_network.pnu_app.localdatabase.StudentSqlLite;
 import com.social_network.pnu_app.network.NetworkStatus;
 import com.social_network.pnu_app.registration.PhoneAuthentication;
 import com.social_network.pnu_app.registration.Registration;
@@ -51,15 +52,10 @@ public class SignIn extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     static String valuePassField="";
-    static String valuePhoneField="1";
     public String ErrorText=null;
 
     boolean error = true;
 
-    public static int valueIDSeriesIDcard;
-    private int valueIDPassword;
-
-    private String valuePassDB="";
 
     static ValueEventListener valueEventListener;
     private static final String TAG ="TAG";
@@ -69,16 +65,16 @@ public class SignIn extends AppCompatActivity {
     public String FBpassword = "1";
     public String FBemail = "";
     public String FBphone = "";
-    public static Object FBid = 0;
+    public static int FBid = 0;
     public String FBName;
     public String FBLastName;
 
     String KeyStudent ="default";
     QueriesFirebase qf = new QueriesFirebase();
    static HashMap<Object, Object> student = new HashMap();
+   StudentSqlLite studentSQLite = new StudentSqlLite();
     private ProgressBar progressBar;
     String codeSent;
-    AuthCredential authCredential;
 
     Intent intentFromSignIn;
 
@@ -91,14 +87,10 @@ public class SignIn extends AppCompatActivity {
         progressBar = findViewById(R.id.progressbarSignIn);
         progressBar.setVisibility(View.GONE);
         mAuth = FirebaseAuth.getInstance();
-        getYourName(AppDatabase.getAppDatabase(SignIn.this));
         verifycationStudentIn();
+
     }
-    public String getYourName(final AppDatabase db)
-    {
-        yourName =db.studentDao().getFirstNameById(1);
-        return yourName;
-    }
+
     public void alertErrorSign(){
         AlertDialog.Builder a_builder = new AlertDialog.Builder(SignIn.this);
         a_builder.setMessage(ErrorText)
@@ -153,7 +145,7 @@ public class SignIn extends AppCompatActivity {
 
                 FBidSerie = (String) student.get("seriesIDcard");
                 FBpassword = (String) student.get("password");
-                FBid = student.get("id");
+                FBid = Integer.parseInt(student.get("id").toString());
                 FBphone = (String) student.get("phone");
                 Registration encrypt = new Registration();
                 valuePassField = encrypt.encryptionPassword(valuePassField);
@@ -171,8 +163,8 @@ public class SignIn extends AppCompatActivity {
                     alertErrorSign();
                 } else if (FBidSerie.equals(valueIDcardField) && (FBverify != true)) {
                      progressBar.setVisibility(View.GONE);
-                    ErrorText = "IDPassword = " + valueIDPassword +
-                            "IDSeriesIDCard = " + valueIDSeriesIDcard;
+                    ErrorText = "IDPassword = " + valuePassField +
+                            "IDSeriesIDCard = " + valueIDcardField;
                     ErrorText = "StudentSqlLite with the such series id does not registered";
                     alertErrorSign();
                 }  else if (!(FBpassword.equals(valuePassField)) && FBverify == true) { // TODO
@@ -186,12 +178,7 @@ public class SignIn extends AppCompatActivity {
                         FBName = (String) student.get("name");
                         FBLastName = (String) student.get("lastName");
 
-                        Student.student = student;
-                         sendCodeVerification();
-                    //    PhoneAuthCredential credential = PhoneAuthProvider.getCredential("001001", "001001");
-                   //     mAuth.signInWithCredential(credential);
-                 //       signInWithPhoneAuthCredential(credential);
-                        progressBar.setVisibility(View.GONE);
+                        sendCodeVerification();  // TODO розкоментувати рядок
 
                     }
                 } else {
@@ -308,8 +295,17 @@ public class SignIn extends AppCompatActivity {
 
                   Toast.makeText(SignIn.this, " Verification automatically completed! SignIn Success",
         Toast.LENGTH_LONG).show();
+                Student.student = student;
+                Student studentSQLite = new Student(valueIDcardField, FBName, FBLastName,FBid , FBemail, FBpassword,
+                        FBphone,FBverify, KeyStudent);
+                Student synchron = new Student();
+                synchron.synchronizationSQLiteSignIn(AppDatabase.getAppDatabase(SignIn.this));
+                /////////////////
+
+
                 intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-                startActivity(intentFromSignIn);
+                startActivityForResult(intentFromSignIn,1);
+                progressBar.setVisibility(View.GONE);
             }
 
 
@@ -325,6 +321,7 @@ public class SignIn extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                 }
                 else {
+                    progressBar.setVisibility(View.GONE);
                     ErrorText = "Registration failure incorrect verification code or problem with sending response. " +
                             "To solve this problem verify that the verification code, which you get in SMS,  inputted correct." +
                             " If code verification, inputted correct you need restart your phone and repeat registration."; // TODO change text

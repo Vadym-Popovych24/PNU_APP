@@ -5,11 +5,16 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.RoomWarnings;
 
+import static java.sql.Types.DECIMAL;
+import static java.sql.Types.INTEGER;
 import static java.sql.Types.VARCHAR;
 
 @Entity(tableName = "student" ) //, indices = {@Index(value = {"email", "phone", "seriesIDcard"}, unique = true)})
 public class StudentSqlLite {
+
+
 
     //@NonNull
     @PrimaryKey(autoGenerate = true)
@@ -37,8 +42,33 @@ public class StudentSqlLite {
     @ColumnInfo(name = "phone", typeAffinity = VARCHAR)
     private String phone;
 
+    @ColumnInfo(name = "currentStudent", typeAffinity = VARCHAR)
+    private String currentStudent;
+
+    @ColumnInfo(name = "KeyFireBase" ,typeAffinity = VARCHAR)
+    private String KeyFireBase;
+
     @ColumnInfo(name = "verify" ,typeAffinity = VARCHAR)
     private boolean verify;
+
+    @ColumnInfo(name = "patronym", typeAffinity = VARCHAR)
+    private String patronym;
+
+    @ColumnInfo(name = "faculty", typeAffinity = VARCHAR)
+    private String faculty;
+
+    @ColumnInfo(name = "groupStudent", typeAffinity = VARCHAR)
+    private String groupStudent;
+
+    @ColumnInfo(name = "dateOfEntry", typeAffinity = VARCHAR)
+    private String dateOfEntry;
+
+    @ColumnInfo(name = "formStudying", typeAffinity = VARCHAR)
+    private String formStudying;
+
+
+
+
 
     public boolean getVerify(){
         return verify;
@@ -130,4 +160,61 @@ public class StudentSqlLite {
         this.verify = verify;
     }
 
+    public String getKeyFireBase() {
+        return KeyFireBase;
+    }
+
+    public void setKeyFireBase(String KeyFireBase) {
+        this.KeyFireBase = KeyFireBase;
+    }
+
+    public String getPatronym() {
+        return patronym;
+    }
+
+    public void setPatronym(String patronym) {
+        this.patronym = patronym;
+    }
+
+    public String getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(String faculty) {
+        this.faculty = faculty;
+    }
+
+    public String getGroupStudent() {
+        return groupStudent;
+    }
+
+    public void setGroupStudent(String groupStudent) {
+        this.groupStudent = groupStudent;
+    }
+
+
+    public String getDateOfEntry() {
+        return dateOfEntry;
+    }
+
+    public void setDateOfEntry(String dateOfEntry) {
+        this.dateOfEntry = dateOfEntry;
+    }
+
+    public String getFormStudying() {
+        return formStudying;
+    }
+
+    public void setFormStudying(String formStudying) {
+        this.formStudying = formStudying;
+    }
+
+
+    public String getCurrentStudent() {
+        return currentStudent;
+    }
+
+    public void setCurrentStudent(String currentStudent) {
+        this.currentStudent = currentStudent;
+    }
 }

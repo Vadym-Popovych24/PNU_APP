@@ -6,7 +6,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.ui.auth.AuthUI;
@@ -19,8 +21,11 @@ import com.social_network.pnu_app.localdatabase.DatabaseInitializer;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final static int SIGN_IN_CODE = 1;
+
     private Button btnMainSignIn;
     private Button btnRegistration;
+    private static int buttonCounter;
 
     Button btnGetCurrentUser;
     TextView bottomText;
@@ -29,15 +34,36 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
     private View clickHereBtn;
 
-    private static int buttonCounter;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SIGN_IN_CODE) {
+
+            Intent intentFromMainActivity;
+            Snackbar.make(rlActivityMain, "Ви авторизовані", Snackbar.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, " Ви авторизовані",
+                    Toast.LENGTH_LONG).show();
+            intentFromMainActivity = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+           // startActivity(intentFromMainActivity);
+        } else {
+            Snackbar.make(rlActivityMain, "Ви не авторизовані", Snackbar.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, " Ви не авторизовані",
+                    Toast.LENGTH_LONG).show();
+            finish();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.activity_main);
         rlActivityMain = findViewById(R.id.rlActivityMain);
-        Intent intentFromMainActivity;
+
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+      //  if(!true){ // TODO change on codeLine above
+            rlActivityMain = findViewById(R.id.rlActivityMain);
+            Intent intentFromMainActivity;
             intentFromMainActivity = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
             startActivity(intentFromMainActivity);
         }
@@ -46,8 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
             //    mess_current_user.setText("current_user(displayName) = " + FirebaseAuth.getInstance().getCurrentUser().getUid() );
         }
-
-        setContentView(R.layout.activity_main);
 
 
       //  Intent intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
@@ -75,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
         btnMainSignIn = findViewById(R.id.btnMainSignIn);
         btnRegistration = findViewById(R.id.btnRegister);
 
-        bottomText = findViewById(R.id.text_bottom);
-        btnGetCurrentUser = findViewById(R.id.btnGetCurrentUser);
+      //  bottomText = findViewById(R.id.text_bottom);
+       // btnGetCurrentUser = findViewById(R.id.btnGetCurrentUser);
 
         View.OnClickListener listener = new View.OnClickListener(){
             @Override
@@ -95,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                         intent = new Intent( "com.social_network.pnu_app.registration.Registration");
                         startActivity(intent);
                         break;
-                    case R.id.btnGetCurrentUser:
+               /*     case R.id.btnGetCurrentUser:
 
                         if(FirebaseAuth.getInstance().getCurrentUser() != null) {
 
@@ -112,8 +136,8 @@ public class MainActivity extends AppCompatActivity {
                         else{
                             bottomText.append("null");
                         }
-
-
+                        break;
+*/
 
 
                 }
@@ -122,9 +146,10 @@ public class MainActivity extends AppCompatActivity {
 
         };
 
+
         btnMainSignIn.setOnClickListener(listener);
         btnRegistration.setOnClickListener(listener);
-        btnGetCurrentUser.setOnClickListener(listener);
+    //    btnGetCurrentUser.setOnClickListener(listener);
 
 
 

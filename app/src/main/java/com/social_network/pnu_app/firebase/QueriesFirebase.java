@@ -22,7 +22,7 @@ public class QueriesFirebase {
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
 
     static int counter = 5;
-    public void addStudent() {
+/*    public void addStudent() {
 
         String id = reference.push().getKey();
 
@@ -36,7 +36,7 @@ public class QueriesFirebase {
 
         reference.updateChildren(student);
 
-    }
+    }*/
 
 
 

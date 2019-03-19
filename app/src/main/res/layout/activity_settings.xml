@@ -17,7 +17,7 @@
         android:layout_centerHorizontal="true"
         android:fontFamily="sans-serif-medium"/>
 
-    <Button
+<!--    <Button
         android:id="@+id/btnSignOut"
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
@@ -36,7 +36,7 @@
         android:paddingLeft="0dp"
         android:textSize="20sp"
         android:text="@string/btnSignOut"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/black" />-->
 
     <Button
         android:id="@+id/btnExit"
@@ -59,7 +59,7 @@
         android:text="Exit"
         android:textColor="@android:color/black" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/tvExampleSignOut"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
         android:layout_marginTop="20dp"
         android:textSize="25sp"
         android:layout_centerHorizontal="true"
-        android:fontFamily="sans-serif-medium"/>
+        android:fontFamily="sans-serif-medium"/>-->
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -86,7 +86,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:itemBackground="@color/lines"
+        app:itemBackground="@color/colorAccentWhite"
         app:itemIconTint="@drawable/bottom_navigation_item_background_colors"
         app:itemTextColor="@drawable/bottom_navigation_item_background_colors"
         app:menu="@menu/menu_bottom_navigation" />

@@ -15,6 +15,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.activity.MainActivity;
+import com.social_network.pnu_app.localdatabase.AppDatabase;
 
 public class Settings extends AppCompatActivity {
 
@@ -30,13 +31,13 @@ public class Settings extends AppCompatActivity {
 
         Button btnSignOut;
         Button Exit;
-        btnSignOut = findViewById(R.id.btnSignOut);
-        btnSignOut.setOnClickListener(listenerBtnSignOut);
+      //  btnSignOut = findViewById(R.id.btnSignOut);
+      //  btnSignOut.setOnClickListener(listenerBtnSignOut);
         Exit = findViewById(R.id.btnExit);
         Exit.setOnClickListener(listenerBtnExit);
     }
 
-    public void SignOut() {
+   /* public void SignOut() {
 
         TextView tvExampleSignOut;
         TextView tvExampleSignOut2;
@@ -70,8 +71,8 @@ public class Settings extends AppCompatActivity {
             tvExampleSignOut.append("null");
         }
     }
-
-        View.OnClickListener listenerBtnSignOut = new View.OnClickListener() {
+*/
+     /*   View.OnClickListener listenerBtnSignOut = new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -79,20 +80,21 @@ public class Settings extends AppCompatActivity {
                     SignOut();
                 }
             }
-        };
+        };*/
 
     View.OnClickListener listenerBtnExit = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.btnExit) {
-                Exit();
+                Exit(AppDatabase.getAppDatabase(Settings.this));
             }
         }
     };
 
-    private void Exit() {
+    private void Exit(final AppDatabase db) {
         FirebaseAuth.getInstance().signOut();
+        db.studentDao().updateCurrentStudent(Integer.parseInt(db.studentDao().getCurrentStudent()));
         Intent intentSignOut = new Intent(this, MainActivity.class);
         intentSignOut.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intentSignOut);

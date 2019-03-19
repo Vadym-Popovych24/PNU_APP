@@ -51,6 +51,7 @@ public class DatabaseInitializer {
 
 
 
+/*
 
         int i =1;
         int valueIDSeriesIDcard;
@@ -210,6 +211,7 @@ public class DatabaseInitializer {
 
 
             }
+*/
 
 
 

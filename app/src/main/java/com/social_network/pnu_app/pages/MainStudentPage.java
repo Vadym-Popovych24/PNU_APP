@@ -34,6 +34,7 @@ import com.google.firebase.storage.UploadTask;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.Student;
 import com.social_network.pnu_app.firebase.QueriesFirebase;
+import com.social_network.pnu_app.localdatabase.AppDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -100,7 +101,7 @@ public class MainStudentPage extends AppCompatActivity {
         btnLoadPhotoStudent.setOnClickListener(listenerBtnLoapPhotoStudent);
     //    emojiconEditText = findViewById(R.id.editTextWall);
 
-        BuildStudentPage();
+        BuildStudentPage(AppDatabase.getAppDatabase(MainStudentPage.this));
         imStudentMainPhoto = (CircleImageView) findViewById(R.id.imStudentMainPhoto);
         imSendPhotoWall = (ImageView) findViewById(R.id.imSendPhotoWall);
         mBTNaddPicture = (Button) findViewById(R.id.btnLoadPhotoStudent);
@@ -148,19 +149,23 @@ public class MainStudentPage extends AppCompatActivity {
 
 QueriesFirebase qfd = new QueriesFirebase();
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void BuildStudentPage(){
+    public void BuildStudentPage(final AppDatabase db){
+        int currentStudent = Integer.parseInt(db.studentDao().getCurrentStudent());
         Bundle bundle = new Bundle();
       //  bundle.putString(FirebaseAnalytics.Param.ITEM_ID,  studentData.get("id"));
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, (String) studentData.get("name"));
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, (String) db.studentDao().getFirstNameById(currentStudent));
        // bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
         studentData = Student.student;
 
-        tvPIBvalue.setText(studentData.get("lastName") + " " + studentData.get("name") + " " + studentData.get("patronym"));
-        tvFacultyValue.setText(" " + Objects.requireNonNull(studentData.get("faculty")).toString());
-        tvGroupValue.setText(" " + Objects.requireNonNull(studentData.get("group")).toString());
-        tvDateOfEntryValue.setText(" " + Objects.requireNonNull(studentData.get("dateOfEntry")).toString());
-        tvFormStudyingValue.setText(" " + Objects.requireNonNull(studentData.get("formStudying")).toString());
+        tvPIBvalue.setText(db.studentDao().getFirstNameById(currentStudent) + " " +
+                           db.studentDao().getLastNameById(currentStudent) + " " +
+                           db.studentDao().getPatronymById(currentStudent));
+
+        tvFacultyValue.setText(" " + db.studentDao().getFacultyById(currentStudent));
+        tvGroupValue.setText(" " + db.studentDao().getGroupById(currentStudent));
+        tvDateOfEntryValue.setText(" " + db.studentDao().getDateOfEntryById(currentStudent));
+        tvFormStudyingValue.setText(" " + db.studentDao().getFormStudyingById(currentStudent));
 
 
     }

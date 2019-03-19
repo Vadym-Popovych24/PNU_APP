@@ -5,8 +5,12 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 
+import com.social_network.pnu_app.entity.Student;
+
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -79,6 +83,24 @@ public interface StudentDao {
     @Query("SELECT seriesIDcard FROM student WHERE u_id = :uid")
     String getSeriesBYId(int uid);
 
+    @Query("SELECT patronym FROM student WHERE u_id = :uid")
+    String getPatronymById(int uid);
+
+    @Query("SELECT faculty FROM student WHERE u_id = :uid")
+    String getFacultyById(int uid);
+
+    @Query("SELECT groupStudent FROM student WHERE u_id = :uid")
+    String getGroupById(int uid);
+
+    @Query("SELECT dateOfEntry FROM student WHERE u_id = :uid")
+    String getDateOfEntryById(int uid);
+
+    @Query("SELECT formStudying FROM student WHERE u_id = :uid")
+    String getFormStudyingById(int uid);
+
+    @Query("SELECT currentStudent FROM student WHERE currentStudent=u_id")
+    String getCurrentStudent();
+
     @Query("UPDATE student SET verify=:verify WHERE u_id= :id")
     void updateVerify(boolean verify, int id);
 
@@ -87,6 +109,28 @@ public interface StudentDao {
 
     @Query("UPDATE student SET email=:email WHERE u_id= :id")
     void setEmail(String email, int id);
+
+   // UpdateByid
+
+    @Query("UPDATE student SET seriesIDcard=:seriesIDcard, first_name=:first_name," +
+            " last_name=:lastName, u_id=:id,  verify=:verify, email=:email, password=:password," +
+            " phone=:phone, KeyFireBase=:FireBaseUid, currentStudent=:id WHERE seriesIDcard=:seriesIDcard")
+    void updateAllField(String seriesIDcard, String first_name, String lastName, int id, String email,
+                        String password, String phone, String FireBaseUid, boolean verify);
+
+    @Query("UPDATE student SET currentStudent=null WHERE currentStudent=:id")
+    void updateCurrentStudent(int id);
+
+/*    @Query("UPDATE student SET email=:email,  password=:password WHERE u_id= :id")
+    void updateStudent(String email, int id, String password);*/
+
+    @Update
+    void updateStudent(StudentSqlLite... student);
+
+    @Insert
+    void insertStudent(StudentSqlLite student);
+
+
 
    // @Query("DELETE FROM student")
    // void DeleteAllTableStudent();
