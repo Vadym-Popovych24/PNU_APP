@@ -55,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                         break;
 
-
-
+                        
                 }
             }
 
