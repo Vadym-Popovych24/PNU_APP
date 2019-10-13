@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">PNU_APP</string>
+    <string name="app_in_name">PNU_APP</string>
+    <string name="app_name_after">Register App</string>
+    <string name="text_bottom">SignUp</string>
+    <string name="btnSingIn">Sign In</string>
+    <string name="btnRegister">Register</string>
+    <string name="emailField">Email</string>
+    <string name="passField">Password</string>
+    <string name="nameField">Name</string>
+    <string name="phoneField">Phone</string>
+    <string name="Registration">Registration</string>
+    <string name="ConfirmPass">Confirm password</string>
+    <string name="SeriesAndNumIDcard">Series and Numb ID card(exampl-ВА12344321)</string>
+    <string name="SignIn">SignIn</string>
+    <string name="title_activity_signin">Sign in</string>
+    <string name="Default">Default</string>
+</resources>
