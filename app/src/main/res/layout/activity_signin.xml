@@ -74,57 +74,5 @@ android:orientation="vertical">
     android:text="@string/btnSingIn"
     android:textColor="@android:color/white" />
 
-    <TextView
-        android:id="@+id/ExampleTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp">
-
-    </TextView>
-
-    <TextView
-        android:id="@+id/ExampleTextView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp">
-
-    </TextView>
-    <TextView
-        android:id="@+id/ExampleTextView3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp">
-
-    </TextView>
-    <TextView
-        android:id="@+id/ExampleTextView4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp">
-
-    </TextView>
-
-    <TextView
-        android:id="@+id/ExampleTextView5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp">
-
-    </TextView>
-    <TextView
-        android:id="@+id/ExampleTextView6"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp">
-
-    </TextView>
-
-
 
 </LinearLayout>

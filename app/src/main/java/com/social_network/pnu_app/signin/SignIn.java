@@ -32,8 +32,6 @@ public class SignIn extends AppCompatActivity {
     private int valueIDPassword;
 
     private String valuePassDB;
-    TextView exam, exam2 , exam3, exam4, exam5 ,exam6;
-    TextView tv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +47,6 @@ public class SignIn extends AppCompatActivity {
         btnSignIn = findViewById(R.id.btnSignIn);
         IDcardField = findViewById(R.id.IDcardField);
         passField = findViewById(R.id.passFieldSignIn);
-        exam = findViewById(R.id.ExampleTextView);
-        exam2 = findViewById(R.id.ExampleTextView2);
-        exam3 = findViewById(R.id.ExampleTextView3);
-        exam4 = findViewById(R.id.ExampleTextView4);
-        exam5 = findViewById(R.id.ExampleTextView5);
-        exam6 = findViewById(R.id.ExampleTextView6);
-        tv = findViewById(R.id.tvPage);
 
         View.OnClickListener listenerSignIn = new View.OnClickListener() {
             @Override
@@ -65,8 +56,6 @@ public class SignIn extends AppCompatActivity {
 
                 valueIDcardField = String.valueOf(IDcardField.getText());
                 valuePassField = String.valueOf(passField.getText());
-
-                // valueIDSeriesIDcard = db.studentDao().getFstudent(12);
 
                 valuePassDB = db.studentDao().getPassword(valuePassField);
                 valueIDcardDB = db.studentDao().getSeriesIDcard(valueIDcardField);
@@ -78,43 +67,20 @@ public class SignIn extends AppCompatActivity {
                        if (valueIDcardDB.equals(valueIDcardField) && (valuePassDB.equals(valuePassField) &&
                                (valueIDSeriesIDcard == valueIDPassword))) {
 
-                        /*   yourName =db.studentDao().getFirstName(getValueIDSeriesIDcard());
+                           yourName =db.studentDao().getFirstName(getValueIDSeriesIDcard());
                            yourLastName = db.studentDao().getLastName(getValueIDSeriesIDcard());
 
-                          exam.setText(yourName);*/
 
-
-                    /*       exam.setText("Value from field SeriesID card: " + valueIDcardField);
-                           exam2.setText("Value from fiels Password: " + valuePassField);
-
-                           exam3.setText("Value from DB SeriesID card: " + String.valueOf(valueIDcardDB));
-                           exam4.setText("Value from DB password: " + String.valueOf(valuePassDB));
-
-                           exam5.setText("Value from DB id SeriesID card: " + String.valueOf(valueIDSeriesIDcard));
-                           exam6.setText("Value from DB Id password: " + String.valueOf(valueIDPassword));*/
-
-                            intentFromSignIn = new Intent("com.example.pnu_app.pages.MainStudentPage");
-                            startActivity(intentFromSignIn);
+                           intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+                           startActivity(intentFromSignIn);
 
                    }
                    else {
-                       exam.setText(warning);
-                      /* exam.setText("Value1 from field SeriesID card: " + valueIDcardField);
-                       exam2.setText("Value1 from fiels Password: " + valuePassField);
-                       exam3.setText(warning);
-                       exam4.setText(warning);
-                       exam5.setText(warning);
-                       exam6.setText(warning);*/
+
                    }
                }
                else {
-                   exam.setText(warning);
-             /*      exam.setText("Value2 from field SeriesID card: " + valueIDcardField);
-                   exam2.setText("Value2 from fiels Password: " + valuePassField);
-                   exam3.setText(warning);
-                   exam4.setText(warning);
-                   exam5.setText(warning);
-                   exam6.setText(warning);*/
+
                }
             }
         };

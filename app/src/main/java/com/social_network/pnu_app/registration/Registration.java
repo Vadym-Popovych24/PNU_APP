@@ -26,14 +26,16 @@ public class Registration extends AppCompatActivity {
     MaterialEditText ConfirmPassField;
     String ErrorText = null;
 
-
     Button btnRegister;
-    TextView errorTextView, errorTextView2, errorTextView3, errorTextView4;
 
     String valueIDcardField;
     String valueEmailField;
     String valuePassField;
     String valueConfirmPassField;
+
+    private String valueIDcardDB;
+    public int valueIDSeriesIDcard;
+    public boolean valueVerify;
 
     boolean error = false;
 
@@ -67,10 +69,10 @@ public class Registration extends AppCompatActivity {
     public boolean verificationData(final AppDatabase db){
 
         btnRegister = findViewById(R.id.btnRegister2);
-        errorTextView = findViewById(R.id.ErrorText);
-        errorTextView2 = findViewById(R.id.ErrorTextP2);
-        errorTextView3 = findViewById(R.id.ErrorTextP3);
-        errorTextView4 = findViewById(R.id.ErrorTextP4);
+        IDcardField = findViewById(R.id.SeriesAndNumField);
+        EmailField =findViewById(R.id.emailField);
+        PassField = findViewById(R.id.passFieldReg);
+        ConfirmPassField= findViewById(R.id.confirmPassField);
 
         View.OnClickListener btnRegisterListener = new View.OnClickListener() {
             @Override
@@ -84,8 +86,52 @@ public class Registration extends AppCompatActivity {
                 if ( verificationSeriesIDcard() == false && verificationEmail() == false &&
                         verificationPassword() == false && verificationConfirmPassword() == false){
 
-                    errorTextView.setTextColor(Color.GREEN);
-                   // errorTextView.setText("All data is right");
+                    valueIDcardField = String.valueOf(IDcardField.getText());
+                    valueIDcardDB = db.studentDao().getSeriesIDcard(valueIDcardField);
+                    valueIDSeriesIDcard =db.studentDao().getIdstudentByIDcard(valueIDcardDB);
+                    valueVerify =db.studentDao().getVerify(valueIDSeriesIDcard);
+
+
+                    if (valueIDcardDB.equals(valueIDcardField) &&  valueVerify == false ) {
+
+                        db.studentDao().updateVerify(true, valueIDSeriesIDcard);
+
+                        AlertDialog.Builder a_builder = new AlertDialog.Builder(Registration.this);
+                        a_builder.setMessage("SUCCESS REGISTRATION")
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        AlertDialog alert = a_builder.create();
+                        alert.setTitle("PERFORMANCE");
+                        alert.show();
+
+                    }
+                    else if(valueVerify == true){
+                        AlertDialog.Builder a_builder = new AlertDialog.Builder(Registration.this);
+                        a_builder.setMessage("Student already registered")
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        AlertDialog alert = a_builder.create();
+                        alert.setTitle("PERFORMANCE");
+                        alert.show();
+
+                    }
+
+
+
+
+
+
+
+                    // TODO sign in
+
                 }
                 else {
                     alertErrorReg();
@@ -109,15 +155,12 @@ public class Registration extends AppCompatActivity {
 
         if (resultSeriesIDcard) {
             error = false;
-            errorTextView.setText(valueIDcardField);
+
 
         }
         else {
             error=true;
             ErrorText = "Enter the correct Series and Number ID card(example-ВА12345678): should be the first two upper letters and 8 digits";
-            errorTextView.setTextColor(Color.RED);
-            errorTextView.setText(ErrorText);
-
         }
 
         return error;
@@ -132,14 +175,10 @@ public class Registration extends AppCompatActivity {
 
         if (resultEmail) {
             error = false;
-            errorTextView2.setText(valueEmailField);
-
         }
         else {
             error=true;
             ErrorText = "Enter the correct email adress";
-            errorTextView.setTextColor(Color.RED);
-            errorTextView.setText(ErrorText);
         }
 
         return error;
@@ -154,14 +193,11 @@ public class Registration extends AppCompatActivity {
 
         if (resultPass) {
             error = false;
-            errorTextView3.setText(valuePassField);
         }
         else {
             error=true;
             ErrorText = "Enter the correct password: The password must be at least 8 characters long and contain 1 digit " +
                     "and 1 letter can also contain uppercase letters or such characters - (@ # $% ^ _-.;: & + =)";
-            errorTextView.setTextColor(Color.RED);
-            errorTextView.setText(ErrorText);
         }
         return error;
 
@@ -175,13 +211,10 @@ public class Registration extends AppCompatActivity {
 
         if (resultConfirmPass) {
             error = false;
-            errorTextView4.setText(valueConfirmPassField);
         }
         else {
             error=true;
             ErrorText = "Passwords isn't equals.Password must be same.";
-            errorTextView.setTextColor(Color.RED);
-            errorTextView.setText(ErrorText);
         }
         return error;
     }

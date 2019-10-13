@@ -5,6 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.social_network.pnu_app.entity.Student;
 
@@ -41,6 +42,15 @@ public interface StudentDao {
 
     @Query("SELECT COUNT(*) FROM student")
     int countStudent();
+
+    @Query("SELECT verify FROM student WHERE u_id = :uid")
+    boolean getVerify(int uid);
+
+    @Query("UPDATE student SET verify=:verify WHERE u_id= :id")
+    void updateVerify(boolean verify, int id);
+
+
+
 
 
     @Insert

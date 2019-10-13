@@ -107,43 +107,4 @@ android:orientation="vertical">
     android:text="@string/btnRegister"
     style="?android:attr/buttonBarButtonStyle"/>
 
-    <TextView
-        android:id="@+id/ErrorText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="14sp">
-
-    </TextView>
-
-    <TextView
-        android:id="@+id/ErrorTextP2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="14sp">
-
-    </TextView>
-
-    <TextView
-        android:id="@+id/ErrorTextP3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="14sp">
-
-    </TextView>
-    <TextView
-        android:id="@+id/ErrorTextP4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="14sp">
-
-    </TextView>
-
-
-
-
-
 </LinearLayout>
