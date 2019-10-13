@@ -119,16 +119,11 @@ public class Registration extends AppCompatActivity {
                                     }
                                 });
                         AlertDialog alert = a_builder.create();
-                        alert.setTitle("PERFORMANCE");
+                        alert.setTitle("PERFORMANCE?");
                         alert.show();
 
                     }
-
-
-
-
-
-
+                    
 
                     // TODO sign in
 
