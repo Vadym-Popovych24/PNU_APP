@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         AppDatabase.destroyInstance();
         super.onDestroy();
-    } Changes */
+    } Changes2 */
     
     
 
