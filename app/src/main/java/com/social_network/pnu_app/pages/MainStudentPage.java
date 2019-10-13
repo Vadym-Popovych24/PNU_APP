@@ -1,14 +1,12 @@
-package com.example.pnu_app.pages;
+package com.social_network.pnu_app.pages;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.example.pnu_app.R;
-import com.example.pnu_app.database.AppDatabase;
-import com.example.pnu_app.entity.Student;
-import com.example.pnu_app.signin.SignIn;
+import com.social_network.pnu_app.R;
+import com.social_network.pnu_app.database.AppDatabase;
 
 public class MainStudentPage extends AppCompatActivity {
 

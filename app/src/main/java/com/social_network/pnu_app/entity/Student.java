@@ -1,4 +1,4 @@
-package com.example.pnu_app.entity;
+package com.social_network.pnu_app.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -6,8 +6,6 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-import static java.sql.Types.DATE;
-import static java.sql.Types.INTEGER;
 import static java.sql.Types.VARCHAR;
 
 @Entity(tableName = "student", indices = {@Index(value = {"email", "phone", "seriesIDcard"}, unique = true)})

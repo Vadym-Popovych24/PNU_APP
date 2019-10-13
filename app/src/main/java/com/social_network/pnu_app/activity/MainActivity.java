@@ -1,4 +1,4 @@
-package com.example.pnu_app.activity;
+package com.social_network.pnu_app.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,9 +7,9 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.pnu_app.R;
-import com.example.pnu_app.database.AppDatabase;
-import com.example.pnu_app.utils.DatabaseInitializer;
+import com.social_network.pnu_app.R;
+import com.social_network.pnu_app.database.AppDatabase;
+import com.social_network.pnu_app.utils.DatabaseInitializer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         AppDatabase.destroyInstance();
         super.onDestroy();
-    } Changes2 */
+    } */
     
     
 

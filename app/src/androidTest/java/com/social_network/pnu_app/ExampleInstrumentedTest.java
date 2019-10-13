@@ -1,4 +1,4 @@
-package com.example.pnu_app;
+package com.social_network.pnu_app;
 
 import android.content.Context;
 

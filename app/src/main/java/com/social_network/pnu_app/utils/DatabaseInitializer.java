@@ -1,4 +1,4 @@
-package com.example.pnu_app.utils;
+package com.social_network.pnu_app.utils;
 
 
 import android.os.AsyncTask;
@@ -8,8 +8,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 
-import com.example.pnu_app.database.AppDatabase;
-import com.example.pnu_app.entity.Student;
+import com.social_network.pnu_app.database.AppDatabase;
+import com.social_network.pnu_app.entity.Student;
 
 import java.util.List;
 

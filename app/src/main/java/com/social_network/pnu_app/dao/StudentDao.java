@@ -1,4 +1,4 @@
-package com.example.pnu_app.dao;
+package com.social_network.pnu_app.dao;
 
 
 import androidx.room.Dao;
@@ -6,8 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import com.example.pnu_app.entity.Student;
-import com.example.pnu_app.signin.SignIn;
+import com.social_network.pnu_app.entity.Student;
 
 import java.util.List;
 

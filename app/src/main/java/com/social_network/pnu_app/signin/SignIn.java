@@ -1,4 +1,4 @@
-package com.example.pnu_app.signin;
+package com.social_network.pnu_app.signin;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,9 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.pnu_app.R;
-import com.example.pnu_app.database.AppDatabase;
-import com.example.pnu_app.entity.Student;
+import com.social_network.pnu_app.R;
+import com.social_network.pnu_app.database.AppDatabase;
+import com.social_network.pnu_app.entity.Student;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 public class SignIn extends AppCompatActivity {

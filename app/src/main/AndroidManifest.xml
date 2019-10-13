@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.pnu_app">
+    package="com.social_network.pnu_app">
 
     <application
         android:allowBackup="false"
@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".pages.MainStudentPage"
+        <activity android:name="com.social_network.pnu_app.pages.MainStudentPage"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="com.example.pnu_app.pages.MainStudentPage" />
@@ -18,7 +18,7 @@
             </intent-filter>
             </activity>
         <activity
-            android:name=".registration.Registration"
+            android:name="com.social_network.pnu_app.registration.Registration"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="com.example.pnu_app.registration.Registration" />
@@ -28,7 +28,7 @@
         </activity>
 
         <activity
-            android:name=".signin.SignIn"
+            android:name="com.social_network.pnu_app.signin.SignIn"
             android:label="@string/title_activity_signin"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -37,7 +37,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainActivity">
+        <activity android:name="com.social_network.pnu_app.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

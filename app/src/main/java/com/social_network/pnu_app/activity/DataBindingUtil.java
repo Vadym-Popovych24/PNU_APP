@@ -1,6 +1,4 @@
-package com.example.pnu_app.activity;
-
-import com.example.pnu_app.activity.MainActivity;
+package com.social_network.pnu_app.activity;
 
 class DataBindingUtil {
     public static MainActivity setContentView(MainActivity mainActivity, int activity_main) {

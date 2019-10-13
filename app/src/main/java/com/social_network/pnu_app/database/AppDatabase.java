@@ -1,4 +1,4 @@
-package com.example.pnu_app.database;
+package com.social_network.pnu_app.database;
 
 import android.content.Context;
 
@@ -6,8 +6,8 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.example.pnu_app.dao.StudentDao;
-import com.example.pnu_app.entity.Student;
+import com.social_network.pnu_app.dao.StudentDao;
+import com.social_network.pnu_app.entity.Student;
 
 @Database(entities = {Student.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
