@@ -90,7 +90,7 @@ public class DatabaseInitializer {
         student6.setEmail("Email6@gmail.com");
         student6.setVerify(true);
         student6.setSeriesIDcard("BA12345676");
-        student6.setPassword("qwerty6%");
+        student6.setPassword("qwerty7%");
 
         addStudent(db, student6);
 
@@ -139,7 +139,7 @@ public class DatabaseInitializer {
         Student vadym = new Student();
         vadym.setFirstName("Vadym");
         vadym.setLastName("Popovych");
-        vadym.setEmail("vadympopovychn24@gmail.com");
+       // vadym.setEmail("vadympopovychn24@gmail.com");
         vadym.setVerify(false);
         vadym.setSeriesIDcard("BA11582136");
         //vadym.setPassword("vadym24;");

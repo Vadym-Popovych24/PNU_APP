@@ -12,7 +12,7 @@
         <activity android:name="com.social_network.pnu_app.pages.MainStudentPage"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="com.example.pnu_app.pages.MainStudentPage" />
+                <action android:name="com.social_network.pnu_app.pages.MainStudentPage" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -21,7 +21,7 @@
             android:name="com.social_network.pnu_app.registration.Registration"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="com.example.pnu_app.registration.Registration" />
+                <action android:name="com.social_network.pnu_app.registration.Registration" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -32,7 +32,7 @@
             android:label="@string/title_activity_signin"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="com.example.pnu_app.signin.SignIn" />
+                <action android:name="com.social_network.pnu_app.signin.SignIn" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

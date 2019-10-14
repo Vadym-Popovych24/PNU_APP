@@ -34,8 +34,8 @@ public interface StudentDao {
     @Query("SELECT u_id  FROM student WHERE password = :password")
     int getIdstudentByIDPassword(String password);
 
-    @Query("SELECT password FROM student WHERE password = :password ")
-    String getPassword(String password);
+    @Query("SELECT password FROM student WHERE password = :password AND u_id= :id")
+    String getPassword(String password , int id);
 
     @Query("SELECT * FROM student WHERE first_name LIKE  :firstName AND last_name LIKE :lastName")
     Student findByName(String firstName, String lastName);
@@ -48,6 +48,12 @@ public interface StudentDao {
 
     @Query("UPDATE student SET verify=:verify WHERE u_id= :id")
     void updateVerify(boolean verify, int id);
+
+    @Query("UPDATE student SET password=:password WHERE u_id= :id")
+    void setPassword(String password, int id);
+
+    @Query("UPDATE student SET email=:email WHERE u_id= :id")
+    void setEmail(String email, int id);
 
 
 

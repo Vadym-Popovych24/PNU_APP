@@ -47,11 +47,11 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent;
                 switch(view.getId()){
                     case R.id.btnMainSignIn:
-                        intent = new Intent( "com.example.pnu_app.signin.SignIn");
+                        intent = new Intent( "com.social_network.pnu_app.signin.SignIn");
                         startActivity(intent);
                         break;
                     case R.id.btnRegister:
-                        intent = new Intent( "com.example.pnu_app.registration.Registration");
+                        intent = new Intent( "com.social_network.pnu_app.registration.Registration");
                         startActivity(intent);
                         break;
 

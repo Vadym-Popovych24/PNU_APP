@@ -95,35 +95,23 @@ public class Registration extends AppCompatActivity {
                     if (valueIDcardDB.equals(valueIDcardField) &&  valueVerify == false ) {
 
                         db.studentDao().updateVerify(true, valueIDSeriesIDcard);
+                        db.studentDao().setPassword(valuePassField, valueIDSeriesIDcard);
+                        db.studentDao().setEmail(valueEmailField , valueIDSeriesIDcard);
 
-                        AlertDialog.Builder a_builder = new AlertDialog.Builder(Registration.this);
-                        a_builder.setMessage("SUCCESS REGISTRATION")
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
-                        AlertDialog alert = a_builder.create();
-                        alert.setTitle("PERFORMANCE");
-                        alert.show();
+                        ErrorText = "SUCCESS REGISTRATION " + "valueIDSeriesIDcard = " + String.valueOf(valueIDSeriesIDcard) +
+                        " valueVerify = " + String.valueOf(valueVerify);
+                        alertErrorReg();
 
                     }
                     else if(valueVerify == true){
-                        AlertDialog.Builder a_builder = new AlertDialog.Builder(Registration.this);
-                        a_builder.setMessage("Student already registered")
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
-                        AlertDialog alert = a_builder.create();
-                        alert.setTitle("PERFORMANCE?");
-                        alert.show();
-
+                        ErrorText = "Student already registered";
+                        alertErrorReg();
                     }
-                    
+                    else if (!valueIDcardDB.equals(valueIDcardField)){
+                        ErrorText = "Student with such id series does not exist";
+                        alertErrorReg();
+                    }
+
 
                     // TODO sign in
 

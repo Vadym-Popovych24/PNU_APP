@@ -28,7 +28,6 @@ public class Student {
     @ColumnInfo(name = "password")
     public String password;
 
-    @NonNull
     @ColumnInfo(name = "email", typeAffinity = VARCHAR)
     private String email;
 

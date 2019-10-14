@@ -1,7 +1,9 @@
 package com.social_network.pnu_app.signin;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +14,7 @@ import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.database.AppDatabase;
 import com.social_network.pnu_app.entity.Student;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.social_network.pnu_app.registration.Registration;
 
 public class SignIn extends AppCompatActivity {
 
@@ -26,6 +29,7 @@ public class SignIn extends AppCompatActivity {
 
     private String valueIDcardDB;
     String valuePassField;
+    String ErrorText=null;
 
 
     public int valueIDSeriesIDcard;
@@ -41,6 +45,19 @@ public class SignIn extends AppCompatActivity {
         verifyStudentIn(AppDatabase.getAppDatabase(SignIn.this));
     }
 
+    public void alertErrorSign(){
+        AlertDialog.Builder a_builder = new AlertDialog.Builder(SignIn.this);
+        a_builder.setMessage(ErrorText)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = a_builder.create();
+        alert.setTitle("PERFORMANCE");
+        alert.show();
+    }
 
     public void verifyStudentIn(final AppDatabase db){
         final Student student = new Student();
@@ -57,11 +74,11 @@ public class SignIn extends AppCompatActivity {
                 valueIDcardField = String.valueOf(IDcardField.getText());
                 valuePassField = String.valueOf(passField.getText());
 
-                valuePassDB = db.studentDao().getPassword(valuePassField);
-                valueIDcardDB = db.studentDao().getSeriesIDcard(valueIDcardField);
-
                 valueIDSeriesIDcard =db.studentDao().getIdstudentByIDcard(valueIDcardField);
-                valueIDPassword = db.studentDao().getIdstudentByIDPassword(valuePassField);
+                valueIDPassword = db.studentDao().getIdstudentByIDPassword(valuePassField); // TODO
+
+                valuePassDB = db.studentDao().getPassword(valuePassField,valueIDSeriesIDcard);
+                valueIDcardDB = db.studentDao().getSeriesIDcard(valueIDcardField);
 
                if (view.getId() == R.id.btnSignIn && (valueIDcardDB != null && valuePassDB != null )) {
                        if (valueIDcardDB.equals(valueIDcardField) && (valuePassDB.equals(valuePassField) &&
@@ -76,6 +93,9 @@ public class SignIn extends AppCompatActivity {
 
                    }
                    else {
+                       ErrorText = "IDPassword = " + String.valueOf(valueIDPassword) +
+                               "IDSeriesIDCard = " + String.valueOf(valueIDSeriesIDcard);
+                           alertErrorSign();
 
                    }
                }
