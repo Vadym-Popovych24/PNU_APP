@@ -6,11 +6,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.database.AppDatabase;
@@ -37,13 +35,13 @@ public class Registration extends AppCompatActivity {
     public int valueIDSeriesIDcard;
     public boolean valueVerify;
 
-    boolean error = false;
+    boolean error = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-        verificationData(AppDatabase.getAppDatabase(Registration.this));
+        verifycationData(AppDatabase.getAppDatabase(Registration.this));
 
     }
 
@@ -66,7 +64,7 @@ public class Registration extends AppCompatActivity {
         alert.show();
     }
 
-    public boolean verificationData(final AppDatabase db){
+    public boolean verifycationData(final AppDatabase db){
 
         btnRegister = findViewById(R.id.btnRegister2);
         IDcardField = findViewById(R.id.SeriesAndNumField);
@@ -78,13 +76,13 @@ public class Registration extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                verificationConfirmPassword();
-                verificationPassword();
-                verificationEmail();
-                verificationSeriesIDcard();
+                verifycationConfirmPassword();
+                verifycationPassword();
+                verifycationEmail();
+                verifycationSeriesIDcard();
 
-                if ( verificationSeriesIDcard() == false && verificationEmail() == false &&
-                        verificationPassword() == false && verificationConfirmPassword() == false){
+                if ( verifycationSeriesIDcard() == false && verifycationEmail() == false &&
+                        verifycationPassword() == false && verifycationConfirmPassword() == false){
 
                     valueIDcardField = String.valueOf(IDcardField.getText());
                     valueIDcardDB = db.studentDao().getSeriesIDcard(valueIDcardField);
@@ -128,7 +126,7 @@ public class Registration extends AppCompatActivity {
         return error;
     }
 
-    public boolean verificationSeriesIDcard(){
+    public boolean verifycationSeriesIDcard(){
 
 
         IDcardField = findViewById(R.id.SeriesAndNumField);
@@ -138,8 +136,6 @@ public class Registration extends AppCompatActivity {
 
         if (resultSeriesIDcard) {
             error = false;
-
-
         }
         else {
             error=true;
@@ -150,7 +146,7 @@ public class Registration extends AppCompatActivity {
 
     }
 
-    public boolean verificationEmail(){
+    public boolean verifycationEmail(){
 
         EmailField = findViewById(R.id.emailField);
         valueEmailField = (String.valueOf(EmailField.getText())).trim();
@@ -168,7 +164,7 @@ public class Registration extends AppCompatActivity {
 
     }
 
-    public boolean verificationPassword(){
+    public boolean verifycationPassword(){
 
         PassField = findViewById(R.id.passFieldReg);
         valuePassField = (String.valueOf(PassField.getText())).trim();
@@ -186,7 +182,7 @@ public class Registration extends AppCompatActivity {
 
     }
 
-    public boolean verificationConfirmPassword(){
+    public boolean verifycationConfirmPassword(){
 
         ConfirmPassField = findViewById(R.id.confirmPassField);
         valueConfirmPassField = (String.valueOf(ConfirmPassField.getText())).trim();

@@ -8,13 +8,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.database.AppDatabase;
 import com.social_network.pnu_app.entity.Student;
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.social_network.pnu_app.registration.Registration;
+
 
 public class SignIn extends AppCompatActivity {
 
@@ -23,19 +22,19 @@ public class SignIn extends AppCompatActivity {
     MaterialEditText passField;
     String valueIDcardField;
 
-
     private String yourLastName;
     private String yourName;
 
     private String valueIDcardDB;
-    String valuePassField;
+    String valuePassField="";
     String ErrorText=null;
 
+    boolean error = true;
 
     public int valueIDSeriesIDcard;
     private int valueIDPassword;
 
-    private String valuePassDB;
+    private String valuePassDB="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,50 +58,81 @@ public class SignIn extends AppCompatActivity {
         alert.show();
     }
 
-    public void verifyStudentIn(final AppDatabase db){
-        final Student student = new Student();
-        btnSignIn = findViewById(R.id.btnSignIn);
+    public boolean verifySignInSeriesIDcard(final AppDatabase db){
+
         IDcardField = findViewById(R.id.IDcardField);
+
+        valueIDcardField = String.valueOf(IDcardField.getText());
+        valueIDSeriesIDcard =db.studentDao().getIdstudentByIDcard(valueIDcardField);
+        valueIDcardDB = db.studentDao().getSeriesIDcard(valueIDcardField);
+
+        error = (valueIDcardDB != null) && valueIDcardDB.equals(valueIDcardField);
+
+        return error;
+    }
+
+    public boolean verifySignInPassword(final AppDatabase db){
+
         passField = findViewById(R.id.passFieldSignIn);
+
+        valuePassField = String.valueOf(passField.getText());
+        valueIDPassword = db.studentDao().getIdstudentByIDPassword(valuePassField,valueIDSeriesIDcard);
+        valuePassDB = db.studentDao().getPassword(valuePassField,valueIDSeriesIDcard);
+
+        error = (valuePassDB != null) && valuePassDB.equals(valuePassField);
+
+        return error;
+    }
+
+    public void verifyStudentIn(final AppDatabase db){
+
+        btnSignIn = findViewById(R.id.btnSignIn);
+
 
         View.OnClickListener listenerSignIn = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intentFromSignIn;
-                String warning = "Data is wrong: Try again";
+            /*    verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this));
+                verifySignInPassword(AppDatabase.getAppDatabase(SignIn.this));*/
 
-                valueIDcardField = String.valueOf(IDcardField.getText());
-                valuePassField = String.valueOf(passField.getText());
-
-                valueIDSeriesIDcard =db.studentDao().getIdstudentByIDcard(valueIDcardField);
-                valueIDPassword = db.studentDao().getIdstudentByIDPassword(valuePassField); // TODO
-
-                valuePassDB = db.studentDao().getPassword(valuePassField,valueIDSeriesIDcard);
-                valueIDcardDB = db.studentDao().getSeriesIDcard(valueIDcardField);
-
-               if (view.getId() == R.id.btnSignIn && (valueIDcardDB != null && valuePassDB != null )) {
-                       if (valueIDcardDB.equals(valueIDcardField) && (valuePassDB.equals(valuePassField) &&
-                               (valueIDSeriesIDcard == valueIDPassword))) {
+               if (view.getId() == R.id.btnSignIn) {
+                       if (verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this)) &&
+                               verifySignInPassword(AppDatabase.getAppDatabase(SignIn.this)) &&
+                               (valueIDSeriesIDcard == valueIDPassword)) {
 
                            yourName =db.studentDao().getFirstName(getValueIDSeriesIDcard());
                            yourLastName = db.studentDao().getLastName(getValueIDSeriesIDcard());
-
 
                            intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
                            startActivity(intentFromSignIn);
 
                    }
-                   else {
-                       ErrorText = "IDPassword = " + String.valueOf(valueIDPassword) +
-                               "IDSeriesIDCard = " + String.valueOf(valueIDSeriesIDcard);
+                       else if (!verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this))) {
+                           ErrorText = "Student with the such series id does not exist";
+                           alertErrorSign();
+                       }
+                       else if ( (valuePassDB == null) || valuePassField == null){ // TODO
+                           ErrorText = "Enter password";
+                           alertErrorSign();
+                       }
+                       else if (verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this)) &&
+                               (!valuePassDB.equals(valuePassField)) && valuePassDB != null ) {
+                       /*ErrorText = "IDPassword = " + String.valueOf(valueIDPassword) +
+                               "IDSeriesIDCard = " + String.valueOf(valueIDSeriesIDcard);*/
+                       ErrorText = "Student with the such series id does not registered";
                            alertErrorSign();
 
                    }
-               }
-               else {
+
+
 
                }
-            }
+               else {
+                   ErrorText = "Wrong password";
+                   alertErrorSign();
+               }
+           }
         };
 
         btnSignIn.setOnClickListener(listenerSignIn);
