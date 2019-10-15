@@ -58,6 +58,14 @@ public class SignIn extends AppCompatActivity {
         alert.show();
     }
 
+    public boolean verifyRegistered(final AppDatabase db){
+
+        valueIDSeriesIDcard =db.studentDao().getIdstudentByIDcard(valueIDcardField);
+        boolean valueVerify= false;
+        valueVerify = db.studentDao().getVerify(valueIDSeriesIDcard);
+        return valueVerify;
+    }
+
     public boolean verifySignInSeriesIDcard(final AppDatabase db){
 
         IDcardField = findViewById(R.id.IDcardField);
@@ -93,8 +101,8 @@ public class SignIn extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intentFromSignIn;
-            /*    verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this));
-                verifySignInPassword(AppDatabase.getAppDatabase(SignIn.this));*/
+                verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this));
+                verifySignInPassword(AppDatabase.getAppDatabase(SignIn.this));
 
                if (view.getId() == R.id.btnSignIn) {
                        if (verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this)) &&
@@ -112,20 +120,21 @@ public class SignIn extends AppCompatActivity {
                            ErrorText = "Student with the such series id does not exist";
                            alertErrorSign();
                        }
-                       else if ( (valuePassDB == null) || valuePassField == null){ // TODO
+                       else if (verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this)) &&
+                               !(verifyRegistered(AppDatabase.getAppDatabase(SignIn.this)) ) ) {
+                       ErrorText = "IDPassword = " + String.valueOf(valueIDPassword) +
+                               "IDSeriesIDCard = " + String.valueOf(valueIDSeriesIDcard);
+                           ErrorText = "Student with the such series id does not registered";
+                           alertErrorSign();
+                       }
+                       else if (valuePassField.isEmpty() ) { // TODO
                            ErrorText = "Enter password";
                            alertErrorSign();
                        }
-                       else if (verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this)) &&
-                               (!valuePassDB.equals(valuePassField)) && valuePassDB != null ) {
-                       /*ErrorText = "IDPassword = " + String.valueOf(valueIDPassword) +
-                               "IDSeriesIDCard = " + String.valueOf(valueIDSeriesIDcard);*/
-                       ErrorText = "Student with the such series id does not registered";
+                       else if ( (valuePassDB == null) && (!valuePassField.isEmpty()) ){ // TODO
+                           ErrorText = "Wrong password";
                            alertErrorSign();
-
-                   }
-
-
+                       }
 
                }
                else {
