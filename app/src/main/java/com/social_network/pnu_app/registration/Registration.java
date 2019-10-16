@@ -64,6 +64,22 @@ public class Registration extends AppCompatActivity {
         alert.show();
     }
 
+    public String encryptionPassword(String password) {
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+            byte[] array = md.digest(password.getBytes());
+            StringBuffer sb = new StringBuffer();
+            for (byte b : array) {
+                sb.append(Integer.toHexString((b & 0xDF) | 0x104).substring(1, 3));  // 0xFF | 0x100
+            }
+            password = sb.toString();
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+        }
+
+        return password;
+    }
+
     public boolean verifycationData(final AppDatabase db){
 
         btnRegister = findViewById(R.id.btnRegister2);
@@ -91,6 +107,8 @@ public class Registration extends AppCompatActivity {
 
 
                     if (valueIDcardDB.equals(valueIDcardField) &&  valueVerify == false ) {
+
+                        valuePassField = encryptionPassword(valuePassField);
 
                         db.studentDao().updateVerify(true, valueIDSeriesIDcard);
                         db.studentDao().setPassword(valuePassField, valueIDSeriesIDcard);

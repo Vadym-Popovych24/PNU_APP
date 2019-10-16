@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.social_network.pnu_app.registration.Registration;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.database.AppDatabase;
 import com.social_network.pnu_app.entity.Student;
@@ -81,11 +82,15 @@ public class SignIn extends AppCompatActivity {
 
     public boolean verifySignInPassword(final AppDatabase db){
 
+        Registration encrypt = new Registration();
         passField = findViewById(R.id.passFieldSignIn);
 
         valuePassField = String.valueOf(passField.getText());
+        valuePassField = encrypt.encryptionPassword(valuePassField);
+
         valueIDPassword = db.studentDao().getIdstudentByIDPassword(valuePassField,valueIDSeriesIDcard);
         valuePassDB = db.studentDao().getPassword(valuePassField,valueIDSeriesIDcard);
+
 
         error = (valuePassDB != null) && valuePassDB.equals(valuePassField);
 
@@ -116,6 +121,10 @@ public class SignIn extends AppCompatActivity {
                            startActivity(intentFromSignIn);
 
                    }
+                       else if (valueIDcardField.isEmpty() ) { // TODO
+                           ErrorText = "Enter Series ID";
+                           alertErrorSign();
+                       }
                        else if (!verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this))) {
                            ErrorText = "Student with the such series id does not exist";
                            alertErrorSign();
