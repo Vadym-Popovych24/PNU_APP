@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 
 import com.social_network.pnu_app.database.AppDatabase;
 import com.social_network.pnu_app.entity.Student;
+import com.social_network.pnu_app.registration.Registration;
 
 import java.util.List;
 
@@ -32,15 +33,35 @@ public class DatabaseInitializer {
     }
 
     private static void populateWithTestData(AppDatabase db) {
-        Student user = new Student();
+        Student student[] = new Student[0];
+        String studentPass;
+      //  Registration encrypt = new Registration();
+      /*  for (int i = 0; i < 10; i++){
+            student[i].setFirstName("StudentName" + i);
+            student[i].setLastName("StudentLastName" + i);
+            student[i].setEmail("Email1@" + i + "gmail.com");
+            student[i].setVerify(true);
+            student[i].setSeriesIDcard("BA1234567" + i);
+            // studentPass = "qwerty" + i + "%";
+            // studentPass = encrypt.encryptionPassword(studentPass);
+            student[i].setPassword("qwerty" + i + "%");
+
+            addStudent(db, student[i]);
+        }*/
+
+
+        //Registration encrypt = new Registration();
+        int i =1;
 
         Student student1 = new Student();
-        student1.setFirstName("StudentName1");
-        student1.setLastName("StudentLastName1");
-        student1.setEmail("Email1@gmail.com");
+        student1.setFirstName("StudentName" + String.valueOf(i));
+        student1.setLastName("StudentLastName" + String.valueOf(i));
+        student1.setEmail("Email" + String.valueOf(i) +"@gmail.com");
         student1.setVerify(true);
-        student1.setSeriesIDcard("BA12345671");
-        student1.setPassword("qwerty1%");
+        student1.setSeriesIDcard("BA1234567" + String.valueOf(i));
+        studentPass = "qwerty" + String.valueOf(i) + "%";
+        //studentPass = encrypt.encryptionPassword(studentPass);
+        student1.setPassword(studentPass);
 
         addStudent(db, student1);
 

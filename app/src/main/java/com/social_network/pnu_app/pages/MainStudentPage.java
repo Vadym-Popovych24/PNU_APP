@@ -7,12 +7,11 @@ import android.widget.TextView;
 
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.database.AppDatabase;
+import com.social_network.pnu_app.signin.SignIn;
 
 public class MainStudentPage extends AppCompatActivity {
 
     TextView tvPage;
-    String yourName;
-    String yourLastNameP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +21,11 @@ public class MainStudentPage extends AppCompatActivity {
     }
 
     public void BuildStudentPage(final AppDatabase db){
-
+        SignIn student = new SignIn();
+        String NameStudent = student.getYourName(AppDatabase.getAppDatabase(MainStudentPage.this));
+        String LastNameStudent = student.getYourLastName(AppDatabase.getAppDatabase(MainStudentPage.this));
 
         tvPage = findViewById(R.id.tvPage);
-
-        tvPage.setText("Hello");
+        tvPage.setText("Hello " +  NameStudent + " " + LastNameStudent);
     }
 }

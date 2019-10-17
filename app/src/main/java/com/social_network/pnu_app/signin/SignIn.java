@@ -32,7 +32,7 @@ public class SignIn extends AppCompatActivity {
 
     boolean error = true;
 
-    public int valueIDSeriesIDcard;
+    public static int valueIDSeriesIDcard;
     private int valueIDPassword;
 
     private String valuePassDB="";
@@ -114,8 +114,12 @@ public class SignIn extends AppCompatActivity {
                                verifySignInPassword(AppDatabase.getAppDatabase(SignIn.this)) &&
                                (valueIDSeriesIDcard == valueIDPassword)) {
 
-                           yourName =db.studentDao().getFirstName(getValueIDSeriesIDcard());
-                           yourLastName = db.studentDao().getLastName(getValueIDSeriesIDcard());
+                           getYourName(AppDatabase.getAppDatabase(SignIn.this));
+                           getYourLastName(AppDatabase.getAppDatabase(SignIn.this));
+
+                      /*     ErrorText = getYourName() + " " + getYourLastName(yourLastName);
+                           alertErrorSign();*/
+
 
                            intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
                            startActivity(intentFromSignIn);
@@ -179,7 +183,9 @@ public class SignIn extends AppCompatActivity {
         this.valueIDPassword = valueIDPassword;
     }
 
-    public String getYourLastName() {
+    public String getYourLastName(final AppDatabase db)
+    {
+        yourLastName = db.studentDao().getLastName(getValueIDSeriesIDcard());
         return yourLastName;
     }
 
@@ -195,12 +201,12 @@ public class SignIn extends AppCompatActivity {
         this.btnSignIn = btnSignIn;
     }
 
-    public String getYourName() {
+    public String getYourName(final AppDatabase db)
+    {
+        yourName =db.studentDao().getFirstName(getValueIDSeriesIDcard());
         return yourName;
     }
 
-    public void setYourName(String yourName) {
-        this.yourName = yourName;
-    }
+    public void setYourName(String yourName) { this.yourName = yourName; }
     }
 
