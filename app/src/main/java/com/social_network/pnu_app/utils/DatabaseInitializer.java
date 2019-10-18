@@ -33,24 +33,26 @@ public class DatabaseInitializer {
     }
 
     private static void populateWithTestData(AppDatabase db) {
-        Student student[] = new Student[0];
+       final int countStudent = 10;
+        Student student[] = new Student[countStudent];
         String studentPass;
       //  Registration encrypt = new Registration();
-      /*  for (int i = 0; i < 10; i++){
-            student[i].setFirstName("StudentName" + i);
-            student[i].setLastName("StudentLastName" + i);
-            student[i].setEmail("Email1@" + i + "gmail.com");
+     /*   for (int i = 0; i < countStudent; i++){
+            student[i].setFirstName("StudentName" + String.valueOf(i));
+            student[i].setLastName("StudentLastName" + String.valueOf(i));
+            student[i].setEmail("Email1@" + String.valueOf(i) + "gmail.com");
             student[i].setVerify(true);
-            student[i].setSeriesIDcard("BA1234567" + i);
+            student[i].setSeriesIDcard("BA1234567" + String.valueOf(i));
             // studentPass = "qwerty" + i + "%";
             // studentPass = encrypt.encryptionPassword(studentPass);
-            student[i].setPassword("qwerty" + i + "%");
+            student[i].setPassword("qwerty" + String.valueOf(i) + "%");
 
             addStudent(db, student[i]);
         }*/
 
 
         //Registration encrypt = new Registration();
+
         int i =1;
 
         Student student1 = new Student();

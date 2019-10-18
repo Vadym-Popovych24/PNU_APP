@@ -97,6 +97,7 @@ public class Student {
     }
 
     public void setEmail(@NonNull String email) {
+
         this.email = email;
     }
 

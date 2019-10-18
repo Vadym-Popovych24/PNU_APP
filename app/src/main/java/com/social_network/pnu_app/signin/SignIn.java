@@ -86,7 +86,7 @@ public class SignIn extends AppCompatActivity {
         passField = findViewById(R.id.passFieldSignIn);
 
         valuePassField = String.valueOf(passField.getText());
-        valuePassField = encrypt.encryptionPassword(valuePassField);
+        // valuePassField = encrypt.encryptionPassword(valuePassField); TODO this coderow encrypt password in database (comment for example)
 
         valueIDPassword = db.studentDao().getIdstudentByIDPassword(valuePassField,valueIDSeriesIDcard);
         valuePassDB = db.studentDao().getPassword(valuePassField,valueIDSeriesIDcard);

@@ -108,7 +108,7 @@ public class Registration extends AppCompatActivity {
 
                     if (valueIDcardDB.equals(valueIDcardField) &&  valueVerify == false ) {
 
-                        valuePassField = encryptionPassword(valuePassField);
+                        // valuePassField = encryptionPassword(valuePassField);  TODO this coderow encrypt password in database (comment for example)
 
                         db.studentDao().updateVerify(true, valueIDSeriesIDcard);
                         db.studentDao().setPassword(valuePassField, valueIDSeriesIDcard);
