@@ -2,6 +2,7 @@
 package com.social_network.pnu_app.registration;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,7 +10,13 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.database.AppDatabase;
 import com.social_network.pnu_app.entity.Student;
@@ -22,6 +29,9 @@ public class Registration extends AppCompatActivity {
     MaterialEditText EmailField;
     MaterialEditText PassField;
     MaterialEditText ConfirmPassField;
+
+    TextView ExampleText;
+
     String ErrorText = null;
 
     Button btnRegister;
@@ -31,8 +41,9 @@ public class Registration extends AppCompatActivity {
     String valuePassField;
     String valueConfirmPassField;
 
+
     private String valueIDcardDB;
-    public int valueIDSeriesIDcard;
+    private static int valueIDSeriesIDcard;
     public boolean valueVerify;
 
     boolean error = true;
@@ -42,6 +53,7 @@ public class Registration extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         verifycationData(AppDatabase.getAppDatabase(Registration.this));
+        addDatatoSqliteFromFirebase(AppDatabase.getAppDatabase(Registration.this));
 
     }
 
@@ -82,6 +94,7 @@ public class Registration extends AppCompatActivity {
 
     public boolean verifycationData(final AppDatabase db){
 
+
         btnRegister = findViewById(R.id.btnRegister2);
         IDcardField = findViewById(R.id.SeriesAndNumField);
         EmailField =findViewById(R.id.emailField);
@@ -97,10 +110,13 @@ public class Registration extends AppCompatActivity {
                 verifycationEmail();
                 verifycationSeriesIDcard();
 
-                if ( verifycationSeriesIDcard() == false && verifycationEmail() == false &&
-                        verifycationPassword() == false && verifycationConfirmPassword() == false){
+                if (    verifycationSeriesIDcard() == false &&
+                        verifycationSeriesIDcardOnExists(AppDatabase.getAppDatabase(Registration.this)) == false &&
+                        verifycationEmail() == false &&
+                        verifycationPassword() == false &&
+                        verifycationConfirmPassword() == false){
 
-                    valueIDcardField = String.valueOf(IDcardField.getText());
+                    valueIDcardField = String.valueOf(IDcardField.getText()).trim();
                     valueIDcardDB = db.studentDao().getSeriesIDcard(valueIDcardField);
                     valueIDSeriesIDcard =db.studentDao().getIdstudentByIDcard(valueIDcardDB);
                     valueVerify =db.studentDao().getVerify(valueIDSeriesIDcard);
@@ -114,6 +130,8 @@ public class Registration extends AppCompatActivity {
                         db.studentDao().setPassword(valuePassField, valueIDSeriesIDcard);
                         db.studentDao().setEmail(valueEmailField , valueIDSeriesIDcard);
 
+                        addDatatoFirebaseFromSqlite(AppDatabase.getAppDatabase(Registration.this));
+
                         ErrorText = "SUCCESS REGISTRATION " + "valueIDSeriesIDcard = " + String.valueOf(valueIDSeriesIDcard) +
                         " valueVerify = " + String.valueOf(valueVerify);
                         alertErrorReg();
@@ -121,10 +139,6 @@ public class Registration extends AppCompatActivity {
                     }
                     else if(valueVerify == true){
                         ErrorText = "Student already registered";
-                        alertErrorReg();
-                    }
-                    else if (!valueIDcardDB.equals(valueIDcardField)){
-                        ErrorText = "Student with such id series does not exist";
                         alertErrorReg();
                     }
 
@@ -161,6 +175,153 @@ public class Registration extends AppCompatActivity {
         }
 
         return error;
+    }
+
+    public  void addDatatoFirebaseFromSqlite(final AppDatabase db){
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference reference = database.getReference("students");
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                Student studentObj = new Student();
+                ExampleText = findViewById(R.id.ExampleText);
+                String SeriesIDcard;
+
+                String password;
+                String email;
+
+                for(DataSnapshot student : dataSnapshot.getChildren()){
+
+                    for (DataSnapshot field : student.getChildren()) {
+
+                        // TODO перевірка по student.getKey() в field.getKey().toString().equals("email")) і passworda i verify
+
+                        if ( (field.getKey().toString().equals("seriesIDcard") &&
+                                (field.getValue().toString().equals(valueIDcardField)) )) {
+
+                            ExampleText.append(student.getKey().toString() + "\n");
+                        }
+                        /*
+                           SeriesIDcard = db.studentDao().getSeriesBYId(valueIDSeriesIDcard);
+                           DatabaseReference refSeriesIDcard = database.getReference(String.valueOf(field));
+                           refSeriesIDcard.setValue(SeriesIDcard);
+                            studentObj.setSeriesIDcard(field.getValue().toString());
+                        }
+
+                        if (field.getKey().toString().equals("email"))
+                            studentObj.setEmail(field.getValue().toString());
+
+                        if (field.getKey().toString().equals("password"))
+                            studentObj.setPassword(field.getValue().toString());
+
+                        if (field.getKey().toString().equals("phone"))
+                            studentObj.setPhone(field.getValue().toString());
+
+                        if (field.getKey().toString().equals("verify")){
+
+                            if (field.getValue().toString().equals("1") ){
+                                studentObj.setVerify(true);
+                            }
+                            else {
+                                studentObj.setVerify(false);
+                            }
+
+                        }
+*/
+
+                    }
+                   // addStudent(db, studentObj);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+    public static void addDatatoSqliteFromFirebase(final AppDatabase db){
+
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference reference = database.getReference("students");
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Student studentObj = new Student();
+
+                for(DataSnapshot student : dataSnapshot.getChildren()){
+
+                    for (DataSnapshot field : student.getChildren()) {
+
+                        if (field.getKey().toString().equals("name"))
+                            studentObj.setFirstName(field.getValue().toString());
+
+                        if (field.getKey().toString().equals("last_name"))
+                            studentObj.setLastName(field.getValue().toString());
+
+                        if (field.getKey().toString().equals("seriesIDcard"))
+                            studentObj.setSeriesIDcard(field.getValue().toString());
+
+                        if (field.getKey().toString().equals("email"))
+                            studentObj.setEmail(field.getValue().toString());
+
+                        if (field.getKey().toString().equals("password"))
+                            studentObj.setPassword(field.getValue().toString());
+
+                        if (field.getKey().toString().equals("phone"))
+                            studentObj.setPhone(field.getValue().toString());
+
+                        if (field.getKey().toString().equals("verify")){
+
+                            if (field.getValue().toString().equals("1") ){
+                                studentObj.setVerify(true);
+                            }
+                            else {
+                                studentObj.setVerify(false);
+                            }
+
+                        }
+
+
+                        }
+                    addStudent(db, studentObj);
+                        }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+    public boolean verifycationSeriesIDcardOnExists(final AppDatabase db) {
+
+        IDcardField = findViewById(R.id.SeriesAndNumField);
+        valueIDcardField = (String.valueOf(IDcardField.getText())).trim();
+
+        valueIDcardDB = db.studentDao().getSeriesIDcard(valueIDcardField);
+
+
+        if (valueIDcardDB == null) {
+                error = true;
+            ErrorText = "Student with such id series does not exist";
+            }
+        else {
+                error = false;
+            }
+
+            return error;
 
     }
 

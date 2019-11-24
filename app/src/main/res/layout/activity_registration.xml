@@ -107,4 +107,16 @@ android:orientation="vertical">
     android:text="@string/btnRegister"
     style="?android:attr/buttonBarButtonStyle"/>
 
+    <TextView
+        android:id="@+id/ExampleText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="26sp"
+        android:textAlignment="center"
+        android:text="Val ="
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_margin="0dp">
+    </TextView>
+
+
 </LinearLayout>

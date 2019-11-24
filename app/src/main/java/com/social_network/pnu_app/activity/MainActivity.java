@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         listenerOnButton();
         DatabaseInitializer.populateAsync(AppDatabase.getAppDatabase(MainActivity.this));
 
+
     }
 
   /*  @Override

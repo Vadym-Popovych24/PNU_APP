@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey;
 
 import static java.sql.Types.VARCHAR;
 
-@Entity(tableName = "student", indices = {@Index(value = {"email", "phone", "seriesIDcard"}, unique = true)})
+@Entity(tableName = "student" ) //, indices = {@Index(value = {"email", "phone", "seriesIDcard"}, unique = true)})
 public class Student {
 
     @NonNull
@@ -35,12 +35,9 @@ public class Student {
     @ColumnInfo(name = "seriesIDcard")
     private String seriesIDcard;
 
-
-
     @ColumnInfo(name = "phone", typeAffinity = VARCHAR)
     private String phone;
 
-    @NonNull
     @ColumnInfo(name = "verify")
     private boolean verify;
 
