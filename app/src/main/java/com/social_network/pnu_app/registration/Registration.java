@@ -36,7 +36,11 @@ public class Registration extends AppCompatActivity {
 
     Button btnRegister;
 
-    String valueIDcardField;
+   private String valueIDcardField;
+
+   public String getValueIDcardField(){
+       return valueIDcardField;
+   }
     String valueEmailField;
     String valuePassField;
     String valueConfirmPassField;
@@ -44,6 +48,11 @@ public class Registration extends AppCompatActivity {
 
     private String valueIDcardDB;
     private static int valueIDSeriesIDcard;
+
+    public static int getValueIDSeriesIDcard() {
+        return valueIDSeriesIDcard;
+    }
+
     public boolean valueVerify;
 
     boolean error = true;
@@ -53,14 +62,9 @@ public class Registration extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         verifycationData(AppDatabase.getAppDatabase(Registration.this));
-        addDatatoSqliteFromFirebase(AppDatabase.getAppDatabase(Registration.this));
 
     }
 
-    private static Student addStudent(final AppDatabase db, Student student) {
-        db.studentDao().insertAll(student);
-        return student;
-    }
 
     public void alertErrorReg(){
         AlertDialog.Builder a_builder = new AlertDialog.Builder(Registration.this);
@@ -130,6 +134,7 @@ public class Registration extends AppCompatActivity {
                         db.studentDao().setPassword(valuePassField, valueIDSeriesIDcard);
                         db.studentDao().setEmail(valueEmailField , valueIDSeriesIDcard);
 
+
                         addDatatoFirebaseFromSqlite(AppDatabase.getAppDatabase(Registration.this));
 
                         ErrorText = "SUCCESS REGISTRATION " + "valueIDSeriesIDcard = " + String.valueOf(valueIDSeriesIDcard) +
@@ -177,63 +182,62 @@ public class Registration extends AppCompatActivity {
         return error;
     }
 
+
     public  void addDatatoFirebaseFromSqlite(final AppDatabase db){
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference reference = database.getReference("students");
+        final DatabaseReference reference = database.getReference("students");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                Registration regObj = new Registration();
+
                 Student studentObj = new Student();
                 ExampleText = findViewById(R.id.ExampleText);
                 String SeriesIDcard;
+                String KeyStudent = "default";
 
-                String password;
-                String email;
+                String password =db.studentDao().getPasswordById(valueIDSeriesIDcard);
+                String email = db.studentDao().getEmailById(valueIDSeriesIDcard);
 
                 for(DataSnapshot student : dataSnapshot.getChildren()){
 
                     for (DataSnapshot field : student.getChildren()) {
 
-                        // TODO перевірка по student.getKey() в field.getKey().toString().equals("email")) і passworda i verify
-
-                        if ( (field.getKey().toString().equals("seriesIDcard") &&
+                        if ( (field.getKey().toString().equals("aSeriesIDcard") &&
                                 (field.getValue().toString().equals(valueIDcardField)) )) {
-
-                            ExampleText.append(student.getKey().toString() + "\n");
-                        }
-                        /*
-                           SeriesIDcard = db.studentDao().getSeriesBYId(valueIDSeriesIDcard);
-                           DatabaseReference refSeriesIDcard = database.getReference(String.valueOf(field));
-                           refSeriesIDcard.setValue(SeriesIDcard);
-                            studentObj.setSeriesIDcard(field.getValue().toString());
-                        }
-
-                        if (field.getKey().toString().equals("email"))
-                            studentObj.setEmail(field.getValue().toString());
-
-                        if (field.getKey().toString().equals("password"))
-                            studentObj.setPassword(field.getValue().toString());
-
-                        if (field.getKey().toString().equals("phone"))
-                            studentObj.setPhone(field.getValue().toString());
-
-                        if (field.getKey().toString().equals("verify")){
-
-                            if (field.getValue().toString().equals("1") ){
-                                studentObj.setVerify(true);
-                            }
-                            else {
-                                studentObj.setVerify(false);
-                            }
+                            KeyStudent = student.getKey().toString();
+                            //  ExampleText.append(student.getKey().toString() + "\n");
 
                         }
-*/
+
+                        if ( (field.getKey().toString().equals("email")) &&
+                                (KeyStudent.equals(student.getKey().toString())) ){
+                            //  ExampleText.append("email = " + email + "\n");
+                            reference.child(KeyStudent).child("email").setValue(email);
+
+                        }
+
+                        if ( (field.getKey().toString().equals("password")) &&
+                                (KeyStudent.equals(student.getKey().toString())) ) {
+                            // ExampleText.append("password + " + password + "\n");
+                            reference.child(KeyStudent).child("password").setValue(password);
+                        }
+
+                        //   if (field.getKey().toString().equals("phone"))
+                        //     studentObj.setPhone(field.getValue().toString());
+
+                        if ( (field.getKey().toString().equals("verify")) &&
+                                (KeyStudent.equals(student.getKey().toString())) )
+                            reference.child(KeyStudent).child("verify").setValue(1);
+
+
+
 
                     }
-                   // addStudent(db, studentObj);
+                    // addStudent(db, studentObj);
                 }
 
             }
@@ -247,64 +251,7 @@ public class Registration extends AppCompatActivity {
 
     }
 
-    public static void addDatatoSqliteFromFirebase(final AppDatabase db){
 
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference reference = database.getReference("students");
-
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Student studentObj = new Student();
-
-                for(DataSnapshot student : dataSnapshot.getChildren()){
-
-                    for (DataSnapshot field : student.getChildren()) {
-
-                        if (field.getKey().toString().equals("name"))
-                            studentObj.setFirstName(field.getValue().toString());
-
-                        if (field.getKey().toString().equals("last_name"))
-                            studentObj.setLastName(field.getValue().toString());
-
-                        if (field.getKey().toString().equals("seriesIDcard"))
-                            studentObj.setSeriesIDcard(field.getValue().toString());
-
-                        if (field.getKey().toString().equals("email"))
-                            studentObj.setEmail(field.getValue().toString());
-
-                        if (field.getKey().toString().equals("password"))
-                            studentObj.setPassword(field.getValue().toString());
-
-                        if (field.getKey().toString().equals("phone"))
-                            studentObj.setPhone(field.getValue().toString());
-
-                        if (field.getKey().toString().equals("verify")){
-
-                            if (field.getValue().toString().equals("1") ){
-                                studentObj.setVerify(true);
-                            }
-                            else {
-                                studentObj.setVerify(false);
-                            }
-
-                        }
-
-
-                        }
-                    addStudent(db, studentObj);
-                        }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }
     public boolean verifycationSeriesIDcardOnExists(final AppDatabase db) {
 
         IDcardField = findViewById(R.id.SeriesAndNumField);
