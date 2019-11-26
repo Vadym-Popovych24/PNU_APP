@@ -21,6 +21,7 @@ import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.database.AppDatabase;
 import com.social_network.pnu_app.entity.Student;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.social_network.pnu_app.signin.SignIn;
 
 
 public class Registration extends AppCompatActivity {
@@ -123,7 +124,7 @@ public class Registration extends AppCompatActivity {
                     valueIDcardField = String.valueOf(IDcardField.getText()).trim();
                     valueIDcardDB = db.studentDao().getSeriesIDcard(valueIDcardField);
                     valueIDSeriesIDcard =db.studentDao().getIdstudentByIDcard(valueIDcardDB);
-                    valueVerify =db.studentDao().getVerify(valueIDSeriesIDcard);
+                    valueVerify =db.studentDao().getVerifyByID(valueIDSeriesIDcard);
 
 
                     if (valueIDcardDB.equals(valueIDcardField) &&  valueVerify == false ) {

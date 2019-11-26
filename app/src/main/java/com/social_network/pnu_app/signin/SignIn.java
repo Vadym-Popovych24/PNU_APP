@@ -12,7 +12,6 @@ import android.widget.Button;
 import com.social_network.pnu_app.registration.Registration;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.database.AppDatabase;
-import com.social_network.pnu_app.entity.Student;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 
@@ -28,7 +27,7 @@ public class SignIn extends AppCompatActivity {
 
     private String valueIDcardDB;
     String valuePassField="";
-    String ErrorText=null;
+    public String ErrorText=null;
 
     boolean error = true;
 
@@ -63,7 +62,7 @@ public class SignIn extends AppCompatActivity {
 
         valueIDSeriesIDcard =db.studentDao().getIdstudentByIDcard(valueIDcardField);
         boolean valueVerify= false;
-        valueVerify = db.studentDao().getVerify(valueIDSeriesIDcard);
+        valueVerify = db.studentDao().getVerifyByID(valueIDSeriesIDcard);
         return valueVerify;
     }
 
@@ -89,7 +88,7 @@ public class SignIn extends AppCompatActivity {
         // valuePassField = encrypt.encryptionPassword(valuePassField); TODO this coderow encrypt password in database (comment for example)
 
         valueIDPassword = db.studentDao().getIdstudentByIDPassword(valuePassField,valueIDSeriesIDcard);
-        valuePassDB = db.studentDao().getPassword(valuePassField,valueIDSeriesIDcard);
+        valuePassDB = db.studentDao().getPasswordById(valuePassField,valueIDSeriesIDcard);
 
 
         error = (valuePassDB != null) && valuePassDB.equals(valuePassField);
@@ -185,7 +184,7 @@ public class SignIn extends AppCompatActivity {
 
     public String getYourLastName(final AppDatabase db)
     {
-        yourLastName = db.studentDao().getLastName(getValueIDSeriesIDcard());
+        yourLastName = db.studentDao().getLastNameById(getValueIDSeriesIDcard());
         return yourLastName;
     }
 
@@ -203,7 +202,7 @@ public class SignIn extends AppCompatActivity {
 
     public String getYourName(final AppDatabase db)
     {
-        yourName =db.studentDao().getFirstName(getValueIDSeriesIDcard());
+        yourName =db.studentDao().getFirstNameById(getValueIDSeriesIDcard());
         return yourName;
     }
 

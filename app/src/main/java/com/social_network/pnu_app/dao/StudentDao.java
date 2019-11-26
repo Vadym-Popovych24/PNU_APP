@@ -15,18 +15,44 @@ import java.util.List;
 @Dao
 public interface StudentDao {
 
+    // Simple
 
     @Query("SELECT * FROM student")
     List<Student> getAll();
 
+    @Query("SELECT u_id FROM student WHERE u_id = :u_id ")
+    int getId(int u_id);
+
     @Query("SELECT seriesIDcard FROM student WHERE seriesIDcard = :seriesIDcard ")
     String getSeriesIDcard(String seriesIDcard);
 
+    @Query("SELECT first_name FROM student WHERE first_name = :name")
+    String getFirstName(String name);
+
+    @Query("SELECT last_name FROM student WHERE last_name = :Lastname")
+    String getLastName(String Lastname);
+
+    @Query("SELECT password FROM student WHERE password = :password")
+    String getPassword(String password);
+
+    @Query("SELECT email FROM student WHERE email = :email")
+    String getEmail(String email);
+
+    @Query("SELECT phone FROM student WHERE phone = :phone")
+    String getPhone(String phone);
+
+    @Query("SELECT verify FROM student WHERE verify = :verify")
+    String getVerify(String verify);
+
+
+
+    // By id
+
     @Query("SELECT first_name FROM student WHERE u_id = :uid")
-    String getFirstName(int uid);
+    String getFirstNameById(int uid);
 
     @Query("SELECT last_name FROM student WHERE u_id = :uid")
-    String getLastName(int uid);
+    String getLastNameById(int uid);
 
     @Query("SELECT u_id  FROM student WHERE seriesIDcard = :seriesIDcard")
     int getIdstudentByIDcard(String seriesIDcard);
@@ -35,7 +61,7 @@ public interface StudentDao {
     int getIdstudentByIDPassword(String password, int idSeriesIDCard);
 
     @Query("SELECT password FROM student WHERE password = :password AND u_id= :id")
-    String getPassword(String password , int id);
+    String getPasswordById(String password , int id);
 
     @Query("SELECT * FROM student WHERE first_name LIKE :firstName AND last_name LIKE :lastName")
     Student findByName(String firstName, String lastName);
@@ -44,7 +70,7 @@ public interface StudentDao {
     int countStudent();
 
     @Query("SELECT verify FROM student WHERE u_id = :uid")
-    boolean getVerify(int uid);
+    boolean getVerifyByID(int uid);
 
     @Query("SELECT password FROM student WHERE u_id = :uid")
     String getPasswordById(int uid);
@@ -73,6 +99,7 @@ public interface StudentDao {
 
     @Insert
     void insertAll(Student... students);
+
 
     @Delete
     void delete(Student student);

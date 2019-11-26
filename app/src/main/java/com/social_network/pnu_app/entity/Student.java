@@ -11,16 +11,16 @@ import static java.sql.Types.VARCHAR;
 @Entity(tableName = "student" ) //, indices = {@Index(value = {"email", "phone", "seriesIDcard"}, unique = true)})
 public class Student {
 
-    @NonNull
+    //@NonNull
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "u_id")
-    private int uid;
+    private int uid = 0;
 
-    @NonNull
+   //@NonNull
     @ColumnInfo(name = "first_name", typeAffinity = VARCHAR)
     private String firstName;
 
-    @NonNull
+   //@NonNull
     @ColumnInfo(name = "last_name", typeAffinity = VARCHAR)
     private String lastName;
 
@@ -31,15 +31,21 @@ public class Student {
     @ColumnInfo(name = "email", typeAffinity = VARCHAR)
     private String email;
 
-    @NonNull
+   // @NonNull
     @ColumnInfo(name = "seriesIDcard")
     private String seriesIDcard;
 
     @ColumnInfo(name = "phone", typeAffinity = VARCHAR)
     private String phone;
 
-    @ColumnInfo(name = "verify")
-    private boolean verify;
+    @ColumnInfo(name = "verify" ,typeAffinity = VARCHAR)
+    private String verify;
+
+    public String getVerify(){
+        return verify;
+    }
+
+
 
 
 
@@ -116,11 +122,11 @@ public class Student {
         this.phone = phone;
     }
 
-    public boolean isVerify() {
+    public String isVerify() {
         return verify;
     }
 
-    public void setVerify(boolean verify) {
+    public void setVerify(String verify) {
         this.verify = verify;
     }
 

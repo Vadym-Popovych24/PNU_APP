@@ -10,18 +10,73 @@ import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.entity.Student;
 
 public class MigrationToSQLITE {
-    static DataSnapshot snapshotInit;
-    public static void CreateSnapshot(){
 
+    public static void addDatatoSqliteFromFirebase(final AppDatabase db){
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference reference = database.getReference("students");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public DataSnapshot onDataChange(@NonNull DataSnapshot dataSnapshot) {
-               snapshotInit = dataSnapshot;
-               return dataSnapshot;
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                Student studentObj = new Student();
+                String valueIDcardDB;
+                String fieldValue;
+                String serie = null;
+
+
+                for (DataSnapshot student : dataSnapshot.getChildren()) {
+
+                    for (DataSnapshot field : student.getChildren()) {
+
+                        fieldValue=field.getValue().toString();
+
+
+                            if (field.getKey().toString().equals("aSeriesIDcard") &&
+                                    ( db.studentDao().getSeriesIDcard(fieldValue)== null) ){
+                                studentObj.setSeriesIDcard(fieldValue);
+                                serie = db.studentDao().getSeriesIDcard(fieldValue);
+                            }
+
+                            if (field.getKey().toString().equals("name") &&
+                                    (db.studentDao().getFirstName(fieldValue)== null))
+                                studentObj.setFirstName(fieldValue);
+
+                            if (field.getKey().toString().equals("last_name")&&
+                                    (db.studentDao().getLastName(fieldValue)== null))
+                                studentObj.setLastName(fieldValue);
+
+                            if (field.getKey().toString().equals("email") &&
+                                    (db.studentDao().getEmail(fieldValue) == null))
+                                studentObj.setEmail(fieldValue);
+
+                            if (field.getKey().toString().equals("password") &&
+                                    (db.studentDao().getPassword(fieldValue) == null))
+                                studentObj.setPassword(fieldValue);
+
+                            if (field.getKey().toString().equals("verify") &&
+                                    (db.studentDao().getVerify(fieldValue) == null)) {
+
+                                if (field.getValue().toString().equals("1")) {
+                                    studentObj.setVerify("1");
+                                } else {
+                                    studentObj.setVerify("0");
+                                }
+
+                            }
+
+
+                    /*     if (field.getKey().toString().equals("phone") &&
+                                (db.studentDao().getPhone(fieldValue) == null ))
+                            studentObj.setPhone(fieldValue); */
+
+
+
+
+                    }
+                 addStudent(db, studentObj);
+                }
                 }
 
             @Override
@@ -37,47 +92,5 @@ public class MigrationToSQLITE {
         return student;
     }
 
-    public static void addDatatoSqliteFromFirebase(final AppDatabase db) {
-
-
-        Student studentObj = new Student();
-
-        for (DataSnapshot student : snapshotInit.getChildren()) {
-
-            for (DataSnapshot field : student.getChildren()) {
-
-                if (field.getKey().toString().equals("name"))
-                    studentObj.setFirstName(field.getValue().toString());
-
-                if (field.getKey().toString().equals("last_name"))
-                    studentObj.setLastName(field.getValue().toString());
-
-                if (field.getKey().toString().equals("aSeriesIDcard"))
-                    studentObj.setSeriesIDcard(field.getValue().toString());
-
-                if (field.getKey().toString().equals("email"))
-                    studentObj.setEmail(field.getValue().toString());
-
-                if (field.getKey().toString().equals("password"))
-                    studentObj.setPassword(field.getValue().toString());
-
-                if (field.getKey().toString().equals("phone"))
-                    studentObj.setPhone(field.getValue().toString());
-
-                if (field.getKey().toString().equals("verify")) {
-
-                    if (field.getValue().toString().equals("1")) {
-                        studentObj.setVerify(true);
-                    } else {
-                        studentObj.setVerify(false);
-                    }
-
-                }
-
-
-            }
-            addStudent(db, studentObj);
-        }
-    }
 
     }

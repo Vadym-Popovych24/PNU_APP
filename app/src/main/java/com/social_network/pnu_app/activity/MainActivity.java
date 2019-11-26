@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.database.AppDatabase;
 import com.social_network.pnu_app.database.MigrationToSQLITE;
+import com.social_network.pnu_app.signin.SignIn;
 import com.social_network.pnu_app.utils.DatabaseInitializer;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,15 +23,15 @@ public class MainActivity extends AppCompatActivity {
 
     private static int buttonCounter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listenerOnButton();
         DatabaseInitializer.populateAsync(AppDatabase.getAppDatabase(MainActivity.this));
-
-
     }
+
 
   /*  @Override
     protected void onDestroy() {
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.btnRegister:
                         if (buttonCounter == 0){
                             plusCounter();
-                            MigrationToSQLITE.addDatatoSqliteFromFirebase(AppDatabase.getAppDatabase(MainActivity.this));
+                         MigrationToSQLITE.addDatatoSqliteFromFirebase(AppDatabase.getAppDatabase(MainActivity.this));
                         }
                         intent = new Intent( "com.social_network.pnu_app.registration.Registration");
                         startActivity(intent);
