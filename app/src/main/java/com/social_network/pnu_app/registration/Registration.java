@@ -18,7 +18,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
-import com.social_network.pnu_app.database.AppDatabase;
 import com.social_network.pnu_app.entity.Student;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.social_network.pnu_app.signin.SignIn;
