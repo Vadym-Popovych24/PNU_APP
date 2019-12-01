@@ -16,11 +16,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
-import com.social_network.pnu_app.entity.Student;
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.social_network.pnu_app.signin.SignIn;
+import com.social_network.pnu_app.entity.Student;
+//import com.social_network.pnu_app.signin.SignIn;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Registration extends AppCompatActivity {
@@ -30,9 +34,14 @@ public class Registration extends AppCompatActivity {
     MaterialEditText PassField;
     MaterialEditText ConfirmPassField;
 
+    FirebaseDatabase database;
+    DatabaseReference reference;
+ public static String KeyStudent;
+
     TextView ExampleText;
 
     String ErrorText = null;
+    boolean verify = false;
 
     Button btnRegister;
 
@@ -44,6 +53,7 @@ public class Registration extends AppCompatActivity {
     String valueEmailField;
     String valuePassField;
     String valueConfirmPassField;
+    String KeyStd;
 
 
     private String valueIDcardDB;
@@ -61,7 +71,9 @@ public class Registration extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-        verifycationData(AppDatabase.getAppDatabase(Registration.this));
+        verifycationData();
+
+         //getDataFromFirebase();
 
     }
 
@@ -96,62 +108,42 @@ public class Registration extends AppCompatActivity {
         return password;
     }
 
-    public boolean verifycationData(final AppDatabase db){
-
+    public boolean verifycationData(){
 
         btnRegister = findViewById(R.id.btnRegister2);
-        IDcardField = findViewById(R.id.SeriesAndNumField);
-        EmailField =findViewById(R.id.emailField);
-        PassField = findViewById(R.id.passFieldReg);
-        ConfirmPassField= findViewById(R.id.confirmPassField);
 
         View.OnClickListener btnRegisterListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                verifycationConfirmPassword();
-                verifycationPassword();
-                verifycationEmail();
-                verifycationSeriesIDcard();
+                initFieldInput();
 
                 if (    verifycationSeriesIDcard() == false &&
-                        verifycationSeriesIDcardOnExists(AppDatabase.getAppDatabase(Registration.this)) == false &&
                         verifycationEmail() == false &&
                         verifycationPassword() == false &&
-                        verifycationConfirmPassword() == false){
+                        verifycationConfirmPassword() == false &&
+                verifycationSeriesIDcardOnExists() == false){
 
-                    valueIDcardField = String.valueOf(IDcardField.getText()).trim();
-                    valueIDcardDB = db.studentDao().getSeriesIDcard(valueIDcardField);
-                    valueIDSeriesIDcard =db.studentDao().getIdstudentByIDcard(valueIDcardDB);
-                    valueVerify =db.studentDao().getVerifyByID(valueIDSeriesIDcard);
-
-
-                    if (valueIDcardDB.equals(valueIDcardField) &&  valueVerify == false ) {
 
                         // valuePassField = encryptionPassword(valuePassField);  TODO this coderow encrypt password in database (comment for example)
 
-                        db.studentDao().updateVerify(true, valueIDSeriesIDcard);
-                        db.studentDao().setPassword(valuePassField, valueIDSeriesIDcard);
-                        db.studentDao().setEmail(valueEmailField , valueIDSeriesIDcard);
 
-
-                        addDatatoFirebaseFromSqlite(AppDatabase.getAppDatabase(Registration.this));
+                /*    reference.child(KeyStd).child("email").setValue(valueEmailField);
+                    reference.child(KeyStd).child("password").setValue(valuePassField);
+                    reference.child(KeyStd).child("verify").setValue(1);*/
 
                         ErrorText = "SUCCESS REGISTRATION " + "valueIDSeriesIDcard = " + String.valueOf(valueIDSeriesIDcard) +
                         " valueVerify = " + String.valueOf(valueVerify);
                         alertErrorReg();
 
-                    }
-                    else if(valueVerify == true){
-                        ErrorText = "Student already registered";
-                        alertErrorReg();
-                    }
+                //    }
 
 
                     // TODO sign in
 
                 }
                 else {
+
                     alertErrorReg();
                 }
 
@@ -162,12 +154,44 @@ public class Registration extends AppCompatActivity {
 
         return error;
     }
+    DataSnapshot snapshot2;
 
-    public boolean verifycationSeriesIDcard(){
-
+    public void initFieldInput(){
 
         IDcardField = findViewById(R.id.SeriesAndNumField);
         valueIDcardField = (String.valueOf(IDcardField.getText())).trim();
+
+        EmailField = findViewById(R.id.emailField);
+        valueEmailField = (String.valueOf(EmailField.getText())).trim();
+
+        PassField = findViewById(R.id.passFieldReg);
+        valuePassField = (String.valueOf(PassField.getText())).trim();
+
+        ConfirmPassField = findViewById(R.id.confirmPassField);
+        valueConfirmPassField = (String.valueOf(ConfirmPassField.getText())).trim();
+
+
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference("students");
+
+        FirebaseDatabase database2 = FirebaseDatabase.getInstance();
+        DatabaseReference reference2 = database2.getReference("students");
+
+        Iterable<DataSnapshot> adas = snapshot2.getChildren();
+
+        for (DataSnapshot d : snapshot2.getChildren()) {
+            for (DataSnapshot fieldd : d.getChildren()) {
+                ExampleText.append("fieldd = " + fieldd.getValue().toString() + "\n");
+            }
+        }
+        String query = String.valueOf(reference2.child("student1").getKey());
+
+     //   ExampleText.append("adas = " + adas.toString() + "\n");
+    }
+
+
+    public boolean verifycationSeriesIDcard(){
+
 
         boolean resultSeriesIDcard = valueIDcardField.matches("^[A-Z]{2}([0-9]){8}$");
 
@@ -181,67 +205,113 @@ public class Registration extends AppCompatActivity {
 
         return error;
     }
+    Map<String, Object> studentValues;
+    Map<String, Object> student = new HashMap<>();
+    String idStudent;
 
-
-    public  void addDatatoFirebaseFromSqlite(final AppDatabase db){
-
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference reference = database.getReference("students");
+   /* public void getDataFromFirebase(){
+     database = FirebaseDatabase.getInstance();
+     reference = database.getReference("students");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                Student registerDataStudent = new Student();
+
+
+                String aseriesIDcard = null;
+                String name = null;
+                String LastName = null;
+                int id = 0;
+                String email = null;
+                String password = null;
+                String phone = null;
+
+                String value;
+                String key;
+                boolean bverify = false;
+
                 Registration regObj = new Registration();
 
-                Student studentObj = new Student();
                 ExampleText = findViewById(R.id.ExampleText);
                 String SeriesIDcard;
-                String KeyStudent = "default";
 
-                String password =db.studentDao().getPasswordById(valueIDSeriesIDcard);
-                String email = db.studentDao().getEmailById(valueIDSeriesIDcard);
+              //  String passwordb = db.studentDao().getPasswordById(valueIDSeriesIDcard);
+              //  String emailb = db.studentDao().getEmailById(valueIDSeriesIDcard);
 
-                for(DataSnapshot student : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshotStudent : dataSnapshot.getChildren()) {
 
-                    for (DataSnapshot field : student.getChildren()) {
+                    idStudent = snapshotStudent.getKey();
+                    for (DataSnapshot field : snapshotStudent.getChildren()) {
+                        value = field.getValue().toString();
+                        key = field.getKey();
 
-                        if ( (field.getKey().toString().equals("aSeriesIDcard") &&
-                                (field.getValue().toString().equals(valueIDcardField)) )) {
-                            KeyStudent = student.getKey().toString();
+                        if (key.equals("bverify")) {//&&(KeyStudent.equals(snapshotStudent.getKey().toString())) )
+                            //reference.child(KeyStudent).child("verify").setValue(1);
+                            bverify = Boolean.parseBoolean(value);
+                        }
+                        if (key.equals("aseriesIDcard") && (value.equals(valueIDcardField))) {
+                         KeyStudent = snapshotStudent.getKey().toString();
+                        }
+                        if (key.equals("aseriesIDcard")) {
+                            aseriesIDcard = value;
+                         //   KeyStudent = snapshotStudent.getKey().toString();
                             //  ExampleText.append(student.getKey().toString() + "\n");
 
                         }
 
-                        if ( (field.getKey().toString().equals("email")) &&
-                                (KeyStudent.equals(student.getKey().toString())) ){
+                        if (key.equals("email")) { // && (KeyStudent.equals(snapshotStudent.getKey().toString())) ){
                             //  ExampleText.append("email = " + email + "\n");
-                            reference.child(KeyStudent).child("email").setValue(email);
+                            email = value;
+                            // reference.child(KeyStudent).child("email").setValue(email);
+                        }
+
+                        if (key.equals("id")) { //  && (KeyStudent.equals(snapshotStudent.getKey().toString())) ){
+                            //  ExampleText.append("email = " + email + "\n");
+                            id = Integer.parseInt(value);
+                            // reference.child(KeyStudent).child("email").setValue(email);
 
                         }
 
-                        if ( (field.getKey().toString().equals("password")) &&
-                                (KeyStudent.equals(student.getKey().toString())) ) {
+                        if (key.equals("name")) { // && (KeyStudent.equals(snapshotStudent.getKey().toString())) ){
+                            //  ExampleText.append("email = " + email + "\n");
+                            name = value;
+                            // reference.child(KeyStudent).child("email").setValue(email);
+
+                        }
+
+                        if (key.equals("last_name")) { // && (KeyStudent.equals(snapshotStudent.getKey().toString())) ){
+                            //  ExampleText.append("email = " + email + "\n");
+                            LastName = value;
+                            // reference.child(KeyStudent).child("email").setValue(email);
+
+                        }
+
+
+                        if (key.equals("password")) {//&&(KeyStudent.equals(snapshotStudent.getKey().toString())) ) {
                             // ExampleText.append("password + " + password + "\n");
-                            reference.child(KeyStudent).child("password").setValue(password);
+                            // reference.child(KeyStudent).child("password").setValue(password);
+                            password = value;
                         }
 
-                        //   if (field.getKey().toString().equals("phone"))
-                        //     studentObj.setPhone(field.getValue().toString());
-
-                        if ( (field.getKey().toString().equals("verify")) &&
-                                (KeyStudent.equals(student.getKey().toString())) )
-                            reference.child(KeyStudent).child("verify").setValue(1);
-
-
-
+                        if (key.toString().equals("phone")) {
+                            //     studentObj.setPhone(field.getValue().toString());
+                            phone = value;
+                        }
 
                     }
-                    // addStudent(db, studentObj);
+                    registerDataStudent = new Student(bverify,aseriesIDcard, name, LastName, id, email, password, phone);
+                    studentValues = registerDataStudent.toMap();
+                    student.put(idStudent, studentValues);
+                   ExampleText.append(student.values().toString());
+                    student.containsValue(valueIDcardField);
+
                 }
-
+                System.out.println(student.values().toString());
+                boolean b = student.containsValue("BA11582183");
+                System.out.println("Contains seriesIDcard = " + b);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -251,31 +321,97 @@ public class Registration extends AppCompatActivity {
 
     }
 
+*/
 
-    public boolean verifycationSeriesIDcardOnExists(final AppDatabase db) {
+    Student st;
+    public boolean verifycationSeriesIDcardOnExists() {
 
-        IDcardField = findViewById(R.id.SeriesAndNumField);
-        valueIDcardField = (String.valueOf(IDcardField.getText())).trim();
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference("students");
+        boolean eq= false;
 
-        valueIDcardDB = db.studentDao().getSeriesIDcard(valueIDcardField);
+      //  DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("students");
+     //   Query query = rootRef.child("student1");
+      //  query.orderByKey().orderByValue();
+     //  eq = query.equals(true);
 
+           reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+snapshot2 = dataSnapshot;
 
-        if (valueIDcardDB == null) {
-                error = true;
-            ErrorText = "Student with such id series does not exist";
-            }
-        else {
+             /*   String value=null;
+                String key;
+
+                ExampleText = findViewById(R.id.ExampleText);
+                boolean wasChanged = false;
                 error = false;
+                String studentExist = null;
+                String registered = null;
+                for (DataSnapshot snapshotStudent : dataSnapshot.getChildren()) {
+
+                    for (DataSnapshot field : snapshotStudent.getChildren()) {
+
+                        value = field.getValue().toString();
+                        key = field.getKey().toString();
+
+                            if (key.equals("aseriesIDcard") && (value.equals(valueIDcardField))) {
+                                studentExist = value;
+                                KeyStudent = snapshotStudent.getKey().toString();
+                                KeyStd = KeyStudent;
+                                ExampleText.append("KeyStudent = " + KeyStudent + "\n");
+                                //  ExampleText.append("seriesIDcard = " + valueIDcardField);
+                                error = false;
+                            }
+
+                             else if (key.equals("bverify") &&
+                                    (KeyStudent.equals(snapshotStudent.getKey().toString()))
+                                    && !value.equals("1")) {
+                                reference.child(KeyStudent).child("email").setValue(valueEmailField);
+                                reference.child(KeyStudent).child("password").setValue(valuePassField);
+                                reference.child(KeyStudent).child("bverify").setValue(1);
+                                error = false;
+                                wasChanged = true;
+
+                            }  if (key.equals("bverify") &&
+                                    (KeyStudent.equals(snapshotStudent.getKey().toString()))
+                                    && value.equals("1")) {
+                                registered = "1";
+
+                                error = true;
+                            }
+
+
+                    }
+                }
+                if (studentExist == null){
+                    error = true;
+                    ErrorText = "Student with such id series does not exist";
+                   ExampleText.append("Student with such id series does not exist");
+                    ExampleText.append("value = " + value + "\n");
+                  //  ExampleText.append("valueIDcardField = " + valueIDcardField + "\n");
+                  //  alertErrorReg();
+                }
+                if (registered=="1" && wasChanged == true) {
+                    error = true;
+                      ExampleText.append("Student already registered " + value);
+                    ErrorText = "Student already registered ";
+                  //  alertErrorReg();
+                }*/
+
+                    }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
+        });
 
             return error;
-
     }
 
     public boolean verifycationEmail(){
 
-        EmailField = findViewById(R.id.emailField);
-        valueEmailField = (String.valueOf(EmailField.getText())).trim();
         boolean resultEmail = valueEmailField.matches("[a-zA-Z0-9]{1,32}[@]{1}[a-zA-Z]{2,32}[.]{1}+[a-z]{2,7}");
 
         if (resultEmail) {
@@ -292,8 +428,7 @@ public class Registration extends AppCompatActivity {
 
     public boolean verifycationPassword(){
 
-        PassField = findViewById(R.id.passFieldReg);
-        valuePassField = (String.valueOf(PassField.getText())).trim();
+
         boolean resultPass = valuePassField.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[@#$%^.;:&+=])(?=\\S+$).{8,32}$");
 
         if (resultPass) {
@@ -310,8 +445,6 @@ public class Registration extends AppCompatActivity {
 
     public boolean verifycationConfirmPassword(){
 
-        ConfirmPassField = findViewById(R.id.confirmPassField);
-        valueConfirmPassField = (String.valueOf(ConfirmPassField.getText())).trim();
         boolean resultConfirmPass = valueConfirmPassField.equals(valuePassField) ? true : false;
 
         if (resultConfirmPass) {

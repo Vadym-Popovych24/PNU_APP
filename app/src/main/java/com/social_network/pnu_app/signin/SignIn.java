@@ -1,6 +1,6 @@
 package com.social_network.pnu_app.signin;
 
-import androidx.appcompat.app.AlertDialog;
+/*import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
@@ -11,7 +11,7 @@ import android.widget.Button;
 
 import com.social_network.pnu_app.registration.Registration;
 import com.social_network.pnu_app.R;
-import com.social_network.pnu_app.database.AppDatabase;
+
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 
@@ -116,8 +116,8 @@ public class SignIn extends AppCompatActivity {
                            getYourName(AppDatabase.getAppDatabase(SignIn.this));
                            getYourLastName(AppDatabase.getAppDatabase(SignIn.this));
 
-                      /*     ErrorText = getYourName() + " " + getYourLastName(yourLastName);
-                           alertErrorSign();*/
+                      *//*     ErrorText = getYourName() + " " + getYourLastName(yourLastName);
+                           alertErrorSign();*//*
 
 
                            intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
@@ -207,5 +207,5 @@ public class SignIn extends AppCompatActivity {
     }
 
     public void setYourName(String yourName) { this.yourName = yourName; }
-    }
+    }*/
 

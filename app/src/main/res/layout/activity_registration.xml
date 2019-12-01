@@ -111,7 +111,7 @@ android:orientation="vertical">
         android:id="@+id/ExampleText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="26sp"
+        android:textSize="11sp"
         android:textAlignment="center"
         android:text="Val ="
         android:textColor="@color/colorPrimaryDark"
