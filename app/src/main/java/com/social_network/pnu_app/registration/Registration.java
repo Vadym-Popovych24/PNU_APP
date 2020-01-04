@@ -73,7 +73,6 @@ public class Registration extends AppCompatActivity {
         setContentView(R.layout.activity_registration);
         verifycationData();
 
-         //getDataFromFirebase();
 
     }
 
@@ -117,13 +116,15 @@ public class Registration extends AppCompatActivity {
             public void onClick(View view) {
 
                 initFieldInput();
+                getDataBase();
 
                 if (    verifycationSeriesIDcard() == false &&
                         verifycationEmail() == false &&
                         verifycationPassword() == false &&
-                        verifycationConfirmPassword() == false &&
-                verifycationSeriesIDcardOnExists() == false){
+                        verifycationConfirmPassword() == false){
+               // verifycationSeriesIDcardOnExists() == false){
 
+         //           getDataFromFirebase();
 
                         // valuePassField = encryptionPassword(valuePassField);  TODO this coderow encrypt password in database (comment for example)
 
@@ -174,42 +175,45 @@ public class Registration extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("students");
 
-        FirebaseDatabase database2 = FirebaseDatabase.getInstance();
-        DatabaseReference reference2 = database2.getReference("students");
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        Query query = rootRef.child("students").child("student1");
 
-        Iterable<DataSnapshot> adas = snapshot2.getChildren();
 
-        for (DataSnapshot d : snapshot2.getChildren()) {
-            for (DataSnapshot fieldd : d.getChildren()) {
-                ExampleText.append("fieldd = " + fieldd.getValue().toString() + "\n");
+    }
+
+
+    public void getDataBase(){
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
+
+  //      Query query = reference.child("issue").orderByChild("id").equalTo(0);
+        final Query[] query = {null};
+        query[0].addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // dataSnapshot is the "issue" node with all children with id 0
+                    for (DataSnapshot issue : dataSnapshot.getChildren()) {
+                        query[0] = reference.child("student1");
+                        ExampleText.append("Query = " + query[0].toString());
+                        // do something with the individual "issues"
+                    }
+
+                }
+
             }
-        }
-        String query = String.valueOf(reference2.child("student1").getKey());
 
-     //   ExampleText.append("adas = " + adas.toString() + "\n");
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
-
-
-    public boolean verifycationSeriesIDcard(){
-
-
-        boolean resultSeriesIDcard = valueIDcardField.matches("^[A-Z]{2}([0-9]){8}$");
-
-        if (resultSeriesIDcard) {
-            error = false;
-        }
-        else {
-            error=true;
-            ErrorText = "Enter the correct Series and Number ID card(example-ВА12345678): should be the first two upper letters and 8 digits";
-        }
-
-        return error;
-    }
-    Map<String, Object> studentValues;
+   /* Map<String, Object> studentValues;
     Map<String, Object> student = new HashMap<>();
     String idStudent;
 
-   /* public void getDataFromFirebase(){
+    public void getDataFromFirebase(){
      database = FirebaseDatabase.getInstance();
      reference = database.getReference("students");
 
@@ -248,7 +252,7 @@ public class Registration extends AppCompatActivity {
                         key = field.getKey();
 
                         if (key.equals("bverify")) {//&&(KeyStudent.equals(snapshotStudent.getKey().toString())) )
-                            //reference.child(KeyStudent).child("verify").setValue(1);
+                            reference.child(KeyStudent).child("verify").setValue(1);
                             bverify = Boolean.parseBoolean(value);
                         }
                         if (key.equals("aseriesIDcard") && (value.equals(valueIDcardField))) {
@@ -264,14 +268,13 @@ public class Registration extends AppCompatActivity {
                         if (key.equals("email")) { // && (KeyStudent.equals(snapshotStudent.getKey().toString())) ){
                             //  ExampleText.append("email = " + email + "\n");
                             email = value;
-                            // reference.child(KeyStudent).child("email").setValue(email);
+                            reference.child(KeyStudent).child("email").setValue(email);
                         }
 
                         if (key.equals("id")) { //  && (KeyStudent.equals(snapshotStudent.getKey().toString())) ){
                             //  ExampleText.append("email = " + email + "\n");
                             id = Integer.parseInt(value);
-                            // reference.child(KeyStudent).child("email").setValue(email);
-
+                            // reference.child(KeyStudent).child("email").setValue(email)
                         }
 
                         if (key.equals("name")) { // && (KeyStudent.equals(snapshotStudent.getKey().toString())) ){
@@ -291,7 +294,7 @@ public class Registration extends AppCompatActivity {
 
                         if (key.equals("password")) {//&&(KeyStudent.equals(snapshotStudent.getKey().toString())) ) {
                             // ExampleText.append("password + " + password + "\n");
-                            // reference.child(KeyStudent).child("password").setValue(password);
+                            reference.child(KeyStudent).child("password").setValue(password);
                             password = value;
                         }
 
@@ -302,9 +305,10 @@ public class Registration extends AppCompatActivity {
 
                     }
                     registerDataStudent = new Student(bverify,aseriesIDcard, name, LastName, id, email, password, phone);
+
                     studentValues = registerDataStudent.toMap();
                     student.put(idStudent, studentValues);
-                   ExampleText.append(student.values().toString());
+                    ExampleText.append(student.values().toString());
                     student.containsValue(valueIDcardField);
 
                 }
@@ -320,10 +324,9 @@ public class Registration extends AppCompatActivity {
 
 
     }
-
 */
 
-    Student st;
+/*    Student st;
     public boolean verifycationSeriesIDcardOnExists() {
 
         database = FirebaseDatabase.getInstance();
@@ -340,7 +343,7 @@ public class Registration extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 snapshot2 = dataSnapshot;
 
-             /*   String value=null;
+             *//*   String value=null;
                 String key;
 
                 ExampleText = findViewById(R.id.ExampleText);
@@ -397,7 +400,7 @@ snapshot2 = dataSnapshot;
                       ExampleText.append("Student already registered " + value);
                     ErrorText = "Student already registered ";
                   //  alertErrorReg();
-                }*/
+                }*//*
 
                     }
 
@@ -408,7 +411,25 @@ snapshot2 = dataSnapshot;
         });
 
             return error;
+    }*/
+
+
+    public boolean verifycationSeriesIDcard(){
+
+
+        boolean resultSeriesIDcard = valueIDcardField.matches("^[A-Z]{2}([0-9]){8}$");
+
+        if (resultSeriesIDcard) {
+            error = false;
+        }
+        else {
+            error=true;
+            ErrorText = "Enter the correct Series and Number ID card(example-ВА12345678): should be the first two upper letters and 8 digits";
+        }
+
+        return error;
     }
+
 
     public boolean verifycationEmail(){
 
