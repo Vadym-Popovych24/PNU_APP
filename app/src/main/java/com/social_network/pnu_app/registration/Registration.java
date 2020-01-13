@@ -24,10 +24,14 @@ import com.social_network.pnu_app.entity.Student;
 //import com.social_network.pnu_app.signin.SignIn;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 public class Registration extends AppCompatActivity {
+
+
+
 
     MaterialEditText IDcardField;
     MaterialEditText EmailField;
@@ -35,7 +39,9 @@ public class Registration extends AppCompatActivity {
     MaterialEditText ConfirmPassField;
 
     FirebaseDatabase database;
-    DatabaseReference reference;
+
+
+    private List<Student> studentList;
  public static String KeyStudent;
 
     TextView ExampleText;
@@ -66,17 +72,44 @@ public class Registration extends AppCompatActivity {
     public boolean valueVerify;
 
     boolean error = true;
+    DatabaseReference reference;
+    DatabaseReference dbStudents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         verifycationData();
+        ExampleText = findViewById(R.id.ExampleText);
 
+        //1. SELECT * FROM Students
+        dbStudents = FirebaseDatabase.getInstance().getReference("students");
+        dbStudents.addListenerForSingleValueEvent(valueEventListener);
 
     }
 
+    ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+           // studentList.clear();
+            if (dataSnapshot.exists()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                   HashMap  student = (HashMap) snapshot.getValue();
+                    ExampleText.append(student.values().toString());
+                   // studentList.add(student);
 
+                }
+                // adapter.notifyDataSetChanged();
+
+
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
     public void alertErrorReg(){
         AlertDialog.Builder a_builder = new AlertDialog.Builder(Registration.this);
         a_builder.setMessage(ErrorText)
@@ -116,7 +149,8 @@ public class Registration extends AppCompatActivity {
             public void onClick(View view) {
 
                 initFieldInput();
-                getDataBase();
+
+                ExampleText.setText(studentList.size());
 
                 if (    verifycationSeriesIDcard() == false &&
                         verifycationEmail() == false &&
@@ -182,33 +216,58 @@ public class Registration extends AppCompatActivity {
     }
 
 
-    public void getDataBase(){
-        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
+    public void getDataBase() {
 
-  //      Query query = reference.child("issue").orderByChild("id").equalTo(0);
-        final Query[] query = {null};
-        query[0].addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // dataSnapshot is the "issue" node with all children with id 0
-                    for (DataSnapshot issue : dataSnapshot.getChildren()) {
-                        query[0] = reference.child("student1");
-                        ExampleText.append("Query = " + query[0].toString());
-                        // do something with the individual "issues"
-                    }
 
-                }
+        //1. SELECT * FROM Artists
+        dbStudents = FirebaseDatabase.getInstance().getReference("studetns");
+        dbStudents.addListenerForSingleValueEvent(valueEventListener);
 
-            }
+        //2. SELECT * FROM Artists WHERE id = "-LAJ7xKNj4UdBjaYr8Ju"
+       /* Query query = FirebaseDatabase.getInstance().getReference("Artists")
+                .orderByChild("id")
+                .equalTo("-LAJ7xKNj4UdBjaYr8Ju");
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+        //3. SELECT * FROM Artists WHERE country = "India"
+        Query query3 = FirebaseDatabase.getInstance().getReference("Artists")
+                .orderByChild("country")
+                .equalTo("India");
 
-            }
-        });
+        //4. SELECT * FROM Artists LIMIT 2
+        Query query4 = FirebaseDatabase.getInstance().getReference("Artists").limitToFirst(2);
+
+
+        //5. SELECT * FROM Artists WHERE age < 30
+        Query query5 = FirebaseDatabase.getInstance().getReference("Artists")
+                .orderByChild("age")
+                .endAt(29);
+
+
+        //6. SELECT * FROM Artists WHERE name = "A%"
+        Query query6 = FirebaseDatabase.getInstance().getReference("Artists")
+                .orderByChild("name")
+                .startAt("A")
+                .endAt("A\uf8ff");*/
+
+        ;
+        /*
+         * You just need to attach the value event listener to read the values
+         * for example
+         * query6.addListenerForSingleValueEvent(valueEventListener)
+         * */
+
 
     }
+
+
+
+
+
+
+
+
+
+
    /* Map<String, Object> studentValues;
     Map<String, Object> student = new HashMap<>();
     String idStudent;
