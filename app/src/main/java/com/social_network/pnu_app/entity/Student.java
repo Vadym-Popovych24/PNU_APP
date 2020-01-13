@@ -7,7 +7,7 @@ public class Student {
 
     String seriesIDcard;
     String name;
-    String LastName;
+    String lastName;
     int id;
     String email;
     String password;
@@ -16,12 +16,12 @@ public class Student {
 
     public Student(){}
 
-    public Student(boolean verify, String seriesIDcard, String name, String LastName, int id, String email,
+    public Student(boolean verify, String seriesIDcard, String name, String lastName, int id, String email,
             String password,String phone){
 
         this.seriesIDcard = seriesIDcard;
         this.name = name;
-        this.LastName = LastName;
+        this.lastName = lastName;
         this.id = id;
         this.email = email;
         this.password = password;
@@ -36,7 +36,7 @@ public class Student {
         MapDatabase.get(password);
         MapDatabase.put("seriesIDcard", seriesIDcard);
         MapDatabase.put("name", name);
-        MapDatabase.put("LastName", LastName);
+        MapDatabase.put("lastName", lastName);
         MapDatabase.put("id", id);
         MapDatabase.put("email", email);
         MapDatabase.put("password", password);
