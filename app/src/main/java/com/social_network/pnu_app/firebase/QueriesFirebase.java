@@ -13,44 +13,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class QueriesFirebase {
-   public static Object idserie;
-    ValueEventListener valueEventListener;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference reference = database.getReference("students");
-    Registration regObj = new Registration();
 
-    public void getSeriesIDcardFB(String seriesIDcard) {
+    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
 
-        Query querySeriesIDcard = database.getReference("students")
-                .orderByChild("seriesIDcard")
-                .equalTo("BA11582136");
-
-        querySeriesIDcard.addListenerForSingleValueEvent(valueEventListener);
-
-        valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap student = null;
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        student = (HashMap) snapshot.getValue();
-                    }
-                    idserie = student.get("seriesIDcard");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-    }
+  static int counter = 5;
 
     public void addStudent(){
 
         String id = reference.push().getKey();
 
-        Student newStudent = new Student(false, "BA115821901", "Petro", "Golovetsky", 4,
+        Student newStudent = new Student(false, "BA115821901", "Petro", "Golovetsky", counter++,
                 "", "", "");
 
         Map<String, Object> studentValues = newStudent.toMap();

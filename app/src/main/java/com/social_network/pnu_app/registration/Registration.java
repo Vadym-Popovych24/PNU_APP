@@ -2,7 +2,6 @@
 package com.social_network.pnu_app.registration;
 
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,13 +19,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.social_network.pnu_app.entity.Student;
 import com.social_network.pnu_app.firebase.QueriesFirebase;
 //import com.social_network.pnu_app.signin.SignIn;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class Registration extends AppCompatActivity {
@@ -37,41 +33,42 @@ public class Registration extends AppCompatActivity {
     MaterialEditText PassField;
     MaterialEditText ConfirmPassField;
 
-   public TextView ExampleText;
+    public TextView ExampleText;
 
     String ErrorText = null;
-    boolean verify = false;
 
     Button btnRegister;
 
-   private String valueIDcardField;
-
-
+    private String valueIDcardField;
     String valueEmailField;
     String valuePassField;
     String valueConfirmPassField;
 
     QueriesFirebase fb = new QueriesFirebase();
+
     private String valueIDcardDB;
     private static int valueIDSeriesIDcard;
 
-
-    public boolean valueVerify;
+    public boolean FBverify;
+    public static String FBidSerie;
+    public String FBpassword;
+    public String FBemail;
+    public String FBid;
 
     boolean error = true;
 
+    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         verifycationData();
+
         ExampleText = findViewById(R.id.ExampleText);
 
-        fb.getSeriesIDcardFB("1");
-        ExampleText.clearComposingText();
-        ExampleText.append(fb.idserie.toString());
     }
+    ValueEventListener valueEventListener;
 
     public void alertErrorReg(){
         AlertDialog.Builder a_builder = new AlertDialog.Builder(Registration.this);
@@ -103,37 +100,90 @@ public class Registration extends AppCompatActivity {
         return password;
     }
 
-    public boolean verifycationData(){
+    public void queryFB(){
+        initFieldInput();
+        Query querySeriesIDcard = FirebaseDatabase.getInstance().getReference("students")
+                .orderByChild("seriesIDcard")
+                .equalTo(valueIDcardField);
 
+        querySeriesIDcard.addListenerForSingleValueEvent(valueEventListener);
+    }
+    String KeyStudent;
+
+    public boolean verifycationData(){
         btnRegister = findViewById(R.id.btnRegister2);
 
         View.OnClickListener btnRegisterListener = new View.OnClickListener() {
+
+
             @Override
             public void onClick(View view) {
-
                 initFieldInput();
-                fb.addStudent();
+                  //   fb.addStudent();
+
 
                 if (    verifycationSeriesIDcard() == false &&
                         verifycationEmail() == false &&
                         verifycationPassword() == false &&
                         verifycationConfirmPassword() == false){
-               // verifycationSeriesIDcardOnExists() == false){
 
-         //           getDataFromFirebase();
+                    valueEventListener = new ValueEventListener() {
 
-                        // valuePassField = encryptionPassword(valuePassField);  TODO this coderow encrypt password in database (comment for example)
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            HashMap student = null;
+                            if (dataSnapshot.exists()) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    student = (HashMap) snapshot.getValue();
+
+                                    FBidSerie = student.get("seriesIDcard").toString();
+                                    FBverify = (boolean) student.get("verify");
+                                    FBid = student.get("id").toString();
+
+                                    KeyStudent = snapshot.getKey();
 
 
-                /*    reference.child(KeyStd).child("email").setValue(valueEmailField);
-                    reference.child(KeyStd).child("password").setValue(valuePassField);
-                    reference.child(KeyStd).child("verify").setValue(1);*/
+                                }
 
-                        ErrorText = "SUCCESS REGISTRATION " + "valueIDSeriesIDcard = " + String.valueOf(valueIDSeriesIDcard) +
-                        " valueVerify = " + String.valueOf(valueVerify);
-                        alertErrorReg();
+                            }
+                        }
 
-                //    }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    };
+                    queryFB();
+                                if (FBidSerie != null ) {
+
+                                    if (FBidSerie.equals(valueIDcardField) && FBverify == false) {
+
+
+                                        ErrorText = "FBidSerie = " + FBidSerie +
+                                                "FBverify = " + FBverify +
+                                                "KeyStudent = " + KeyStudent;
+                                        alertErrorReg();
+                                        // valuePassField = encryptionPassword(valuePassField);  TODO this coderow encrypt password in database (comment for example)
+
+
+                                        reference.child(KeyStudent).child("email").setValue(valueEmailField);
+                                        reference.child(KeyStudent).child("password").setValue(valuePassField);
+                                        reference.child(KeyStudent).child("verify").setValue(true);
+
+                                        ErrorText = "SUCCESS REGISTRATION " + "valueIDSeriesIDcard = " + String.valueOf(FBid) +
+                                                " FBverify = " + String.valueOf(FBverify);
+                                        alertErrorReg();
+
+                                    } else if (FBverify == true && FBidSerie.equals(valueIDcardField)) {
+                                        ErrorText = "Student already registered";
+                                        alertErrorReg();
+                                    }
+                                    else
+                                        ErrorText = "Student with such id series does not exist";
+                                        alertErrorReg();
+                                    }
+
+
 
 
                     // TODO sign in
@@ -151,7 +201,6 @@ public class Registration extends AppCompatActivity {
 
         return error;
     }
-    DataSnapshot snapshot2;
 
     public void initFieldInput(){
 
@@ -238,4 +287,3 @@ public class Registration extends AppCompatActivity {
 
 
 }
-
