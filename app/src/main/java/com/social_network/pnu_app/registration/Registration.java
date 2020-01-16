@@ -50,22 +50,26 @@ public class Registration extends AppCompatActivity {
     private static int valueIDSeriesIDcard;
 
     public boolean FBverify;
-    public static String FBidSerie;
-    public String FBpassword;
-    public String FBemail;
-    public String FBid;
+    public static String FBidSerie ="";
+    public String FBpassword = "";
+    public String FBemail = "";
+    public static Object FBid = 0;
 
     boolean error = true;
 
+    String KeyStudent = "default";
+    HashMap<Object, Object> student = new HashMap();
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+        ExampleText = findViewById(R.id.ExampleText);
+        student.put("seriesIDcard", "default seriesIDcard value");
+        student.put("id", 0);
         verifycationData();
 
-        ExampleText = findViewById(R.id.ExampleText);
 
     }
     ValueEventListener valueEventListener;
@@ -106,19 +110,90 @@ public class Registration extends AppCompatActivity {
                 .orderByChild("seriesIDcard")
                 .equalTo(valueIDcardField);
 
-        querySeriesIDcard.addListenerForSingleValueEvent(valueEventListener);
+        querySeriesIDcard.addValueEventListener(valueEventListener);
     }
-    String KeyStudent;
 
     public boolean verifycationData(){
+
         btnRegister = findViewById(R.id.btnRegister2);
 
-        View.OnClickListener btnRegisterListener = new View.OnClickListener() {
+        valueEventListener = new ValueEventListener() {
 
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+         //       if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        student = (HashMap) snapshot.getValue();
+                        KeyStudent = snapshot.getKey();
+
+                    }
+
+                    FBidSerie = (String) student.get("seriesIDcard");
+                    FBid =  student.get("id");
+                    try {
+                        FBverify = (boolean) student.get("verify");
+                    }
+                    catch (Exception castToBool){
+                        error = true;
+                        ErrorText = "Database Error";
+                        ExampleText.append("Database Error! " + "\n");
+                        if (FBverify != true)
+                            FBverify = false;
+                            reference.child(KeyStudent).child("verify").setValue(false);
+
+                    }
+
+                    if (FBidSerie != null) {
+
+                        if (FBverify == true && FBidSerie.equals(valueIDcardField)) {
+                            ErrorText = "Student already registered";
+                            alertErrorReg();
+
+                        } else if (!FBidSerie.equals(valueIDcardField)) {
+                            ErrorText = "Student with such id series does not exist";
+                            alertErrorReg();
+
+                        }
+                        else if (FBidSerie.equals(valueIDcardField) && FBverify == false) {
+
+
+                            // valuePassField = encryptionPassword(valuePassField);  TODO this coderow encrypt password in database (comment for example)
+
+
+                            reference.child(KeyStudent).child("email").setValue(valueEmailField);
+                            reference.child(KeyStudent).child("password").setValue(valuePassField);
+                            reference.child(KeyStudent).child("verify").setValue(true);
+
+                            ExampleText.append('\n'  + "SUCCESS REGISTRATION " + " valueIDSeriesIDcard = " + (FBidSerie) +
+                                    " FBverify = " + (FBverify) + " FBid = " + FBid + "KeyStudnt = " + KeyStudent  + '\n' );
+
+                        }
+                    }
+
+                    else{
+                        ErrorText = "Student with such id series does not exist";
+                       // alertErrorReg();
+                    }
+
+                    // TODO sign in
+
+                }
+
+
+           // }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        View.OnClickListener btnRegisterListener = new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 initFieldInput();
+
                   //   fb.addStudent();
 
 
@@ -127,70 +202,10 @@ public class Registration extends AppCompatActivity {
                         verifycationPassword() == false &&
                         verifycationConfirmPassword() == false){
 
-                    valueEventListener = new ValueEventListener() {
-
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            HashMap student = null;
-                            if (dataSnapshot.exists()) {
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    student = (HashMap) snapshot.getValue();
-
-                                    FBidSerie = student.get("seriesIDcard").toString();
-                                    FBverify = (boolean) student.get("verify");
-                                    FBid = student.get("id").toString();
-
-                                    KeyStudent = snapshot.getKey();
-
-
-                                }
-
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    };
                     queryFB();
-                                if (FBidSerie != null ) {
-
-                                    if (FBidSerie.equals(valueIDcardField) && FBverify == false) {
-
-
-                                        ErrorText = "FBidSerie = " + FBidSerie +
-                                                "FBverify = " + FBverify +
-                                                "KeyStudent = " + KeyStudent;
-                                        alertErrorReg();
-                                        // valuePassField = encryptionPassword(valuePassField);  TODO this coderow encrypt password in database (comment for example)
-
-
-                                        reference.child(KeyStudent).child("email").setValue(valueEmailField);
-                                        reference.child(KeyStudent).child("password").setValue(valuePassField);
-                                        reference.child(KeyStudent).child("verify").setValue(true);
-
-                                        ErrorText = "SUCCESS REGISTRATION " + "valueIDSeriesIDcard = " + String.valueOf(FBid) +
-                                                " FBverify = " + String.valueOf(FBverify);
-                                        alertErrorReg();
-
-                                    } else if (FBverify == true && FBidSerie.equals(valueIDcardField)) {
-                                        ErrorText = "Student already registered";
-                                        alertErrorReg();
-                                    }
-                                    else
-                                        ErrorText = "Student with such id series does not exist";
-                                        alertErrorReg();
-                                    }
-
-
-
-
-                    // TODO sign in
-
                 }
-                else {
 
+                else {
                     alertErrorReg();
                 }
 
@@ -204,6 +219,8 @@ public class Registration extends AppCompatActivity {
 
     public void initFieldInput(){
 
+        // TODO DELETE Setters text Tests speed
+
         IDcardField = findViewById(R.id.SeriesAndNumField);
         valueIDcardField = (String.valueOf(IDcardField.getText())).trim();
 
@@ -215,6 +232,9 @@ public class Registration extends AppCompatActivity {
 
         ConfirmPassField = findViewById(R.id.confirmPassField);
         valueConfirmPassField = (String.valueOf(ConfirmPassField.getText())).trim();
+
+
+
 
 
 
