@@ -1,6 +1,6 @@
 package com.social_network.pnu_app.signin;
 
-/*import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
@@ -8,11 +8,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.registration.Registration;
 import com.social_network.pnu_app.R;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import java.util.HashMap;
 
 
 public class SignIn extends AppCompatActivity {
@@ -36,12 +44,24 @@ public class SignIn extends AppCompatActivity {
 
     private String valuePassDB="";
 
+    static ValueEventListener valueEventListener;
+
+    public boolean FBverify;
+    public static String FBidSerie ="";
+    public String FBpassword = "1";
+    public String FBemail = "";
+    public static Object FBid = 0;
+    public String FBName;
+    public String FBLastName;
+
+    String KeyStudent ="default";
+   static HashMap<Object, Object> student = new HashMap();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
-
-        verifyStudentIn(AppDatabase.getAppDatabase(SignIn.this));
+        verifycationStudentIn();
     }
 
     public void alertErrorSign(){
@@ -58,6 +78,7 @@ public class SignIn extends AppCompatActivity {
         alert.show();
     }
 
+/*
     public boolean verifyRegistered(final AppDatabase db){
 
         valueIDSeriesIDcard =db.studentDao().getIdstudentByIDcard(valueIDcardField);
@@ -66,11 +87,9 @@ public class SignIn extends AppCompatActivity {
         return valueVerify;
     }
 
-    public boolean verifySignInSeriesIDcard(final AppDatabase db){
+   public boolean verifySignInSeriesIDcard(final AppDatabase db){
 
-        IDcardField = findViewById(R.id.IDcardField);
 
-        valueIDcardField = String.valueOf(IDcardField.getText());
         valueIDSeriesIDcard =db.studentDao().getIdstudentByIDcard(valueIDcardField);
         valueIDcardDB = db.studentDao().getSeriesIDcard(valueIDcardField);
 
@@ -79,13 +98,8 @@ public class SignIn extends AppCompatActivity {
         return error;
     }
 
-    public boolean verifySignInPassword(final AppDatabase db){
+   public boolean verifySignInPassword(final AppDatabase db){
 
-        Registration encrypt = new Registration();
-        passField = findViewById(R.id.passFieldSignIn);
-
-        valuePassField = String.valueOf(passField.getText());
-        // valuePassField = encrypt.encryptionPassword(valuePassField); TODO this coderow encrypt password in database (comment for example)
 
         valueIDPassword = db.studentDao().getIdstudentByIDPassword(valuePassField,valueIDSeriesIDcard);
         valuePassDB = db.studentDao().getPasswordById(valuePassField,valueIDSeriesIDcard);
@@ -94,9 +108,100 @@ public class SignIn extends AppCompatActivity {
         error = (valuePassDB != null) && valuePassDB.equals(valuePassField);
 
         return error;
+    }*/
+
+    public void initFieldInput(){
+
+        IDcardField = findViewById(R.id.IDcardField);
+        valueIDcardField = String.valueOf(IDcardField.getText()).trim();
+
+        passField = findViewById(R.id.passFieldSignIn);
+        valuePassField = String.valueOf(passField.getText()).trim();
+
     }
 
-    public void verifyStudentIn(final AppDatabase db){
+    public void queryFB(){
+        initFieldInput();
+        Query querySeriesIDcard = FirebaseDatabase.getInstance().getReference("students")
+                .orderByChild("seriesIDcard")
+                .equalTo(valueIDcardField);
+
+        querySeriesIDcard.addListenerForSingleValueEvent(valueEventListener);
+    }
+
+
+
+    public HashMap<Object, Object> getStudentFB(){
+        valueEventListener = new ValueEventListener() {
+            Intent intentFromSignIn;
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //       if (dataSnapshot.exists()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    student = (HashMap) snapshot.getValue();
+                    KeyStudent = snapshot.getKey();
+
+                }
+
+                FBidSerie = (String) student.get("seriesIDcard");
+                FBpassword = (String) student.get("password");
+                FBid = student.get("id");
+
+             //    Registration encrypt = new Registration();
+             //   valuePassField = encrypt.encryptionPassword(valuePassField); // TODO this coderow encrypt password in database (comment for example)
+
+                try {
+                    FBverify = (boolean) student.get("verify");
+                } catch (Exception castToBool) {
+                    FBverify = false;
+                }
+                if ((FBidSerie != null && FBpassword != null)) {
+
+                 if (!FBidSerie.equals(valueIDcardField)) {
+                    ErrorText = "Student with the such series id does not exist";
+                    alertErrorSign();
+                } else if (FBidSerie.equals(valueIDcardField) && (FBverify != true)) {
+                    ErrorText = "IDPassword = " + valueIDPassword +
+                            "IDSeriesIDCard = " + valueIDSeriesIDcard;
+                    ErrorText = "Student with the such series id does not registered";
+                    alertErrorSign();
+                }  else if (!FBpassword.equals(valuePassField)) { // TODO
+                    ErrorText = "Wrong password";
+                    alertErrorSign();
+                }
+
+
+                    if (FBverify == true && FBidSerie.equals(valueIDcardField) && FBpassword.equals(valuePassField)) {
+                        FBName = (String) student.get("name");
+                        FBLastName = (String) student.get("lastName");
+
+                        ErrorText = "SUCCESS SIGN IN " + FBName + " " + FBLastName;
+                        alertErrorSign();
+
+                        intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+                        startActivity(intentFromSignIn);
+
+                    }
+                } else {
+                    ErrorText = "Student with such id series does not exist 2";
+                    alertErrorSign();
+                }
+
+                // TODO sign in
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        return student;
+    }
+
+
+
+
+    public void verifycationStudentIn(){
 
         btnSignIn = findViewById(R.id.btnSignIn);
 
@@ -104,20 +209,35 @@ public class SignIn extends AppCompatActivity {
         View.OnClickListener listenerSignIn = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentFromSignIn;
-                verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this));
-                verifySignInPassword(AppDatabase.getAppDatabase(SignIn.this));
+                //  Intent intentFromSignIn;
+                initFieldInput();
+                getStudentFB();
+                if (view.getId() == R.id.btnSignIn) {
 
-               if (view.getId() == R.id.btnSignIn) {
-                       if (verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this)) &&
+                    if (valueIDcardField.isEmpty()) { // TODO
+                        ErrorText = "Enter Series ID";
+                        alertErrorSign();
+                    } else if (valuePassField.isEmpty()) { // TODO
+                        ErrorText = "Enter password";
+                        alertErrorSign();
+                    } else {
+                        if (verifycationSeriesIDcard() == false &&
+                                verifycationPassword() == false) {
+                            queryFB();
+                        }
+                        else {
+                            alertErrorSign();
+                        }
+                    }
+          /*             if (verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this)) &&
                                verifySignInPassword(AppDatabase.getAppDatabase(SignIn.this)) &&
                                (valueIDSeriesIDcard == valueIDPassword)) {
 
                            getYourName(AppDatabase.getAppDatabase(SignIn.this));
                            getYourLastName(AppDatabase.getAppDatabase(SignIn.this));
 
-                      *//*     ErrorText = getYourName() + " " + getYourLastName(yourLastName);
-                           alertErrorSign();*//*
+                           ErrorText = getYourName() + " " + getYourLastName(yourLastName);
+                           alertErrorSign();
 
 
                            intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
@@ -147,20 +267,54 @@ public class SignIn extends AppCompatActivity {
                            ErrorText = "Wrong password";
                            alertErrorSign();
                        }
-
-               }
-               else {
+*/
+                }
+          /*     else {
                    ErrorText = "Wrong password";
                    alertErrorSign();
-               }
-           }
+               }*/
+            }
+
         };
 
         btnSignIn.setOnClickListener(listenerSignIn);
 
             }
 
-    public String getValueIDcardDB() {
+    public boolean verifycationSeriesIDcard(){
+
+
+        boolean resultSeriesIDcard = valueIDcardField.matches("^[A-Z]{2}([0-9]){8}$");
+
+        if (resultSeriesIDcard) {
+            error = false;
+        }
+        else {
+            error=true;
+            ErrorText = "Enter the correct Series and Number ID card(example-ВА12345678): should be the first two upper letters and 8 digits";
+        }
+
+        return error;
+    }
+
+    public boolean verifycationPassword(){
+
+
+        boolean resultPass = valuePassField.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[@#$%^.;:&+=])(?=\\S+$).{8,32}$");
+
+        if (resultPass) {
+            error = false;
+        }
+        else {
+            error=true;
+            ErrorText = "Enter the correct password: The password must be at least 8 characters long and contain 1 digit " +
+                    "and 1 letter can also contain uppercase letters or such characters - (@ # $% ^ _-.;: & + =)";
+        }
+        return error;
+
+    }
+
+/*    public String getValueIDcardDB() {
         return valueIDcardDB;
     }
 
@@ -206,6 +360,7 @@ public class SignIn extends AppCompatActivity {
         return yourName;
     }
 
-    public void setYourName(String yourName) { this.yourName = yourName; }
-    }*/
+    public void setYourName(String yourName) { this.yourName = yourName; }*/
+    }
+
 

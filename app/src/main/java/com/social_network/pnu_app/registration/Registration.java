@@ -199,7 +199,6 @@ public class Registration extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 initFieldInput();
-
                   //   fb.addStudent();
                 getStudentFB();
 
@@ -207,8 +206,6 @@ public class Registration extends AppCompatActivity {
                         verifycationEmail() == false &&
                         verifycationPassword() == false &&
                         verifycationConfirmPassword() == false){
-
-
 
                     queryFB();
                 }
@@ -227,7 +224,6 @@ public class Registration extends AppCompatActivity {
 
     public void initFieldInput(){
 
-        // TODO DELETE Setters text Tests speed
 
         IDcardField = findViewById(R.id.SeriesAndNumField);
         valueIDcardField = (String.valueOf(IDcardField.getText())).trim();
@@ -240,11 +236,6 @@ public class Registration extends AppCompatActivity {
 
         ConfirmPassField = findViewById(R.id.confirmPassField);
         valueConfirmPassField = (String.valueOf(ConfirmPassField.getText())).trim();
-
-
-
-
-
 
     }
 

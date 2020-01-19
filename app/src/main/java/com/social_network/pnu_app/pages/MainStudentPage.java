@@ -8,6 +8,9 @@ import android.widget.TextView;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.Student;
 import com.social_network.pnu_app.registration.Registration;
+import com.social_network.pnu_app.signin.SignIn;
+
+import java.util.HashMap;
 
 
 public class MainStudentPage extends AppCompatActivity {
@@ -18,15 +21,15 @@ public class MainStudentPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_student_page);
-      //  BuildStudentPage(AppDatabase.getAppDatabase(MainStudentPage.this));
+        BuildStudentPage();
     }
 
-   // public void BuildStudentPage(final AppDatabase db){
-    //    SignIn student = new SignIn();
-      //  String NameStudent = student.getYourName(AppDatabase.getAppDatabase(MainStudentPage.this));
-       // String LastNameStudent = student.getYourLastName(AppDatabase.getAppDatabase(MainStudentPage.this));
+    public void BuildStudentPage(){
+        HashMap studentData;
+        SignIn student = new SignIn();
+        studentData = student.getStudentFB();
 
-     //   tvPage = findViewById(R.id.tvPage);
-      //  tvPage.setText("Hello " +  NameStudent + " " + LastNameStudent);
-    //}
+        tvPage = findViewById(R.id.tvPage);
+        tvPage.setText("Hello " +  studentData.get("name") + " " + studentData.get("lastName"));
+    }
 }
