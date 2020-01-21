@@ -30,6 +30,15 @@ public class Student {
 
     }
 
+    public Student(boolean verify,  String email, String password,String phone){
+
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.verify = verify;
+
+    }
+
 
     public Map<String, Object> toMap(){
         HashMap<String, Object> MapDatabase = new HashMap<>();

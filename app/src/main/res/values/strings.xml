@@ -15,4 +15,7 @@
     <string name="SignIn">SignIn</string>
     <string name="title_activity_signin">Sign in</string>
     <string name="Default">Default</string>
+    <string name="TextVerificationCode">Verification code</string>
+    <string name="HintVerificationCode">Enter 6 numbers</string>
+    <string name="ExpanationVerificationCode">Review your sms and write the verification code</string>
 </resources>

@@ -9,16 +9,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.social_network.pnu_app.pages.MainStudentPage"
+        <activity
+            android:name=".registration.PhoneAuthentication"
+            android:theme="@style/AppTheme.NoActionBar">
+
+            <intent-filter>
+                <action android:name="com.social_network.pnu_app.registration.PhoneAuthentication" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".pages.MainStudentPage"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="com.social_network.pnu_app.pages.MainStudentPage" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            </activity>
+        </activity>
         <activity
-            android:name="com.social_network.pnu_app.registration.Registration"
+            android:name=".registration.Registration"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="com.social_network.pnu_app.registration.Registration" />
@@ -26,9 +37,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="com.social_network.pnu_app.signin.SignIn"
+            android:name=".signin.SignIn"
             android:label="@string/title_activity_signin"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -37,7 +47,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="com.social_network.pnu_app.activity.MainActivity">
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

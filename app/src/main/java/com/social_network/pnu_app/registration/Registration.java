@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -37,11 +38,11 @@ public class Registration extends AppCompatActivity {
 
     String ErrorText = null;
 
-    Button btnRegister;
+    Button idBtnRegister;
 
     private String valueIDcardField;
-    String valueEmailField;
-    String valuePassField;
+    static String valuePhoneField;
+    static String valuePassField;
     String valueConfirmPassField;
 
     QueriesFirebase fb = new QueriesFirebase();
@@ -57,7 +58,8 @@ public class Registration extends AppCompatActivity {
 
     boolean error = true;
 
-    String KeyStudent ="default";
+
+    static String KeyStudent ="default";
     HashMap<Object, Object> student = new HashMap();
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
 
@@ -69,8 +71,8 @@ public class Registration extends AppCompatActivity {
 
         verifycationData();
 
-
     }
+
     ValueEventListener valueEventListener;
 
     public void alertErrorReg(){
@@ -157,14 +159,18 @@ public class Registration extends AppCompatActivity {
 
                         // valuePassField = encryptionPassword(valuePassField);  TODO this coderow encrypt password in database (comment for example)
 
+                        valuePhoneField = valuePhoneField.replaceAll(" ", "");
 
-                        reference.child(KeyStudent).child("email").setValue(valueEmailField);
+                      /*  reference.child(KeyStudent).child("phone").setValue(valuePhoneField);
                         reference.child(KeyStudent).child("password").setValue(valuePassField);
-                        reference.child(KeyStudent).child("verify").setValue(true);
-                        FBverify = true;
+                        reference.child(KeyStudent).child("verify").setValue(true);*/
+                      //  FBverify = true;
 
-                        ExampleText.setText('\n'  + "SUCCESS REGISTRATION " + " valueIDSeriesIDcard = " + (FBidSerie) +
-                                " FBverify = " + (FBverify) + " FBid = " + FBid + "KeyStudnt = " + KeyStudent  + '\n' );
+                        Intent intentFromRegistration = new Intent("com.social_network.pnu_app.registration.PhoneAuthentication");
+                        startActivity(intentFromRegistration);
+
+    /*                    ExampleText.setText('\n'  + "SUCCESS REGISTRATION " + " valueIDSeriesIDcard = " + (FBidSerie) +
+                                " FBverify = " + (FBverify) + " FBid = " + FBid + "KeyStudnt = " + KeyStudent  + '\n' );*/
 
                     }
                 }
@@ -191,7 +197,7 @@ public class Registration extends AppCompatActivity {
 
     public boolean verifycationData(){
 
-        btnRegister = findViewById(R.id.btnRegister2);
+        idBtnRegister = findViewById(R.id.btnRegister);
 
 
         View.OnClickListener btnRegisterListener = new View.OnClickListener() {
@@ -203,7 +209,7 @@ public class Registration extends AppCompatActivity {
                 getStudentFB();
 
                 if (    verifycationSeriesIDcard() == false &&
-                        verifycationEmail() == false &&
+                        verifycationPhone() == false &&
                         verifycationPassword() == false &&
                         verifycationConfirmPassword() == false){
 
@@ -217,7 +223,7 @@ public class Registration extends AppCompatActivity {
             }
         };
 
-        btnRegister.setOnClickListener(btnRegisterListener);
+        idBtnRegister.setOnClickListener(btnRegisterListener);
 
         return error;
     }
@@ -228,8 +234,8 @@ public class Registration extends AppCompatActivity {
         IDcardField = findViewById(R.id.SeriesAndNumField);
         valueIDcardField = (String.valueOf(IDcardField.getText())).trim();
 
-        EmailField = findViewById(R.id.emailField);
-        valueEmailField = (String.valueOf(EmailField.getText())).trim();
+        EmailField = findViewById(R.id.phoneField);
+        valuePhoneField = (String.valueOf(EmailField.getText())).trim();
 
         PassField = findViewById(R.id.passFieldReg);
         valuePassField = (String.valueOf(PassField.getText())).trim();
@@ -257,16 +263,16 @@ public class Registration extends AppCompatActivity {
     }
 
 
-    public boolean verifycationEmail(){
+    public boolean verifycationPhone(){
 
-        boolean resultEmail = valueEmailField.matches("[a-zA-Z0-9]{1,32}[@]{1}[a-zA-Z]{2,32}[.]{1}+[a-z]{2,7}");
+        boolean resultEmail = valuePhoneField.matches("^\\+?(?:[0-9] ?){9,11}[0-9]$");
 
         if (resultEmail) {
             error = false;
         }
         else {
             error=true;
-            ErrorText = "Enter the correct email adress";
+            ErrorText = "Enter the correct phone number example(+380751334582)";
         }
 
         return error;
