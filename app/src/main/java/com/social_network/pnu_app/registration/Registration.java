@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -58,6 +60,7 @@ public class Registration extends AppCompatActivity {
 
     boolean error = true;
 
+    private FirebaseAuth mAuth;
 
     static String KeyStudent ="default";
     HashMap<Object, Object> student = new HashMap();
@@ -68,7 +71,10 @@ public class Registration extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         ExampleText = findViewById(R.id.ExampleText);
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
+        ExampleText.append("Current user = "  + currentUser);
         verifycationData();
 
     }
@@ -129,17 +135,19 @@ public class Registration extends AppCompatActivity {
 
                 FBidSerie = (String) student.get("seriesIDcard");
                 FBid = student.get("id");
+
                 try {
                     FBverify = (boolean) student.get("verify");
-                    ExampleText.setText("value FBverif = " + FBverify + "\n"+ "KeyStudent = " + KeyStudent + "\n"
-                    + "FBidSerie = " + FBidSerie + "\n");
+             /*       ExampleText.setText("value FBverif = " + FBverify + "\n"+ "KeyStudent = " + KeyStudent + "\n"
+                    + "FBidSerie = " + FBidSerie + "\n");*/
+
                 }
                 catch (Exception castToBool){
                         FBverify = false;
-                        ExampleText.setText("value FBverif catch= " + FBverify + "\n" +
+                      /*  ExampleText.setText("value FBverif catch= " + FBverify + "\n" +
                                 "Database Error! " + "\n" +
                                 "Catch KeyStudent = " + KeyStudent + "\n" +
-                                "Catch FBidSerie = " + FBidSerie + "\n");
+                                "Catch FBidSerie = " + FBidSerie + "\n");*/
                         ErrorText = "Error Database, please try again!";
                 }
 
