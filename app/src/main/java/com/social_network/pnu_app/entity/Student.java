@@ -5,19 +5,20 @@ import java.util.Map;
 
 public class Student {
 
-    String seriesIDcard;
-    String name;
-    String lastName;
-    int id;
-    String email;
-    String password;
-    String phone;
-    boolean verify;
+    public String seriesIDcard;
+    public String name;
+    public String lastName;
+    public int id;
+    public String email;
+    public String password;
+    public String phone;
+    public boolean verify;
+    public String uid;
 
     public Student(){}
 
-    public Student(boolean verify, String seriesIDcard, String name, String lastName, int id, String email,
-            String password,String phone){
+    public Student(String seriesIDcard, String name, String lastName, int id, String email,
+            String password,String phone, boolean verify, String uid){
 
         this.seriesIDcard = seriesIDcard;
         this.name = name;
@@ -27,18 +28,30 @@ public class Student {
         this.password = password;
         this.phone = phone;
         this.verify = verify;
+        this.uid = uid;
 
     }
 
-    public Student(boolean verify,  String email, String password,String phone){
+    public Student(boolean verify,  String email, String password,String phone,String uid){
 
+        this.verify = verify;
         this.email = email;
         this.password = password;
         this.phone = phone;
-        this.verify = verify;
+        this.uid = uid;
 
     }
 
+    public Map<String, Object> toMapUpdateChild(){
+        HashMap<String, Object> MapDatabase = new HashMap<>();
+        MapDatabase.put("verify",verify);
+        MapDatabase.put("email", email);
+        MapDatabase.put("password", password);
+        MapDatabase.put("uid", uid);
+        MapDatabase.put("phone", phone);
+
+        return MapDatabase;
+    }
 
     public Map<String, Object> toMap(){
         HashMap<String, Object> MapDatabase = new HashMap<>();
@@ -50,6 +63,7 @@ public class Student {
         MapDatabase.put("email", email);
         MapDatabase.put("password", password);
         MapDatabase.put("phone", phone);
+        MapDatabase.put("uid", uid);
         MapDatabase.put("verify",verify);
 
         return MapDatabase;

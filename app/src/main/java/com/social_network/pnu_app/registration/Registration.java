@@ -128,7 +128,7 @@ public class Registration extends AppCompatActivity {
                 }
 
                 FBidSerie = (String) student.get("seriesIDcard");
-                FBid =  student.get("id");
+                FBid = student.get("id");
                 try {
                     FBverify = (boolean) student.get("verify");
                     ExampleText.setText("value FBverif = " + FBverify + "\n"+ "KeyStudent = " + KeyStudent + "\n"
@@ -205,7 +205,7 @@ public class Registration extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 initFieldInput();
-                  //   fb.addStudent();
+                    // fb.addStudent();
                 getStudentFB();
 
                 if (    verifycationSeriesIDcard() == false &&

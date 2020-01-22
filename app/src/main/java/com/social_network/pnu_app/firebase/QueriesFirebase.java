@@ -22,8 +22,8 @@ public class QueriesFirebase {
 
         String id = reference.push().getKey();
 
-        Student newStudent = new Student(false, "BA115821901", "Petro", "Golovetsky", counter++,
-                "", "", "");
+        Student newStudent = new Student("BA115821360", "Vadym", "Popovych", counter++,
+                "", "", "",false,"");
 
         Map<String, Object> studentValues = newStudent.toMap();
 
