@@ -2,6 +2,7 @@
 package com.social_network.pnu_app.registration;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,9 +12,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,11 +60,13 @@ public class Registration extends AppCompatActivity {
     public static Object FBid = 0;
 
     boolean error = true;
+    boolean phoneExist = false;
 
     private FirebaseAuth mAuth;
 
     static String KeyStudent ="default";
     HashMap<Object, Object> student = new HashMap();
+    HashMap<Object, Object> studentByPhone = new HashMap();
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
 
     @Override
@@ -72,17 +75,15 @@ public class Registration extends AppCompatActivity {
         setContentView(R.layout.activity_registration);
         ExampleText = findViewById(R.id.ExampleText);
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        ExampleText.append("Current user = "  + currentUser);
         verifycationData();
 
     }
 
-    ValueEventListener valueEventListener;
+    ValueEventListener listerQueryBySerieIDcatdStudent;
+    ValueEventListener listerQueryByPhoneStudent;
 
     public void alertErrorReg(){
-        AlertDialog.Builder a_builder = new AlertDialog.Builder(Registration.this);
+        AlertDialog.Builder a_builder = new AlertDialog.Builder(this);
         a_builder.setMessage(ErrorText)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
@@ -111,26 +112,57 @@ public class Registration extends AppCompatActivity {
         return password;
     }
 
-    public void queryFB(){
+    public void queryBySerieIdcardFB(){
         initFieldInput();
         Query querySeriesIDcard = FirebaseDatabase.getInstance().getReference("students")
                 .orderByChild("seriesIDcard")
                 .equalTo(valueIDcardField);
 
-        querySeriesIDcard.addListenerForSingleValueEvent(valueEventListener);
+        querySeriesIDcard.addListenerForSingleValueEvent(listerQueryBySerieIDcatdStudent);
     }
 
+    public void queryByPhoneFB(){
+        initFieldInput();
+        Query queryPhone = FirebaseDatabase.getInstance().getReference("students")
+                .orderByChild("phone")
+                .equalTo(valuePhoneField);
 
-    public HashMap<Object, Object> getStudentFB(){
+        queryPhone.addListenerForSingleValueEvent(listerQueryByPhoneStudent);
+    }
 
-        valueEventListener = new ValueEventListener() {
+    public boolean getStudentByPhoneFB(){
+
+        listerQueryByPhoneStudent = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        studentByPhone = (HashMap) snapshot.getValue();
+                    }
+                    if (studentByPhone.get("phone") != null) {
+                        if (studentByPhone.get("phone").equals(valuePhoneField)) {
+                            phoneExist = true;
+                        }
+                    }
+                }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(Registration.this, "Error connect to Database, check your " +
+                        "internet connection and try again " , Toast.LENGTH_LONG).show();
+            }
+        };
+        return phoneExist;
+    }
+
+    public HashMap<Object, Object> getStudentBySerieIDcardFB(){
+
+        listerQueryBySerieIDcatdStudent = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                //       if (dataSnapshot.exists()) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     student = (HashMap) snapshot.getValue();
                     KeyStudent = snapshot.getKey();
-
                 }
 
                 FBidSerie = (String) student.get("seriesIDcard");
@@ -138,16 +170,10 @@ public class Registration extends AppCompatActivity {
 
                 try {
                     FBverify = (boolean) student.get("verify");
-             /*       ExampleText.setText("value FBverif = " + FBverify + "\n"+ "KeyStudent = " + KeyStudent + "\n"
-                    + "FBidSerie = " + FBidSerie + "\n");*/
 
                 }
                 catch (Exception castToBool){
                         FBverify = false;
-                      /*  ExampleText.setText("value FBverif catch= " + FBverify + "\n" +
-                                "Database Error! " + "\n" +
-                                "Catch KeyStudent = " + KeyStudent + "\n" +
-                                "Catch FBidSerie = " + FBidSerie + "\n");*/
                         ErrorText = "Error Database, please try again!";
                 }
 
@@ -162,24 +188,19 @@ public class Registration extends AppCompatActivity {
                         alertErrorReg();
 
                     }
+                    else if (getStudentByPhoneFB() == true){
+                        ErrorText = "Student with such phone number already registered";
+                        alertErrorReg();
+                        phoneExist = false;
+                    }
                     else if (FBidSerie.equals(valueIDcardField) && FBverify == false) {
 
-
-                        // valuePassField = encryptionPassword(valuePassField);  TODO this coderow encrypt password in database (comment for example)
+                        valuePassField = encryptionPassword(valuePassField); // TODO this coderow encrypt password in database (comment for example)
 
                         valuePhoneField = valuePhoneField.replaceAll(" ", "");
 
-                      /*  reference.child(KeyStudent).child("phone").setValue(valuePhoneField);
-                        reference.child(KeyStudent).child("password").setValue(valuePassField);
-                        reference.child(KeyStudent).child("verify").setValue(true);*/
-                      //  FBverify = true;
-
                         Intent intentFromRegistration = new Intent("com.social_network.pnu_app.registration.PhoneAuthentication");
                         startActivity(intentFromRegistration);
-
-    /*                    ExampleText.setText('\n'  + "SUCCESS REGISTRATION " + " valueIDSeriesIDcard = " + (FBidSerie) +
-                                " FBverify = " + (FBverify) + " FBid = " + FBid + "KeyStudnt = " + KeyStudent  + '\n' );*/
-
                     }
                 }
 
@@ -188,16 +209,14 @@ public class Registration extends AppCompatActivity {
                      alertErrorReg();
                 }
 
-                // TODO sign in
-
             }
 
-
-            // }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+                Toast.makeText(Registration.this, "Error connect to Database, check your " +
+                        "internet connection and try again " , Toast.LENGTH_LONG).show();
             }
         };
         return student;
@@ -214,14 +233,17 @@ public class Registration extends AppCompatActivity {
             public void onClick(View view) {
                 initFieldInput();
                     // fb.addStudent();
-                getStudentFB();
+                getStudentBySerieIDcardFB();
+                getStudentByPhoneFB();
 
                 if (    verifycationSeriesIDcard() == false &&
                         verifycationPhone() == false &&
                         verifycationPassword() == false &&
                         verifycationConfirmPassword() == false){
 
-                    queryFB();
+
+                    queryBySerieIdcardFB();
+                    queryByPhoneFB();
                 }
 
                 else {
@@ -273,14 +295,14 @@ public class Registration extends AppCompatActivity {
 
     public boolean verifycationPhone(){
 
-        boolean resultEmail = valuePhoneField.matches("^\\+?(?:[0-9] ?){9,11}[0-9]$");
+        boolean resultEmail = valuePhoneField.matches("^\\+(?:[0-9] ?){9,11}[0-9]$");
 
         if (resultEmail) {
             error = false;
         }
         else {
             error=true;
-            ErrorText = "Enter the correct phone number example(+380751334582)";
+            ErrorText = "Enter the correct phone number example +380 751 334 582";
         }
 
         return error;

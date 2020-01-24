@@ -17,5 +17,5 @@
     <string name="Default">Default</string>
     <string name="TextVerificationCode">Verification code</string>
     <string name="HintVerificationCode">Enter 6 numbers</string>
-    <string name="ExpanationVerificationCode">Review your sms and write the verification code</string>
+    <string name="ExpanationVerificationCode">Waiting (from 1 to 60 seconds) review your sms and write the verification code</string>
 </resources>

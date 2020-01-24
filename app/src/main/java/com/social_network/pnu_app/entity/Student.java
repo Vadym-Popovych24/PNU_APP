@@ -32,10 +32,9 @@ public class Student {
 
     }
 
-    public Student(boolean verify,  String email, String password,String phone,String uid){
+    public Student(boolean verify, String password,String phone,String uid){
 
         this.verify = verify;
-        this.email = email;
         this.password = password;
         this.phone = phone;
         this.uid = uid;
@@ -45,7 +44,6 @@ public class Student {
     public Map<String, Object> toMapUpdateChild(){
         HashMap<String, Object> MapDatabase = new HashMap<>();
         MapDatabase.put("verify",verify);
-        MapDatabase.put("email", email);
         MapDatabase.put("password", password);
         MapDatabase.put("uid", uid);
         MapDatabase.put("phone", phone);
