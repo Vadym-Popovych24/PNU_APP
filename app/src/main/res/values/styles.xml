@@ -18,4 +18,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="progressbarcolor">progressbarcolor
+        <item name="colorPrimary">@color/progress_end</item>
+    </style>
+
+
 </resources>

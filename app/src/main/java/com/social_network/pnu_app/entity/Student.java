@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class Student {
 
+    public static HashMap<Object, Object> student = new HashMap();
     public String seriesIDcard;
     public String name;
     public String lastName;

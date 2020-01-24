@@ -15,6 +15,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.social_network.pnu_app.entity.Student;
+import com.social_network.pnu_app.firebase.QueriesFirebase;
 import com.social_network.pnu_app.registration.Registration;
 import com.social_network.pnu_app.R;
 
@@ -55,6 +57,7 @@ public class SignIn extends AppCompatActivity {
     public String FBLastName;
 
     String KeyStudent ="default";
+    QueriesFirebase qf = new QueriesFirebase();
    static HashMap<Object, Object> student = new HashMap();
 
     @Override
@@ -165,7 +168,7 @@ public class SignIn extends AppCompatActivity {
                             "IDSeriesIDCard = " + valueIDSeriesIDcard;
                     ErrorText = "Student with the such series id does not registered";
                     alertErrorSign();
-                }  else if (!FBpassword.equals(valuePassField)) { // TODO
+                }  else if (!(FBpassword.equals(valuePassField)) && FBverify == true) { // TODO
                     ErrorText = "Wrong password";
                     alertErrorSign();
                 }
@@ -175,8 +178,7 @@ public class SignIn extends AppCompatActivity {
                         FBName = (String) student.get("name");
                         FBLastName = (String) student.get("lastName");
 
-                        ErrorText = "SUCCESS SIGN IN " + FBName + " " + FBLastName;
-                        alertErrorSign();
+                        Student.student = student;
 
                         intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
                         startActivity(intentFromSignIn);

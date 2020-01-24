@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +39,7 @@ public class PhoneAuthentication extends AppCompatActivity {
     String valueVerificationCode;
 
     TextView tx;
-
+    private ProgressBar progressBar;
     MaterialEditText idVerificationCode;
     Button idbtnVerifyRegister;
     FirebaseUser currentUser;
@@ -54,7 +55,8 @@ public class PhoneAuthentication extends AppCompatActivity {
         idVerificationCode = findViewById(R.id.verificationCode);
         idbtnVerifyRegister = findViewById(R.id.btnVerifyRegister);
         tx = findViewById(R.id.ExampleTextAuth);
-
+        progressBar = findViewById(R.id.progressbarPhoneAuth);
+        progressBar.setVisibility(View.GONE);
         sendCodeVerification();
         verifyCodeSent();
 
@@ -65,7 +67,6 @@ public class PhoneAuthentication extends AppCompatActivity {
     String password = Registration.valuePassField;
     String phone;
     String uid;
-
     String ErrorText;
 
     @Override
@@ -102,29 +103,65 @@ public class PhoneAuthentication extends AppCompatActivity {
     PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-            Log.d(TAG, "onVerificationCompleted:" + phoneAuthCredential);
-
-            Toast.makeText(PhoneAuthentication.this, "On verification completed, please sign in ", Toast.LENGTH_LONG).show();
-
-            // THIS METHOD IS AN AUTO SIGN IN , HE CALLS WHEN USER ALREADY GET CODE VERIFY AND REGISTERED
-
-            // This case almost unreal but, I add this part of code for better work app. But student can
-            // sign in a MainStudentPage without confirms verify code it happend if he confirm code verify earlier
-            // and it is norm, but previous ones verifing methods and setters phone number in RealTimeDatabase don't allow do it
 
 
-                            Intent intentFromPhoneAuthentication = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-                            startActivity(intentFromPhoneAuthentication);
+                Log.d(TAG, "onVerificationCompleted:" + phoneAuthCredential);
 
+                Toast.makeText(PhoneAuthentication.this, "On verification completed, please sign in ", Toast.LENGTH_LONG).show();
+                if (codeSent == null) {
+                    Toast.makeText(PhoneAuthentication.this, "Code sent == nul OnVerificationCompleted ", Toast.LENGTH_LONG).show();
+                // THIS METHOD IS AN AUTO SIGN IN , HE CALLS WHEN USER ALREADY GET CODE VERIFY BUT NOT CONFIRM HIS VERIFY CODE
+
+                // This case almost unreal but, I add this code for better works app. But student can
+                // sign in a MainStudentPage without confirms verify code it happend if he gets code verify earlier but not confirm it
+                // and it is norm. If user input phone number which he previously ones use, verifing methods and setters phone number
+                // in RealTimeDatabase don't allow do register agen.
+
+
+                verfy = true;
+                phone = Registration.valuePhoneField;
+                uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                Student studentValue = new Student(verfy, password, phone, uid);
+
+                reference.child(Registration.KeyStudent).updateChildren((studentValue.toMapUpdateChild()))
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                progressBar.setVisibility(View.GONE);
+                                Log.d(TAG, "update RealTime Database Success");
+                                Intent intentFromPhoneAuthentication = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+                                startActivity(intentFromPhoneAuthentication);
+                                idVerificationCode.setText("");
+                            }
+
+
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressBar.setVisibility(View.GONE);
+                        //display a failure message in logs
+                        Log.w(TAG, "update RealTimeDatabase:failure", e.fillInStackTrace());
+                        ErrorText = "Registration not success, check your internet connection and try again";
+                        alertErrorPhoneAuthentication();
+                        //  Toast.makeText(PhoneAuthentication.this, "Registration not success, check your internet" +
+                        //          " connection and try again ", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+         /*   else{
+                ErrorText = "On Verification Failed, You already registered! just Sign In";
+                alertErrorPhoneAuthentication();
+            }*/
 
         }
 
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
+            progressBar.setVisibility(View.GONE);
             Log.w(TAG, "onVerificationFailed", e.fillInStackTrace());
-            ErrorText = "On Verification Failed, please input correct verification code.";
+            ErrorText = "On Verification Sending SMS Failed!" ;
             alertErrorPhoneAuthentication();
-        //    Toast.makeText(PhoneAuthentication.this, "on Verification Failed input correct verification code ", Toast.LENGTH_LONG).show();
         }
 
 
@@ -141,7 +178,8 @@ public class PhoneAuthentication extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if (currentUser == null) {
+                tx.append(" codeSent = " + codeSent);
+                progressBar.setVisibility(View.VISIBLE);
 
 
                     valueVerificationCode = String.valueOf(idVerificationCode.getText()).trim();
@@ -150,14 +188,12 @@ public class PhoneAuthentication extends AppCompatActivity {
                     if (valueVerificationCode != null && codeSent != null && valueVerificationCode != "") {
                         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(codeSent, valueVerificationCode);
                         signInWithPhoneAuthCredential(credential);
-                    } else {
-                        Toast.makeText(PhoneAuthentication.this, "Input Code verification ", Toast.LENGTH_LONG).show();
                     }
-                }
+
                 else{
+                    progressBar.setVisibility(View.GONE);
                     ErrorText = "Error with sending SMS, current user already in sign in and registered.";
                     alertErrorPhoneAuthentication();
-                //    Toast.makeText(PhoneAuthentication.this, "Error with sending SMS, current user already in sign in.", Toast.LENGTH_LONG).show();
                 }
         }
 
@@ -167,7 +203,6 @@ public class PhoneAuthentication extends AppCompatActivity {
     }
 
     private void signInWithPhoneAuthCredential(final PhoneAuthCredential credential) {
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             mAuth.signInWithCredential(credential).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                 @Override
                 public void onSuccess(AuthResult authResult) {
@@ -187,9 +222,12 @@ public class PhoneAuthentication extends AppCompatActivity {
 
                                 @Override
                                 public void onSuccess(Void aVoid) {
+                                    progressBar.setVisibility(View.GONE);
                                     Log.d(TAG, "update RealTime Database Success");
+                                    codeSent = null;
                                     Intent intentFromPhoneAuthentication = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
                                     startActivity(intentFromPhoneAuthentication);
+
 
                                 }
 
@@ -197,12 +235,11 @@ public class PhoneAuthentication extends AppCompatActivity {
                             }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            progressBar.setVisibility(View.GONE);
                             //display a failure message in logs
                             Log.w(TAG, "update RealTimeDatabase:failure", e.fillInStackTrace());
                             ErrorText = "Registration not success, check your internet connection and try again";
                             alertErrorPhoneAuthentication();
-                            //  Toast.makeText(PhoneAuthentication.this, "Registration not success, check your internet" +
-                            //          " connection and try again ", Toast.LENGTH_LONG).show();
                         }
                     });
 
@@ -213,6 +250,7 @@ public class PhoneAuthentication extends AppCompatActivity {
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
+                    progressBar.setVisibility(View.GONE);
                     // If sign in fails, display a message to the user and write logs in outputs.
                     Log.w(TAG, "signInWithCredential:failure", e.fillInStackTrace());
                     ErrorText = "Registration failure incorrect verification code or problem with sending response. " +
@@ -220,20 +258,12 @@ public class PhoneAuthentication extends AppCompatActivity {
                             " If code verification, inputted correct you need restart your phone and repeat registration.";
                     alertErrorPhoneAuthentication();
 
-           /* Toast.makeText(PhoneAuthentication.this, "Registration failure incorrect verification code or problem with sending response. " +
-                            "To solve this problem verify that the verification code, which you get in SMS,  inputted correct." +
-                            " If code verification, inputted correct you need restart your phone and repeat registration.",
-                    Toast.LENGTH_LONG).show();*/
                 }
 
             });
         }
-        else {
-            ErrorText = "Current user already registered";
-                    alertErrorPhoneAuthentication();
-        }
     }
 
 
-}
+
 

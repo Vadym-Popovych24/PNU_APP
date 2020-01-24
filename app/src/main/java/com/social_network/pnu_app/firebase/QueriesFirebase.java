@@ -1,5 +1,10 @@
 package com.social_network.pnu_app.firebase;
 
+import android.view.View;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -16,14 +21,13 @@ public class QueriesFirebase {
 
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
 
-  static int counter = 5;
-
-    public void addStudent(){
+    static int counter = 5;
+    public void addStudent() {
 
         String id = reference.push().getKey();
 
         Student newStudent = new Student("BA115821360", "Vadym", "Popovych", counter++,
-                "", "", "",false,"");
+                "", "", "", false, "");
 
         Map<String, Object> studentValues = newStudent.toMap();
 
@@ -33,4 +37,7 @@ public class QueriesFirebase {
         reference.updateChildren(student);
 
     }
+
+
+
 }

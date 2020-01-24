@@ -8,9 +8,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +41,7 @@ public class Registration extends AppCompatActivity {
     MaterialEditText ConfirmPassField;
 
     public TextView ExampleText;
+    private ProgressBar progressBar;
 
     String ErrorText = null;
 
@@ -75,6 +79,11 @@ public class Registration extends AppCompatActivity {
         setContentView(R.layout.activity_registration);
         ExampleText = findViewById(R.id.ExampleText);
         mAuth = FirebaseAuth.getInstance();
+
+        progressBar = findViewById(R.id.progressbar);
+        progressBar.setVisibility(View.GONE);
+
+
         verifycationData();
 
     }
@@ -148,6 +157,7 @@ public class Registration extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                progressBar.setVisibility(View.GONE);
                 Toast.makeText(Registration.this, "Error connect to Database, check your " +
                         "internet connection and try again " , Toast.LENGTH_LONG).show();
             }
@@ -180,15 +190,18 @@ public class Registration extends AppCompatActivity {
                 if (FBidSerie != null) {
 
                     if (FBverify == true && FBidSerie.equals(valueIDcardField)) {
+                        progressBar.setVisibility(View.GONE);
                         ErrorText = "Student already registered";
                         alertErrorReg();
 
                     } else if (!FBidSerie.equals(valueIDcardField)) {
+                        progressBar.setVisibility(View.GONE);
                         ErrorText = "Student with such id series does not exist";
                         alertErrorReg();
 
                     }
                     else if (getStudentByPhoneFB() == true){
+                        progressBar.setVisibility(View.GONE);
                         ErrorText = "Student with such phone number already registered";
                         alertErrorReg();
                         phoneExist = false;
@@ -198,13 +211,14 @@ public class Registration extends AppCompatActivity {
                         valuePassField = encryptionPassword(valuePassField); // TODO this coderow encrypt password in database (comment for example)
 
                         valuePhoneField = valuePhoneField.replaceAll(" ", "");
-
+                        progressBar.setVisibility(View.GONE);
                         Intent intentFromRegistration = new Intent("com.social_network.pnu_app.registration.PhoneAuthentication");
                         startActivity(intentFromRegistration);
                     }
                 }
 
                 else{
+                    progressBar.setVisibility(View.GONE);
                     ErrorText = "Student with such id series does not exist";
                      alertErrorReg();
                 }
@@ -214,7 +228,7 @@ public class Registration extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                progressBar.setVisibility(View.GONE);
                 Toast.makeText(Registration.this, "Error connect to Database, check your " +
                         "internet connection and try again " , Toast.LENGTH_LONG).show();
             }
@@ -241,12 +255,14 @@ public class Registration extends AppCompatActivity {
                         verifycationPassword() == false &&
                         verifycationConfirmPassword() == false){
 
+                    progressBar.setVisibility(View.VISIBLE);
 
                     queryBySerieIdcardFB();
                     queryByPhoneFB();
                 }
 
                 else {
+                    progressBar.setVisibility(View.GONE);
                     alertErrorReg();
                 }
 
@@ -286,7 +302,7 @@ public class Registration extends AppCompatActivity {
         }
         else {
             error=true;
-            ErrorText = "Enter the correct Series and Number ID card(example-ВА12345678): should be the first two upper letters and 8 digits";
+            ErrorText = "Enter the correct Series and Number ID card(example-ВА12345678): should be the first two upper letters(US Language) and 8 digits";
         }
 
         return error;

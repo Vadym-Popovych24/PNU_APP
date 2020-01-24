@@ -7,7 +7,9 @@
     <color name="ripple_effect">#aa5353</color>
     <color name="btn_sign_in">#ed7171</color>
     <color name="btn_sign_in_stroke">#d66060</color>
-    <color name="btn_register">#e27a5d</color>
+    <color name="btn_register">#E27A5D</color>
     <color name="btn_register_stroke">#d16e53</color>
-
+    <color name="progressBar">#D5C9C4</color>
+    <color name="progress_start">#9E9691</color>
+    <color name="progress_end">#756D69</color>
 </resources>

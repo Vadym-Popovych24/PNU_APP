@@ -4,18 +4,20 @@
     <string name="app_name_after">Register App</string>
     <string name="text_bottom">SignUp</string>
     <string name="btnSingIn">Sign In</string>
+    <string name="btnConfirm">Confirm</string>
     <string name="btnRegister">Register</string>
+    <string name="btnRegistration">Registration</string>
     <string name="emailField">Email</string>
     <string name="passField">Password</string>
     <string name="nameField">Name</string>
-    <string name="phoneField">Phone</string>
+    <string name="phoneField">Phone +380YYXXXXXXX</string>
     <string name="Registration">Registration</string>
     <string name="ConfirmPass">Confirm password</string>
-    <string name="SeriesAndNumIDcard">Series and Numb ID card(exampl-ВА12344321)</string>
+    <string name="SeriesAndNumIDcard">Series ID student card(ВА12344321)US Letter</string>
     <string name="SignIn">SignIn</string>
     <string name="title_activity_signin">Sign in</string>
     <string name="Default">Default</string>
     <string name="TextVerificationCode">Verification code</string>
-    <string name="HintVerificationCode">Enter 6 numbers</string>
+    <string name="HintVerificationCode">Input 6 numbers</string>
     <string name="ExpanationVerificationCode">Waiting (from 1 to 60 seconds) review your sms and write the verification code</string>
 </resources>

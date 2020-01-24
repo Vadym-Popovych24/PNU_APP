@@ -63,5 +63,12 @@
         android:text="@string/btnRegister"
         style="?android:attr/buttonBarButtonStyle"/>
 
-
+    <ProgressBar
+        android:id="@+id/progressbarPhoneAuth"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="98dp"
+        android:layout_height="79dp"
+        android:layout_below="@+id/LinearLatoutReg"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"/>
 </LinearLayout>
