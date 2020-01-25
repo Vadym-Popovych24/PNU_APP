@@ -150,8 +150,8 @@ public class SignIn extends AppCompatActivity {
                 FBpassword = (String) student.get("password");
                 FBid = student.get("id");
 
-             //    Registration encrypt = new Registration();
-             //   valuePassField = encrypt.encryptionPassword(valuePassField); // TODO this coderow encrypt password in database (comment for example)
+                Registration encrypt = new Registration();
+                valuePassField = encrypt.encryptionPassword(valuePassField); // TODO this coderow encrypt password in database (comment for example)
 
                 try {
                     FBverify = (boolean) student.get("verify");
@@ -179,6 +179,8 @@ public class SignIn extends AppCompatActivity {
                         FBLastName = (String) student.get("lastName");
 
                         Student.student = student;
+
+
 
                         intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
                         startActivity(intentFromSignIn);

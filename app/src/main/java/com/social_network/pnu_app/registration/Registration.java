@@ -11,12 +11,18 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.social_network.pnu_app.firebase.QueriesFirebase;
+import com.social_network.pnu_app.network.NetworkStatus;
 //import com.social_network.pnu_app.signin.SignIn;
 
 import java.util.HashMap;
@@ -44,6 +51,7 @@ public class Registration extends AppCompatActivity {
     private ProgressBar progressBar;
 
     String ErrorText = null;
+    private static final String TAG ="TAG";
 
     Button idBtnRegister;
 
@@ -58,7 +66,7 @@ public class Registration extends AppCompatActivity {
     private static int valueIDSeriesIDcard;
 
     public boolean FBverify;
-    public static String FBidSerie ="";
+    public static String FBidSerie;
     public String FBpassword = "";
     public String FBemail = "";
     public static Object FBid = 0;
@@ -72,6 +80,9 @@ public class Registration extends AppCompatActivity {
     HashMap<Object, Object> student = new HashMap();
     HashMap<Object, Object> studentByPhone = new HashMap();
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
+    private Object Query;
+
+    NetworkStatus network = new NetworkStatus();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +139,7 @@ public class Registration extends AppCompatActivity {
                 .equalTo(valueIDcardField);
 
         querySeriesIDcard.addListenerForSingleValueEvent(listerQueryBySerieIDcatdStudent);
+
     }
 
     public void queryByPhoneFB(){
@@ -137,6 +149,12 @@ public class Registration extends AppCompatActivity {
                 .equalTo(valuePhoneField);
 
         queryPhone.addListenerForSingleValueEvent(listerQueryByPhoneStudent);
+
+        if(!network.isOnline()){
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(Registration.this, " Please Connect to Internet",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     public boolean getStudentByPhoneFB(){
@@ -175,8 +193,10 @@ public class Registration extends AppCompatActivity {
                     KeyStudent = snapshot.getKey();
                 }
 
-                FBidSerie = (String) student.get("seriesIDcard");
                 FBid = student.get("id");
+
+                FBidSerie = (String) student.get("seriesIDcard");
+
 
                 try {
                     FBverify = (boolean) student.get("verify");
@@ -246,6 +266,7 @@ public class Registration extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 initFieldInput();
+
                     // fb.addStudent();
                 getStudentBySerieIDcardFB();
                 getStudentByPhoneFB();
