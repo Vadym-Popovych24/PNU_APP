@@ -1,4 +1,4 @@
-package com.social_network.pnu_app.registration;
+package com.social_network.pnu_app.signin;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -36,7 +36,7 @@ import com.social_network.pnu_app.network.NetworkStatus;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-public class PhoneAuthentication extends AppCompatActivity {
+public class PhoneSignInAuto extends AppCompatActivity {
 
     private static final String TAG ="TAG";
     private FirebaseAuth mAuth;
@@ -71,11 +71,11 @@ public class PhoneAuthentication extends AppCompatActivity {
     }
 
     boolean verfy;
-    String password = Registration.valuePassField;
+    String password = SignIn.valuePassField;
     String phone;
     String uid;
     String ErrorText;
-   public static HashMap<Object, Object> student = new HashMap();
+    public static HashMap<Object, Object> student = new HashMap();
 
     NetworkStatus network = new NetworkStatus();
 
@@ -101,13 +101,13 @@ public class PhoneAuthentication extends AppCompatActivity {
         alert.show();
     }
 
-   public void sendCodeVerification(){
-       PhoneAuthProvider.getInstance().verifyPhoneNumber(
-               Registration.valuePhoneField,        // Phone number to verify
-               60,                               // Timeout duration
-               TimeUnit.SECONDS,                     // Unit of timeout
-               this,                          // Activity (for callback binding)
-               mCallbacks);                          // OnVerificationStateChangedCallbacks
+    public void sendCodeVerification(){
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                SignIn.valuePhoneField,        // Phone number to verify
+                60,                               // Timeout duration
+                TimeUnit.SECONDS,                     // Unit of timeout
+                this,                          // Activity (for callback binding)
+                mCallbacks);                          // OnVerificationStateChangedCallbacks
     }
 
     PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -115,9 +115,9 @@ public class PhoneAuthentication extends AppCompatActivity {
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
 
 
-               Log.d(TAG, "onVerificationCompleted:" + phoneAuthCredential);
-           // tx.append(" codeSent = " + codeSent);
-                Toast.makeText(PhoneAuthentication.this, "On verification completed, please sign in ", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "onVerificationCompleted:" + phoneAuthCredential);
+            // tx.append(" codeSent = " + codeSent);
+            Toast.makeText(PhoneSignInAuto.this, "On verification completed, please sign in ", Toast.LENGTH_LONG).show();
             /*     if (codeSent == null) {
                     Toast.makeText(PhoneAuthentication.this, "Code sent == nul OnVerificationCompleted ", Toast.LENGTH_LONG).show();
                 // THIS METHOD IS AN AUTO SIGN IN , HE CALLS WHEN USER ALREADY GET CODE VERIFY BUT NOT CONFIRM HIS VERIFY CODE
@@ -184,35 +184,35 @@ public class PhoneAuthentication extends AppCompatActivity {
     };
 
     public void verifyCodeSent(){
-     //   tx.append(" codeSent = " + codeSent);
+        tx.append(" codeSent = " + codeSent);
         View.OnClickListener btnVerifyRegisterListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 getStudentBySerieIDcardFB();
 
-                    valueVerificationCode = String.valueOf(idVerificationCode.getText()).trim();
-                    valueVerificationCode = valueVerificationCode.replaceAll(" ", "");
+                valueVerificationCode = String.valueOf(idVerificationCode.getText()).trim();
+                valueVerificationCode = valueVerificationCode.replaceAll(" ", "");
 
-                    if (valueVerificationCode != null && codeSent !=null && valueVerificationCode != "") {
-                        progressBar.setVisibility(View.VISIBLE);
-                        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(codeSent, valueVerificationCode);
-                        signInWithPhoneAuthCredential(credential);
-                        queryBySerieIDcardFB();
-                    }
-                    else if (valueVerificationCode == null || valueVerificationCode == "") {
-                        ErrorText = "Input verification code!";
-                        alertErrorPhoneAuthentication();
+                if (valueVerificationCode != null && codeSent !=null && valueVerificationCode != "") {
+                    progressBar.setVisibility(View.VISIBLE);
+                    PhoneAuthCredential credential = PhoneAuthProvider.getCredential(codeSent, valueVerificationCode);
+                    signInWithPhoneAuthCredential(credential);
+                    queryBySerieIDcardFB();
+                }
+                else if (valueVerificationCode == null || valueVerificationCode == "") {
+                    ErrorText = "Input verification code!";
+                    alertErrorPhoneAuthentication();
                 }
 
                 else{
                     progressBar.setVisibility(View.GONE);
-                //    tx.append(" codeSent = " + codeSent);
-                //    tx.append(" (Registration.FBidSerie: " + Registration.FBidSerie);
+                    tx.append(" codeSent = " + codeSent);
+                    tx.append(" (Registration.FBidSerie: " + SignIn.FBidSerie);
                     ErrorText = "Error with sending SMS, current user already sign in and registered.Please SIGN IN";
                     alertErrorPhoneAuthentication();
                 }
-        }
+            }
 
 
         };
@@ -220,83 +220,47 @@ public class PhoneAuthentication extends AppCompatActivity {
     }
 
     private void signInWithPhoneAuthCredential(final PhoneAuthCredential credential) {
-            mAuth.signInWithCredential(credential).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                @Override
-                public void onSuccess(AuthResult authResult) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success");
+        mAuth.signInWithCredential(credential).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                // Sign in success, update UI with the signed-in user's information
+                Log.d(TAG, "signInWithCredential:success");
 
            /*             Toast.makeText(PhoneAuthentication.this, "SignIn Success",
             Toast.LENGTH_LONG).show();
 */
 
-                    verfy = true;
-                    phone = Registration.valuePhoneField;
-                    uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    Student studentValue = new Student(verfy, password, phone, uid);
-
-                    reference.child(Registration.KeyStudent).updateChildren((studentValue.toMapUpdateChild()))
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    progressBar.setVisibility(View.GONE);
-                                    Log.d(TAG, "update RealTime Database Success");
-                                    codeSent = null;
-                                    Intent intentFromPhoneAuthentication = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-                                    startActivity(intentFromPhoneAuthentication);
-                                    idVerificationCode.setText("");
-
-                                }
 
 
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressBar.setVisibility(View.GONE);
-                            if (!network.isOnline()) {
-                                progressBar.setVisibility(View.GONE);
-                                Toast.makeText(PhoneAuthentication.this, " Please Connect to Internet",
-                                        Toast.LENGTH_LONG).show();
-                            } else {
-                                //display a failure message in logs
-                                Log.w(TAG, "update RealTimeDatabase:failure", e.fillInStackTrace());
-                                ErrorText = "Registration not success, check your internet connection and try again";
-                                alertErrorPhoneAuthentication();
-                            }
-                        }
-                    });
+            }
 
 
-                }
-
-
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressBar.setVisibility(View.GONE);
+                // If sign in fails, display a message to the user and write logs in outputs.
+                Log.w(TAG, "signInWithCredential:failure", e.fillInStackTrace());
+                if (!network.isOnline()) {
                     progressBar.setVisibility(View.GONE);
-                    // If sign in fails, display a message to the user and write logs in outputs.
-                    Log.w(TAG, "signInWithCredential:failure", e.fillInStackTrace());
-                    if (!network.isOnline()) {
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(PhoneAuthentication.this, " Please Connect to Internet",
-                                Toast.LENGTH_LONG).show();
-                    }
-                    else {
-                        ErrorText = "Registration failure incorrect verification code or problem with sending response. " +
-                                "To solve this problem verify that the verification code, which you get in SMS,  inputted correct." +
-                                " If code verification, inputted correct you need restart your phone and repeat registration.";
-                        alertErrorPhoneAuthentication();
-                    }
+                    Toast.makeText(PhoneSignInAuto.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
                 }
+                else {
+                    ErrorText = "Registration failure incorrect verification code or problem with sending response. " +
+                            "To solve this problem verify that the verification code, which you get in SMS,  inputted correct." +
+                            " If code verification, inputted correct you need restart your phone and repeat registration.";
+                    alertErrorPhoneAuthentication();
+                }
+            }
 
-            });
-        }
+        });
+    }
 
     public void queryBySerieIDcardFB(){
         Query querySeriesIDcard = FirebaseDatabase.getInstance().getReference("students")
                 .orderByChild("seriesIDcard")
-                .equalTo(Registration.FBidSerie);
+                .equalTo(SignIn.FBidSerie);
 
         querySeriesIDcard.addListenerForSingleValueEvent(listerQueryBySerieIDcatdStudent);
     }
@@ -317,14 +281,14 @@ public class PhoneAuthentication extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(PhoneAuthentication.this, "Error connect to Database, check your " +
+                Toast.makeText(PhoneSignInAuto.this, "Error connect to Database, check your " +
                         "internet connection and try again " , Toast.LENGTH_LONG).show();
             }
         };
         return student;
     }
 
-    }
+}
 
 
 

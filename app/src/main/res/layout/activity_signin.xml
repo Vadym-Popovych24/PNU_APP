@@ -1,12 +1,13 @@
-
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".signin.SignIn">
 
 <LinearLayout
 
-
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".signin.SignIn"
+android:id="@+id/LinearLatoutSignIn"
 android:layout_width="match_parent"
 android:layout_height="wrap_content"
 android:layout_margin="20dp"
@@ -74,5 +75,24 @@ android:orientation="vertical">
     android:text="@string/btnSingIn"
     android:textColor="@android:color/white" />
 
+    <TextView
+        android:id="@+id/ExampleTextSignIN"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="12sp"></TextView>
 
 </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressbarSignIn"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="98dp"
+        android:layout_height="79dp"
+        android:layout_below="@+id/LinearLatoutSignIn"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

@@ -91,7 +91,7 @@ public class Registration extends AppCompatActivity {
         ExampleText = findViewById(R.id.ExampleText);
         mAuth = FirebaseAuth.getInstance();
 
-        progressBar = findViewById(R.id.progressbar);
+        progressBar = findViewById(R.id.progressbarRegistration);
         progressBar.setVisibility(View.GONE);
 
 

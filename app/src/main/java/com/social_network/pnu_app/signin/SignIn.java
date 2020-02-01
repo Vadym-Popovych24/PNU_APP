@@ -1,15 +1,26 @@
 package com.social_network.pnu_app.signin;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -17,12 +28,15 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.entity.Student;
 import com.social_network.pnu_app.firebase.QueriesFirebase;
+import com.social_network.pnu_app.network.NetworkStatus;
+import com.social_network.pnu_app.registration.PhoneAuthentication;
 import com.social_network.pnu_app.registration.Registration;
 import com.social_network.pnu_app.R;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 
 public class SignIn extends AppCompatActivity {
@@ -32,11 +46,10 @@ public class SignIn extends AppCompatActivity {
     MaterialEditText passField;
     String valueIDcardField;
 
-    private String yourLastName;
-    private String yourName;
+    private FirebaseAuth mAuth;
 
-    private String valueIDcardDB;
-    String valuePassField="";
+    static String valuePassField="";
+    static String valuePhoneField="";
     public String ErrorText=null;
 
     boolean error = true;
@@ -47,23 +60,34 @@ public class SignIn extends AppCompatActivity {
     private String valuePassDB="";
 
     static ValueEventListener valueEventListener;
+    private static final String TAG ="TAG";
 
     public boolean FBverify;
     public static String FBidSerie ="";
     public String FBpassword = "1";
     public String FBemail = "";
+    public String FBphone = "";
     public static Object FBid = 0;
     public String FBName;
     public String FBLastName;
 
+    TextView textView;
     String KeyStudent ="default";
     QueriesFirebase qf = new QueriesFirebase();
    static HashMap<Object, Object> student = new HashMap();
+    private ProgressBar progressBar;
+    String codeSent;
+
+    NetworkStatus network = new NetworkStatus();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
+        progressBar = findViewById(R.id.progressbarSignIn);
+        progressBar.setVisibility(View.GONE);
+        textView = findViewById(R.id.ExampleTextSignIN);
+        mAuth = FirebaseAuth.getInstance();
         verifycationStudentIn();
     }
 
@@ -80,38 +104,6 @@ public class SignIn extends AppCompatActivity {
         alert.setTitle("PERFORMANCE");
         alert.show();
     }
-
-/*
-    public boolean verifyRegistered(final AppDatabase db){
-
-        valueIDSeriesIDcard =db.studentDao().getIdstudentByIDcard(valueIDcardField);
-        boolean valueVerify= false;
-        valueVerify = db.studentDao().getVerifyByID(valueIDSeriesIDcard);
-        return valueVerify;
-    }
-
-   public boolean verifySignInSeriesIDcard(final AppDatabase db){
-
-
-        valueIDSeriesIDcard =db.studentDao().getIdstudentByIDcard(valueIDcardField);
-        valueIDcardDB = db.studentDao().getSeriesIDcard(valueIDcardField);
-
-        error = (valueIDcardDB != null) && valueIDcardDB.equals(valueIDcardField);
-
-        return error;
-    }
-
-   public boolean verifySignInPassword(final AppDatabase db){
-
-
-        valueIDPassword = db.studentDao().getIdstudentByIDPassword(valuePassField,valueIDSeriesIDcard);
-        valuePassDB = db.studentDao().getPasswordById(valuePassField,valueIDSeriesIDcard);
-
-
-        error = (valuePassDB != null) && valuePassDB.equals(valuePassField);
-
-        return error;
-    }*/
 
     public void initFieldInput(){
 
@@ -130,6 +122,12 @@ public class SignIn extends AppCompatActivity {
                 .equalTo(valueIDcardField);
 
         querySeriesIDcard.addListenerForSingleValueEvent(valueEventListener);
+
+        if(!network.isOnline()){
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(SignIn.this, " Please Connect to Internet",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
 
@@ -149,7 +147,7 @@ public class SignIn extends AppCompatActivity {
                 FBidSerie = (String) student.get("seriesIDcard");
                 FBpassword = (String) student.get("password");
                 FBid = student.get("id");
-
+                FBphone = (String) student.get("phone");
                 Registration encrypt = new Registration();
                 valuePassField = encrypt.encryptionPassword(valuePassField); // TODO this coderow encrypt password in database (comment for example)
 
@@ -161,14 +159,17 @@ public class SignIn extends AppCompatActivity {
                 if ((FBidSerie != null && FBpassword != null)) {
 
                  if (!FBidSerie.equals(valueIDcardField)) {
+                     progressBar.setVisibility(View.GONE);
                     ErrorText = "Student with the such series id does not exist";
                     alertErrorSign();
                 } else if (FBidSerie.equals(valueIDcardField) && (FBverify != true)) {
+                     progressBar.setVisibility(View.GONE);
                     ErrorText = "IDPassword = " + valueIDPassword +
                             "IDSeriesIDCard = " + valueIDSeriesIDcard;
                     ErrorText = "Student with the such series id does not registered";
                     alertErrorSign();
                 }  else if (!(FBpassword.equals(valuePassField)) && FBverify == true) { // TODO
+                     progressBar.setVisibility(View.GONE);
                     ErrorText = "Wrong password";
                     alertErrorSign();
                 }
@@ -180,13 +181,14 @@ public class SignIn extends AppCompatActivity {
 
                         Student.student = student;
 
-
+                        progressBar.setVisibility(View.GONE);
 
                         intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
                         startActivity(intentFromSignIn);
 
                     }
                 } else {
+                    progressBar.setVisibility(View.GONE);
                     ErrorText = "Student with such id series does not exist 2";
                     alertErrorSign();
                 }
@@ -196,7 +198,11 @@ public class SignIn extends AppCompatActivity {
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                if(!network.isOnline()){
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(SignIn.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                }
             }
         };
         return student;
@@ -214,69 +220,34 @@ public class SignIn extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //  Intent intentFromSignIn;
+                progressBar.setVisibility(View.VISIBLE);
                 initFieldInput();
                 getStudentFB();
                 if (view.getId() == R.id.btnSignIn) {
 
                     if (valueIDcardField.isEmpty()) { // TODO
+                        progressBar.setVisibility(View.GONE);
                         ErrorText = "Enter Series ID";
                         alertErrorSign();
                     } else if (valuePassField.isEmpty()) { // TODO
+                        progressBar.setVisibility(View.GONE);
                         ErrorText = "Enter password";
                         alertErrorSign();
                     } else {
                         if (verifycationSeriesIDcard() == false &&
                                 verifycationPassword() == false) {
                             queryFB();
+                            textView.setText("FBphone =" + FBphone);
                         }
                         else {
+                            progressBar.setVisibility(View.GONE);
                             alertErrorSign();
                         }
                     }
-          /*             if (verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this)) &&
-                               verifySignInPassword(AppDatabase.getAppDatabase(SignIn.this)) &&
-                               (valueIDSeriesIDcard == valueIDPassword)) {
-
-                           getYourName(AppDatabase.getAppDatabase(SignIn.this));
-                           getYourLastName(AppDatabase.getAppDatabase(SignIn.this));
-
-                           ErrorText = getYourName() + " " + getYourLastName(yourLastName);
-                           alertErrorSign();
 
 
-                           intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-                           startActivity(intentFromSignIn);
-
-                   }
-                       else if (valueIDcardField.isEmpty() ) { // TODO
-                           ErrorText = "Enter Series ID";
-                           alertErrorSign();
-                       }
-                       else if (!verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this))) {
-                           ErrorText = "Student with the such series id does not exist";
-                           alertErrorSign();
-                       }
-                       else if (verifySignInSeriesIDcard(AppDatabase.getAppDatabase(SignIn.this)) &&
-                               !(verifyRegistered(AppDatabase.getAppDatabase(SignIn.this)) ) ) {
-                       ErrorText = "IDPassword = " + String.valueOf(valueIDPassword) +
-                               "IDSeriesIDCard = " + String.valueOf(valueIDSeriesIDcard);
-                           ErrorText = "Student with the such series id does not registered";
-                           alertErrorSign();
-                       }
-                       else if (valuePassField.isEmpty() ) { // TODO
-                           ErrorText = "Enter password";
-                           alertErrorSign();
-                       }
-                       else if ( (valuePassDB == null) && (!valuePassField.isEmpty()) ){ // TODO
-                           ErrorText = "Wrong password";
-                           alertErrorSign();
-                       }
-*/
                 }
-          /*     else {
-                   ErrorText = "Wrong password";
-                   alertErrorSign();
-               }*/
+
             }
 
         };
@@ -284,6 +255,7 @@ public class SignIn extends AppCompatActivity {
         btnSignIn.setOnClickListener(listenerSignIn);
 
             }
+
 
     public boolean verifycationSeriesIDcard(){
 
@@ -318,53 +290,6 @@ public class SignIn extends AppCompatActivity {
 
     }
 
-/*    public String getValueIDcardDB() {
-        return valueIDcardDB;
-    }
-
-    public void setValueIDcardDB(String valueIDcardDB) {
-        this.valueIDcardDB = valueIDcardDB;
-    }
-    public int getValueIDSeriesIDcard() {
-        return valueIDSeriesIDcard;
-    }
-
-    public void setValueIDSeriesIDcard(int valueIDSeriesIDcard) {
-        this.valueIDSeriesIDcard = valueIDSeriesIDcard;
-    }
-    public int getValueIDPassword() {
-        return valueIDPassword;
-    }
-
-    public void setValueIDPassword(int valueIDPassword) {
-        this.valueIDPassword = valueIDPassword;
-    }
-
-    public String getYourLastName(final AppDatabase db)
-    {
-        yourLastName = db.studentDao().getLastNameById(getValueIDSeriesIDcard());
-        return yourLastName;
-    }
-
-    public void setYourLastName(String yourLastName) {
-        this.yourLastName = yourLastName;
-    }
-
-    public Button getBtnSignIn() {
-        return btnSignIn;
-    }
-
-    public void setBtnSignIn(Button btnSignIn) {
-        this.btnSignIn = btnSignIn;
-    }
-
-    public String getYourName(final AppDatabase db)
-    {
-        yourName =db.studentDao().getFirstNameById(getValueIDSeriesIDcard());
-        return yourName;
-    }
-
-    public void setYourName(String yourName) { this.yourName = yourName; }*/
     }
 
 

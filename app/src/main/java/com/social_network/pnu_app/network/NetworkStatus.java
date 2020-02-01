@@ -1,20 +1,8 @@
 package com.social_network.pnu_app.network;
 
-
-import android.content.Context;
-        import android.net.ConnectivityManager;
-        import android.net.NetworkInfo;
-        import android.util.Log;
-
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
-
-//     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 public class NetworkStatus {
-    private static final String TAG ="TAG";
 
 
     public boolean isOnline() {

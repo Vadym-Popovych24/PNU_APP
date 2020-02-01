@@ -121,7 +121,7 @@
 </LinearLayout>
 
     <ProgressBar
-        android:id="@+id/progressbar"
+        android:id="@+id/progressbarRegistration"
         style="@style/Widget.AppCompat.ProgressBar"
         android:layout_width="98dp"
         android:layout_height="79dp"
