@@ -248,8 +248,6 @@ public class PhoneAuthentication extends AppCompatActivity {
                                     idVerificationCode.setText("");
 
                                 }
-
-
                             }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
@@ -325,7 +323,3 @@ public class PhoneAuthentication extends AppCompatActivity {
     }
 
     }
-
-
-
-

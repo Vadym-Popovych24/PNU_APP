@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "803879077669-e9i982aoh9e8981inki458akgogns5vf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.social_network.pnu_app",
+            "certificate_hash": "37271505cf0e0066cae9ec6e1340063a2e551862"
+          }
+        },
+        {
           "client_id": "803879077669-j29uq6j8esgjehuh3fioq1uei834c0n6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

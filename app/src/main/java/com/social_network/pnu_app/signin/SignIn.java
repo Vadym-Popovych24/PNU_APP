@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -49,7 +50,7 @@ public class SignIn extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     static String valuePassField="";
-    static String valuePhoneField="";
+    static String valuePhoneField="1";
     public String ErrorText=null;
 
     boolean error = true;
@@ -77,6 +78,9 @@ public class SignIn extends AppCompatActivity {
    static HashMap<Object, Object> student = new HashMap();
     private ProgressBar progressBar;
     String codeSent;
+    AuthCredential authCredential;
+
+    Intent intentFromSignIn;
 
     NetworkStatus network = new NetworkStatus();
 
@@ -134,7 +138,6 @@ public class SignIn extends AppCompatActivity {
 
     public HashMap<Object, Object> getStudentFB(){
         valueEventListener = new ValueEventListener() {
-            Intent intentFromSignIn;
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //       if (dataSnapshot.exists()) {
@@ -180,11 +183,8 @@ public class SignIn extends AppCompatActivity {
                         FBLastName = (String) student.get("lastName");
 
                         Student.student = student;
-
+                        sendCodeVerification();
                         progressBar.setVisibility(View.GONE);
-
-                        intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-                        startActivity(intentFromSignIn);
 
                     }
                 } else {
@@ -209,8 +209,6 @@ public class SignIn extends AppCompatActivity {
     }
 
 
-
-
     public void verifycationStudentIn(){
 
         btnSignIn = findViewById(R.id.btnSignIn);
@@ -219,7 +217,6 @@ public class SignIn extends AppCompatActivity {
         View.OnClickListener listenerSignIn = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //  Intent intentFromSignIn;
                 progressBar.setVisibility(View.VISIBLE);
                 initFieldInput();
                 getStudentFB();
@@ -259,7 +256,6 @@ public class SignIn extends AppCompatActivity {
 
     public boolean verifycationSeriesIDcard(){
 
-
         boolean resultSeriesIDcard = valueIDcardField.matches("^[A-Z]{2}([0-9]){8}$");
 
         if (resultSeriesIDcard) {
@@ -275,7 +271,6 @@ public class SignIn extends AppCompatActivity {
 
     public boolean verifycationPassword(){
 
-
         boolean resultPass = valuePassField.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[@#$%^.;:&+=])(?=\\S+$).{8,32}$");
 
         if (resultPass) {
@@ -289,6 +284,49 @@ public class SignIn extends AppCompatActivity {
         return error;
 
     }
+
+
+    public void sendCodeVerification(){
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                Student.student.get("phone").toString(),        // Phone number to verify
+                60,                               // Timeout duration
+                TimeUnit.SECONDS,                     // Unit of timeout
+                this,                          // Activity (for callback binding)
+                mCallbacks);                          // OnVerificationStateChangedCallbacks
+    }
+
+    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+        @Override
+        public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+            Log.d(TAG, "onVerificationCompleted:" + phoneAuthCredential);
+            intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+            startActivity(intentFromSignIn);
+            mAuth.signInAnonymously();
+        }
+            // tx.append(" codeSent = " + codeSent);
+            //   Toast.makeText(SignInPhone.this, "On verification completed, please sign in ", Toast.LENGTH_LONG).show();
+        //     if (codeSent == null) {
+          //          Toast.makeText(PhoneAuthentication.this, "Code sent == nul OnVerificationCompleted ", Toast.LENGTH_LONG).show();
+                // THIS METHOD IS AN AUTO SIGN IN , HE CALLS WHEN USER ALREADY GET CODE VERIFY BUT NOT CONFIRM HIS VERIFY CODE
+
+
+
+        @Override
+        public void onVerificationFailed(@NonNull FirebaseException e) {
+            progressBar.setVisibility(View.GONE);
+            Log.w(TAG, "onVerificationFailed", e.fillInStackTrace());
+            ErrorText = "On Verification Sending SMS Failed! You are often do requests due to unusual activity and was blocked. Try Later! After 4 hours" ;
+            alertErrorSign();
+        }
+
+
+        @Override
+        public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+            super.onCodeSent(s, forceResendingToken);
+
+            codeSent = s;
+        }
+    };
 
     }
 

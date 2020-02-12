@@ -35,8 +35,9 @@ import com.social_network.pnu_app.network.NetworkStatus;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
+import com.social_network.pnu_app.R;
 
-public class PhoneSignInAuto extends AppCompatActivity {
+public class SignInPhone extends AppCompatActivity {
 
     private static final String TAG ="TAG";
     private FirebaseAuth mAuth;
@@ -51,29 +52,24 @@ public class PhoneSignInAuto extends AppCompatActivity {
     FirebaseUser currentUser;
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
     ValueEventListener listerQueryBySerieIDcatdStudent;
+    static boolean onVerificationCompleted =false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_phone_authentication);
+        setContentView(R.layout.activity_sign_in_phone);
 
         mAuth = FirebaseAuth.getInstance();
-        idVerificationCode = findViewById(R.id.verificationCode);
-        idbtnVerifyRegister = findViewById(R.id.btnVerifyRegister);
-        tx = findViewById(R.id.ExampleTextAuth);
-        progressBar = findViewById(R.id.progressbarPhoneAuth);
+        idVerificationCode = findViewById(R.id.verificationCodeSignInAuto);
+        idbtnVerifyRegister = findViewById(R.id.btnVerifyPhoneSignInAuto);
+        tx = findViewById(R.id.ExampleTextPhoneSignInAuto);
+        progressBar = findViewById(R.id.progressbarPhoneSignInAuto);
         progressBar.setVisibility(View.GONE);
-        sendCodeVerification();
+
         verifyCodeSent();
-
-
     }
 
-    boolean verfy;
-    String password = SignIn.valuePassField;
-    String phone;
-    String uid;
     String ErrorText;
     public static HashMap<Object, Object> student = new HashMap();
 
@@ -83,7 +79,7 @@ public class PhoneSignInAuto extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        currentUser = mAuth.getCurrentUser();
+     //   currentUser = mAuth.getCurrentUser();
         currentUser = null;
     }
 
@@ -101,87 +97,7 @@ public class PhoneSignInAuto extends AppCompatActivity {
         alert.show();
     }
 
-    public void sendCodeVerification(){
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                SignIn.valuePhoneField,        // Phone number to verify
-                60,                               // Timeout duration
-                TimeUnit.SECONDS,                     // Unit of timeout
-                this,                          // Activity (for callback binding)
-                mCallbacks);                          // OnVerificationStateChangedCallbacks
-    }
 
-    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-        @Override
-        public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-
-
-            Log.d(TAG, "onVerificationCompleted:" + phoneAuthCredential);
-            // tx.append(" codeSent = " + codeSent);
-            Toast.makeText(PhoneSignInAuto.this, "On verification completed, please sign in ", Toast.LENGTH_LONG).show();
-            /*     if (codeSent == null) {
-                    Toast.makeText(PhoneAuthentication.this, "Code sent == nul OnVerificationCompleted ", Toast.LENGTH_LONG).show();
-                // THIS METHOD IS AN AUTO SIGN IN , HE CALLS WHEN USER ALREADY GET CODE VERIFY BUT NOT CONFIRM HIS VERIFY CODE
-
-                // This case almost unreal but, I add this code for better works app. But student can
-                // sign in a MainStudentPage without confirms verify code it happend if he gets code verify earlier but not confirm it
-                // and it is norm. If user input phone number which he previously ones use, verifing methods and setters phone number
-                // in RealTimeDatabase don't allow do register agen.
-
-
-                verfy = true;
-                phone = Registration.valuePhoneField;
-                uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                Student studentValue = new Student(verfy, password, phone, uid);
-
-                reference.child(Registration.KeyStudent).updateChildren((studentValue.toMapUpdateChild()))
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                progressBar.setVisibility(View.GONE);
-                                Log.d(TAG, "update RealTime Database Success");
-                                Intent intentFromPhoneAuthentication = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-                                startActivity(intentFromPhoneAuthentication);
-                                idVerificationCode.setText("");
-                            }
-
-
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        progressBar.setVisibility(View.GONE);
-                        //display a failure message in logs
-                        Log.w(TAG, "update RealTimeDatabase:failure", e.fillInStackTrace());
-                        ErrorText = "Registration not success, check your internet connection and try again";
-                        alertErrorPhoneAuthentication();
-                        //  Toast.makeText(PhoneAuthentication.this, "Registration not success, check your internet" +
-                        //          " connection and try again ", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }*/
-         /*   else{
-                ErrorText = "On Verification Failed, You already registered! just Sign In";
-                alertErrorPhoneAuthentication();
-            }*/
-
-        }
-
-        @Override
-        public void onVerificationFailed(@NonNull FirebaseException e) {
-            progressBar.setVisibility(View.GONE);
-            Log.w(TAG, "onVerificationFailed", e.fillInStackTrace());
-            ErrorText = "On Verification Sending SMS Failed! You are often do requests due to unusual activity and was blocked. Try Later! After 4 hours" ;
-            alertErrorPhoneAuthentication();
-        }
-
-
-        @Override
-        public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-            super.onCodeSent(s, forceResendingToken);
-
-            codeSent = s;
-        }
-    };
 
     public void verifyCodeSent(){
         tx.append(" codeSent = " + codeSent);
@@ -243,7 +159,7 @@ public class PhoneSignInAuto extends AppCompatActivity {
                 Log.w(TAG, "signInWithCredential:failure", e.fillInStackTrace());
                 if (!network.isOnline()) {
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(PhoneSignInAuto.this, " Please Connect to Internet",
+                    Toast.makeText(SignInPhone.this, " Please Connect to Internet",
                             Toast.LENGTH_LONG).show();
                 }
                 else {
@@ -281,7 +197,7 @@ public class PhoneSignInAuto extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(PhoneSignInAuto.this, "Error connect to Database, check your " +
+                Toast.makeText(SignInPhone.this, "Error connect to Database, check your " +
                         "internet connection and try again " , Toast.LENGTH_LONG).show();
             }
         };
@@ -289,7 +205,4 @@ public class PhoneSignInAuto extends AppCompatActivity {
     }
 
 }
-
-
-
 

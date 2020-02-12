@@ -11,8 +11,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".signin.PhoneSignInAuto"></activity>
-        <activity android:name=".phone_auto_authentication" />
+        <activity android:name=".signin.SignInPhone"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="com.social_network.pnu_app.signin.SignInPhone" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".registration.PhoneAuthentication"
             android:theme="@style/AppTheme.NoActionBar">
