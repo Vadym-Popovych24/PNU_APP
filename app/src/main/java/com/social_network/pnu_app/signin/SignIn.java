@@ -253,6 +253,48 @@ public class SignIn extends AppCompatActivity {
 
             }
 
+    public void sendCodeVerification(){
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                Student.student.get("phone").toString(),        // Phone number to verify
+                60,                               // Timeout duration
+                TimeUnit.SECONDS,                     // Unit of timeout
+                this,                          // Activity (for callback binding)
+                mCallbacks);                          // OnVerificationStateChangedCallbacks
+    }
+
+    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+        @Override
+        public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+            Log.d(TAG, "onVerificationCompleted:" + phoneAuthCredential);
+            intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+            startActivity(intentFromSignIn);
+            // mAuth.signInAnonymously();
+            mAuth.signInWithCredential(Student.credentialStudent);
+        }
+
+        //  Toast.makeText(SignInPhone.this, "On verification completed, please sign in ", Toast.LENGTH_LONG).show();
+        // THIS METHOD IS AN AUTO SIGN IN , HE CALLS WHEN USER ALREADY GET CODE VERIFY BUT NOT CONFIRM HIS VERIFY CODE
+
+
+
+        @Override
+        public void onVerificationFailed(@NonNull FirebaseException e) {
+            progressBar.setVisibility(View.GONE);
+            Log.w(TAG, "onVerificationFailed", e.fillInStackTrace());
+            ErrorText = "On Verification Sending SMS Failed! You are often do requests due to unusual activity and was blocked. Try Later! After 4 hours" ;
+            alertErrorSign();
+        }
+
+
+        @Override
+        public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+            super.onCodeSent(s, forceResendingToken);
+
+            codeSent = s;
+        }
+    };
+
+
 
     public boolean verifycationSeriesIDcard(){
 
@@ -286,47 +328,6 @@ public class SignIn extends AppCompatActivity {
     }
 
 
-    public void sendCodeVerification(){
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                Student.student.get("phone").toString(),        // Phone number to verify
-                60,                               // Timeout duration
-                TimeUnit.SECONDS,                     // Unit of timeout
-                this,                          // Activity (for callback binding)
-                mCallbacks);                          // OnVerificationStateChangedCallbacks
-    }
-
-    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-        @Override
-        public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-            Log.d(TAG, "onVerificationCompleted:" + phoneAuthCredential);
-            intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-            startActivity(intentFromSignIn);
-            mAuth.signInAnonymously();
-        }
-            // tx.append(" codeSent = " + codeSent);
-            //   Toast.makeText(SignInPhone.this, "On verification completed, please sign in ", Toast.LENGTH_LONG).show();
-        //     if (codeSent == null) {
-          //          Toast.makeText(PhoneAuthentication.this, "Code sent == nul OnVerificationCompleted ", Toast.LENGTH_LONG).show();
-                // THIS METHOD IS AN AUTO SIGN IN , HE CALLS WHEN USER ALREADY GET CODE VERIFY BUT NOT CONFIRM HIS VERIFY CODE
-
-
-
-        @Override
-        public void onVerificationFailed(@NonNull FirebaseException e) {
-            progressBar.setVisibility(View.GONE);
-            Log.w(TAG, "onVerificationFailed", e.fillInStackTrace());
-            ErrorText = "On Verification Sending SMS Failed! You are often do requests due to unusual activity and was blocked. Try Later! After 4 hours" ;
-            alertErrorSign();
-        }
-
-
-        @Override
-        public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-            super.onCodeSent(s, forceResendingToken);
-
-            codeSent = s;
-        }
-    };
 
     }
 

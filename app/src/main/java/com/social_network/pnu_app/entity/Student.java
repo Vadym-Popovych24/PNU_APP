@@ -1,5 +1,7 @@
 package com.social_network.pnu_app.entity;
 
+import com.google.firebase.auth.AuthCredential;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +17,7 @@ public class Student {
     public String phone;
     public boolean verify;
     public String uid;
+    public static AuthCredential credentialStudent;
 
     public Student(){}
 
