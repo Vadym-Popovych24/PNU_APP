@@ -1,21 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".pages.MainStudentPage">
-
-    <LinearLayout
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".pages.MainStudentPage"
+        android:id="@+id/RelativeLayoutImageProfile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/backgroundStudentMainPage"
+    >
+
+        <ImageView
+            android:layout_alignParentTop="true"
+            android:id="@+id/imStudentMainPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:contentDescription="@string/imageDescription"
+            android:layout_marginBottom="5dp"
+            app:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
+
+        <Button
+            android:id="@+id/btnLoadPhotoStudent"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_loadphoto"
+            android:paddingEnd="10dp"
+            android:paddingRight="1dp"
+            android:paddingStart="0dp"
+            android:paddingLeft="0dp"
+            android:text="@string/btnLoadPhotoStudent"
+            android:textColor="@android:color/white"
+
+            android:layout_below="@+id/imStudentMainPhoto"
+            android:layout_alignParentRight="true"/>
 
         <TextView
-            android:id="@+id/tvPage"
-            android:layout_width="match_parent"
+            android:id="@+id/tvAboutStudent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Default"
+            android:layout_below="@+id/btnLoadPhotoStudent"
+            android:text="@string/studentInfo"
+            android:textColor="@color/studentInfo"
             android:textSize="26sp" />
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tvPIB"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvAboutStudent"
+            android:text="@string/studentPIB"
+            android:textColor="@color/black"
+            android:textSize="26sp" />
+
+        <TextView
+            android:id="@+id/tvPIBvalue"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tvPIB"
+            android:layout_below="@+id/tvPIB"
+            android:text="Попович Вадим Віталійоич"
+            android:textColor="@color/valuesStudentDate"
+            android:textSize="26sp" />
+
+        <TextView
+            android:id="@+id/tvFaculty"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvPIBvalue"
+            android:text="@string/faculty"
+            android:textColor="@color/black"
+            android:textSize="26sp" />
+
+        <TextView
+            android:id="@+id/tvFacultyValue"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvFaculty"
+            android:layout_toRightOf="@id/tvPIB"
+            android:textColor="@color/valuesStudentDate"
+            android:text="Математики та інформатики"
+
+            android:textSize="26sp" />
+
+        <TextView
+            android:id="@+id/tvGroup"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvFacultyValue"
+            android:text="@string/group"
+            android:textColor="@color/black"
+            android:textSize="26sp" />
+
+        <TextView
+            android:id="@+id/tvGroupValue"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tvGroup"
+            android:layout_below="@id/tvFacultyValue"
+            android:text="ІПЗ-41"
+            android:textColor="@color/valuesStudentDate"
+            android:textSize="26sp" />
+
+        <TextView
+            android:id="@+id/tvDateOfEntry"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvGroup"
+            android:text="@string/dateOfEntry"
+            android:textColor="@color/black"
+            android:textSize="26sp" />
+
+        <TextView
+            android:id="@+id/tvDateOfEntryValue"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tvDateOfEntry"
+            android:layout_below="@+id/tvGroupValue"
+            android:text="2016"
+            android:textColor="@color/valuesStudentDate"
+            android:textSize="26sp" />
+
+
+
+        <TextView
+            android:id="@+id/tvFormStudying"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvDateOfEntry"
+            android:text="@string/formOfStudying"
+            android:textColor="@color/black"
+            android:textSize="26sp" />
+
+        <TextView
+            android:id="@+id/tvFormStudyingValue"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tvFormStudying"
+            android:layout_below="@+id/tvDateOfEntry"
+            android:text="Денна"
+            android:textColor="@color/valuesStudentDate"
+            android:textSize="26sp" />
+</RelativeLayout>

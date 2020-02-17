@@ -20,4 +20,15 @@
     <string name="TextVerificationCode">Verification code</string>
     <string name="HintVerificationCode">Input 6 numbers</string>
     <string name="ExpanationVerificationCode">Waiting (from 1 to 60 seconds) review your sms and write the verification code</string>
+    <string name="imageDescription">imageDescription</string>
+
+
+     <!--MainStudentPage-->
+    <string name="studentInfo">Про студента</string>
+    <string name="studentPIB">ПІБ</string>
+    <string name="faculty">Факультет</string>
+    <string name="group">Група</string>
+    <string name="dateOfEntry">Рік вступу</string>
+    <string name="formOfStudying">Форма навчання</string>
+    <string name="btnLoadPhotoStudent">Змінити фото профілю</string>
 </resources>

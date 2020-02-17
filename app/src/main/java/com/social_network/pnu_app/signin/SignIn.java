@@ -184,6 +184,8 @@ public class SignIn extends AppCompatActivity {
 
                         Student.student = student;
                         sendCodeVerification();
+                        PhoneAuthCredential credential = PhoneAuthProvider.getCredential("001001", "001001");
+                        signInWithPhoneAuthCredential(credential);
                         progressBar.setVisibility(View.GONE);
 
                     }
@@ -269,7 +271,7 @@ public class SignIn extends AppCompatActivity {
             intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
             startActivity(intentFromSignIn);
             // mAuth.signInAnonymously();
-            mAuth.signInWithCredential(Student.credentialStudent);
+
         }
 
         //  Toast.makeText(SignInPhone.this, "On verification completed, please sign in ", Toast.LENGTH_LONG).show();
@@ -294,7 +296,40 @@ public class SignIn extends AppCompatActivity {
         }
     };
 
+    private void signInWithPhoneAuthCredential(final PhoneAuthCredential credential) {
+        mAuth.signInWithCredential(credential).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                // Sign in success, update UI with the signed-in user's information
+                Log.d(TAG, "signInWithCredential:success");
 
+       /*             Toast.makeText(PhoneAuthentication.this, "SignIn Success",
+        Toast.LENGTH_LONG).show();      */
+
+            }
+
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressBar.setVisibility(View.GONE);
+                // If sign in fails, display a message to the user and write logs in outputs.
+                Log.w(TAG, "signInWithCredential:failure", e.fillInStackTrace());
+                if (!network.isOnline()) {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(SignIn.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                }
+                else {
+                    ErrorText = "Registration failure incorrect verification code or problem with sending response. " +
+                            "To solve this problem verify that the verification code, which you get in SMS,  inputted correct." +
+                            " If code verification, inputted correct you need restart your phone and repeat registration.";
+                    alertErrorSign();
+                }
+            }
+
+        });
+    }
 
     public boolean verifycationSeriesIDcard(){
 

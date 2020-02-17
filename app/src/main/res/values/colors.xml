@@ -12,4 +12,9 @@
     <color name="progressBar">#D5C9C4</color>
     <color name="progress_start">#9E9691</color>
     <color name="progress_end">#756D69</color>
+    <color name="studentInfo">#168CE6</color>
+    <color name="black">#000001</color>
+    <color name="valuesStudentDate">#8C8CC2</color>
+    <color name="textLoadPhotoStudent">#8C8CC2</color>
+    <color name="backgroundStudentMainPage">#FFFFFF</color>
 </resources>

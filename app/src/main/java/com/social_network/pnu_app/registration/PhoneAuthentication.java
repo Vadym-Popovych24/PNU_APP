@@ -197,7 +197,6 @@ public class PhoneAuthentication extends AppCompatActivity {
                     if (valueVerificationCode != null && codeSent !=null && valueVerificationCode != "") {
                         progressBar.setVisibility(View.VISIBLE);
                         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(codeSent, valueVerificationCode);
-                        Student.credentialStudent = credential;
                                 signInWithPhoneAuthCredential(credential);
                         queryBySerieIDcardFB();
                     }
