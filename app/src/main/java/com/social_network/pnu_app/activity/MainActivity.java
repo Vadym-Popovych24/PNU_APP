@@ -20,11 +20,12 @@ public class MainActivity extends AppCompatActivity {
 
     private static int buttonCounter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+      //  Intent intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+      //  startActivity(intentFromSignIn);
         listenerOnButton();
     }
 

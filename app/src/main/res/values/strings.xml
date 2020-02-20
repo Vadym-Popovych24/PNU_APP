@@ -31,4 +31,10 @@
     <string name="dateOfEntry">Рік вступу</string>
     <string name="formOfStudying">Форма навчання</string>
     <string name="btnLoadPhotoStudent">Змінити фото профілю</string>
+    <string name="btnListFriends">0 Друзі</string>
+    <string name="btnListPoll">0 Опитувань</string>
+    <string name="btnListWall">0 Записи</string>
+    <string name="hindEditTextAddNotes">Додати запис</string>
+    <string name="contentDescription">TODO</string>
+    <string name="Online">Online</string>
 </resources>

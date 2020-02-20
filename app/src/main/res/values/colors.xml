@@ -17,4 +17,9 @@
     <color name="valuesStudentDate">#8C8CC2</color>
     <color name="textLoadPhotoStudent">#8C8CC2</color>
     <color name="backgroundStudentMainPage">#FFFFFF</color>
+    <color name="onlineText">#8D8585</color>
+    <color name="wallBackground">#D5D5D5</color>
+    <color name="borderWallBackground">#929292</color>
+    <color name="StartWallBackground">#858585</color>
+    <color name="lines">#D5D5D5</color>
 </resources>
