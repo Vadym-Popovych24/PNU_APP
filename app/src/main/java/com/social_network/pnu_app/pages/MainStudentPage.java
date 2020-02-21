@@ -44,6 +44,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
+
 
 public class MainStudentPage extends AppCompatActivity {
 
@@ -59,7 +62,7 @@ public class MainStudentPage extends AppCompatActivity {
 
     public static HashMap<Object, Object> studentData = new HashMap();
 
-    private ImageView imStudentMainPhoto;
+    private CircleImageView imStudentMainPhoto;
 
     private ImageView imSendPhotoWall;
 
@@ -70,6 +73,8 @@ public class MainStudentPage extends AppCompatActivity {
     private String mImageUri = "";
 
     private String mRereference = "";
+
+    private EmojiconEditText emojiconEditText;
 
 
     private static final int REQUEST_CODE_PERMISSION_RECEIVE_CAMERA = 102;
@@ -91,9 +96,10 @@ public class MainStudentPage extends AppCompatActivity {
         tvDateOfEntryValue = findViewById(R.id.tvDateOfEntryValue);
         tvFormStudyingValue = findViewById(R.id.tvFormStudyingValue);
         btnLoadPhotoStudent.setOnClickListener(listenerBtnLoapPhotoStudent);
+    //    emojiconEditText = findViewById(R.id.editTextWall);
 
         BuildStudentPage();
-        imStudentMainPhoto = (ImageView) findViewById(R.id.imStudentMainPhoto);
+        imStudentMainPhoto = (CircleImageView) findViewById(R.id.imStudentMainPhoto);
         imSendPhotoWall = (ImageView) findViewById(R.id.imSendPhotoWall);
         mBTNaddPicture = (Button) findViewById(R.id.btnLoadPhotoStudent);
 
@@ -138,7 +144,7 @@ QueriesFirebase qfd = new QueriesFirebase();
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
         studentData = Student.student;
 
-        tvPIBvalue.setText(studentData.get("name") + " " + studentData.get("lastName") + " " + studentData.get("patronym"));
+        tvPIBvalue.setText(studentData.get("lastName") + " " + studentData.get("name") + " " + studentData.get("patronym"));
         tvFacultyValue.setText(" " + Objects.requireNonNull(studentData.get("faculty")).toString());
         tvGroupValue.setText(" " + Objects.requireNonNull(studentData.get("group")).toString());
         tvDateOfEntryValue.setText(" " + Objects.requireNonNull(studentData.get("dateOfEntry")).toString());
@@ -259,20 +265,16 @@ QueriesFirebase qfd = new QueriesFirebase();
 
                         Picasso.with(getBaseContext())
                                 .load(data.getData())
-                                .into(imStudentMainPhoto);
+                                .into(imSendPhotoWall);
                         uploadFileInFireBaseStorage(data.getData());
                     } else if (mImageUri != null) {
                         mImageUri = Uri.fromFile(mTempPhoto).toString();
 
                         Picasso.with(this)
                                 .load(mImageUri)
-                                .into(imStudentMainPhoto);
-                        uploadFileInFireBaseStorage(Uri.fromFile((mTempPhoto)));
-
-                        Picasso.with(this)
-                                .load(mImageUri)
                                 .into(imSendPhotoWall);
                         uploadFileInFireBaseStorage(Uri.fromFile((mTempPhoto)));
+
                     }
                 }
                 break;
