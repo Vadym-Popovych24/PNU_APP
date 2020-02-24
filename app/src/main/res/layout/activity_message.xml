@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".pages.Message"
+    android:id="@+id/rlMessenger"
+    android:background="@color/colorBackGround">
+
+    <ImageView
+        android:id="@+id/emoji_button"
+        android:padding="4dp"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_smileemodji"
+        android:layout_width="48dp"
+        android:layout_height="35dp"
+        android:background="@color/colorAccentWhite"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        />
+
+
+    <ImageView
+        android:id="@+id/submit_button_menu"
+        android:padding="0dp"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentBottom="true"
+        android:clickable="true"
+        android:src="@android:drawable/ic_menu_send"
+        android:layout_width="50dp"
+        android:layout_height="35dp"
+        android:layout_alignParentRight="true" />
+
+    <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
+        android:id="@+id/textField"
+        android:layout_width="313dp"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="0dp"
+        android:layout_toLeftOf="@+id/submit_button_menu"
+        android:background="@color/colorAccentWhite"
+
+        android:layout_toRightOf="@+id/emoji_button"
+        android:hint="Message"
+        android:textColorHint="@color/textColorHint"
+        app:emojiconSize="20sp" />
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/textField"
+        android:id="@+id/list_of_messages"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="13dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginLeft="10dp"
+
+        android:layout_marginTop="36dp"
+        android:layout_alignParentLeft="true"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll">
+    </ListView>
+
+
+</RelativeLayout>
+

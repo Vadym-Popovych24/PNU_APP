@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
@@ -81,6 +83,7 @@ public class MainStudentPage extends AppCompatActivity {
     private static final int REQUEST_CODE_TAKE_PHOTO = 103;
 
 
+
     private StorageReference mStorageRef;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -103,6 +106,13 @@ public class MainStudentPage extends AppCompatActivity {
         imSendPhotoWall = (ImageView) findViewById(R.id.imSendPhotoWall);
         mBTNaddPicture = (Button) findViewById(R.id.btnLoadPhotoStudent);
 
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation_profile);
+        bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
+
+        menuChanges(bottomNavigationView);
+
        // mBTNaddPicture.setOnClickListener((View.OnClickListener) this);
 
         File localFile = null;
@@ -120,7 +130,7 @@ public class MainStudentPage extends AppCompatActivity {
                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                             Picasso.with(getBaseContext())
                                     .load(Uri.fromFile(finalLocalFile))
-                                    .into(imStudentMainPhoto);
+                                    .into(imSendPhotoWall);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -153,6 +163,45 @@ QueriesFirebase qfd = new QueriesFirebase();
 
     }
 
+    public void menuChanges(BottomNavigationView bottomNavigationView){
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        Intent intentMenu;
+                        switch (item.getItemId()) {
+                            case R.id.action_search:
+                                intentMenu = new Intent( "com.social_network.pnu_app.pages.Search");
+                                startActivity(intentMenu);
+
+                                break;
+                            case R.id.action_message:
+                                intentMenu = new Intent( "com.social_network.pnu_app.pages.Messenger");
+                                startActivity(intentMenu);
+
+
+                                break;
+                            case R.id.action_main_student_page:
+                                intentMenu = new Intent( "com.social_network.pnu_app.pages.MainStudentPage");
+                                startActivity(intentMenu);
+
+                                break;
+                            case R.id.action_schedule:
+                                intentMenu = new Intent( "com.social_network.pnu_app.pages.Schedule");
+                                startActivity(intentMenu);
+
+                                break;
+                            case R.id.action_settings:
+                                intentMenu = new Intent( "com.social_network.pnu_app.pages.Settings");
+                                startActivity(intentMenu);
+
+                                break;
+                        }
+                        return false;
+                    }
+                });
+    }
 
     //Метод для добавления фото
     public void addPhoto() {

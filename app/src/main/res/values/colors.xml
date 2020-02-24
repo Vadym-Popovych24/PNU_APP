@@ -22,4 +22,17 @@
     <color name="borderWallBackground">#929292</color>
     <color name="StartWallBackground">#858585</color>
     <color name="lines">#E9E9E9</color>
+
+    // Message colors
+
+    <color name="colorPrimaryMessage">#5C5F64</color>      <!--Original colorPrimary #008577-->
+    <color name="colorPrimaryDarkMessage">#00000C</color><!--Original colorPriamryDark #00574B-->
+    <color name="colorPrimaryDarkText">#00574B</color>
+    <color name="colorAccentMessage">#D81B60</color>
+    <color name="colorAccentWhite">#FFFFFF</color>
+    <color name="colorData">#00574B</color>
+    <color name="colorEmail">#72D3FF</color>
+    <color name="colorEmailCurrent">#F3E576</color>
+    <color name="colorBackGround">#D5CFC1</color>
+    <color name="textColorHint">#818181</color>
 </resources>

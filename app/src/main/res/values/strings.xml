@@ -23,7 +23,7 @@
     <string name="imageDescription">imageDescription</string>
 
 
-     <!--MainStudentPage-->
+    <!--MainStudentPage-->
     <string name="studentInfo">Про студента</string>
     <string name="studentPIB">ПІБ</string>
     <string name="faculty">Факультет</string>
@@ -37,4 +37,9 @@
     <string name="hindEditTextAddNotes">Додати запис</string>
     <string name="contentDescription">TODO</string>
     <string name="Online">Online</string>
+    <string name="menuSearch">Пошук</string>
+    <string name="menuMessenger">Повідомлення</string>
+    <string name="menuMainStudentPage">Моя сторінка</string>
+    <string name="menuSchedule">Розклад</string>
+    <string name="menuSettings">Налаштування</string>
 </resources>

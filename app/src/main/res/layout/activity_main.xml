@@ -87,6 +87,7 @@
             android:text="@string/btnSingIn"
             android:textColor="@android:color/white" />
 
+
     </LinearLayout>
 
 </RelativeLayout>

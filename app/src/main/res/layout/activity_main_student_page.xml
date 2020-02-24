@@ -318,6 +318,17 @@
         android:paddingEnd="12dp"
         android:layout_toEndOf="@+id/imSendPhotoWall" />
 
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:itemBackground="@color/lines"
+        app:itemIconTint="@drawable/bottom_navigation_item_background_colors"
+        app:itemTextColor="@drawable/bottom_navigation_item_background_colors"
+        app:menu="@menu/menu_bottom_navigation" />
+
 </RelativeLayout>
 
 <!--    android:drawableLeft="@drawable/edittext_wall_drawable_left"
