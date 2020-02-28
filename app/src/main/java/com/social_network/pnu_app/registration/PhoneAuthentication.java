@@ -131,7 +131,7 @@ public class PhoneAuthentication extends AppCompatActivity {
                 verfy = true;
                 phone = Registration.valuePhoneField;
                 uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                Student studentValue = new Student(verfy, password, phone, uid);
+                StudentSqlLite studentValue = new StudentSqlLite(verfy, password, phone, uid);
 
                 reference.child(Registration.KeyStudent).updateChildren((studentValue.toMapUpdateChild()))
                         .addOnSuccessListener(new OnSuccessListener<Void>() {

@@ -8,6 +8,8 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.social_network.pnu_app.R;
+import com.social_network.pnu_app.localdatabase.AppDatabase;
+import com.social_network.pnu_app.localdatabase.DatabaseInitializer;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
       //  Intent intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
       //  startActivity(intentFromSignIn);
+        DatabaseInitializer.populateAsync(AppDatabase.getAppDatabase(MainActivity.this));
         listenerOnButton();
     }
 

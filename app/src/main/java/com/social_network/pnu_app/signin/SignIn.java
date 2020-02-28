@@ -29,6 +29,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.entity.Student;
 import com.social_network.pnu_app.firebase.QueriesFirebase;
+import com.social_network.pnu_app.localdatabase.AppDatabase;
 import com.social_network.pnu_app.network.NetworkStatus;
 import com.social_network.pnu_app.registration.PhoneAuthentication;
 import com.social_network.pnu_app.registration.Registration;
@@ -83,7 +84,7 @@ public class SignIn extends AppCompatActivity {
     Intent intentFromSignIn;
 
     NetworkStatus network = new NetworkStatus();
-
+    private String yourName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,9 +93,14 @@ public class SignIn extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
         textView = findViewById(R.id.ExampleTextSignIN);
         mAuth = FirebaseAuth.getInstance();
+        getYourName(AppDatabase.getAppDatabase(SignIn.this));
         verifycationStudentIn();
     }
-
+    public String getYourName(final AppDatabase db)
+    {
+        yourName =db.studentDao().getFirstNameById(1);
+        return yourName;
+    }
     public void alertErrorSign(){
         AlertDialog.Builder a_builder = new AlertDialog.Builder(SignIn.this);
         a_builder.setMessage(ErrorText)
@@ -163,13 +169,13 @@ public class SignIn extends AppCompatActivity {
 
                  if (!FBidSerie.equals(valueIDcardField)) {
                      progressBar.setVisibility(View.GONE);
-                    ErrorText = "Student with the such series id does not exist";
+                    ErrorText = "StudentSqlLite with the such series id does not exist";
                     alertErrorSign();
                 } else if (FBidSerie.equals(valueIDcardField) && (FBverify != true)) {
                      progressBar.setVisibility(View.GONE);
                     ErrorText = "IDPassword = " + valueIDPassword +
                             "IDSeriesIDCard = " + valueIDSeriesIDcard;
-                    ErrorText = "Student with the such series id does not registered";
+                    ErrorText = "StudentSqlLite with the such series id does not registered";
                     alertErrorSign();
                 }  else if (!(FBpassword.equals(valuePassField)) && FBverify == true) { // TODO
                      progressBar.setVisibility(View.GONE);
@@ -193,7 +199,7 @@ public class SignIn extends AppCompatActivity {
                     }
                 } else {
                     progressBar.setVisibility(View.GONE);
-                    ErrorText = "Student with such id series does not exist 2";
+                    ErrorText = "StudentSqlLite with such id series does not exist 2";
                     alertErrorSign();
                 }
 
@@ -260,7 +266,7 @@ public class SignIn extends AppCompatActivity {
 /*
     public void sendCodeVerification(){
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                Student.student.get("phone").toString(),        // Phone number to verify
+                StudentSqlLite.student.get("phone").toString(),        // Phone number to verify
                 60,                               // Timeout duration
                 TimeUnit.SECONDS,                     // Unit of timeout
                 this,                          // Activity (for callback binding)

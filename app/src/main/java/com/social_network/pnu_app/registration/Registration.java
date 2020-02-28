@@ -211,18 +211,18 @@ public class Registration extends AppCompatActivity {
 
                     if (FBverify == true && FBidSerie.equals(valueIDcardField)) {
                         progressBar.setVisibility(View.GONE);
-                        ErrorText = "Student already registered";
+                        ErrorText = "StudentSqlLite already registered";
                         alertErrorReg();
 
                     } else if (!FBidSerie.equals(valueIDcardField)) {
                         progressBar.setVisibility(View.GONE);
-                        ErrorText = "Student with such id series does not exist";
+                        ErrorText = "StudentSqlLite with such id series does not exist";
                         alertErrorReg();
 
                     }
                     else if (getStudentByPhoneFB() == true){
                         progressBar.setVisibility(View.GONE);
-                        ErrorText = "Student with such phone number already registered";
+                        ErrorText = "StudentSqlLite with such phone number already registered";
                         alertErrorReg();
                         phoneExist = false;
                     }
@@ -239,7 +239,7 @@ public class Registration extends AppCompatActivity {
 
                 else{
                     progressBar.setVisibility(View.GONE);
-                    ErrorText = "Student with such id series does not exist";
+                    ErrorText = "StudentSqlLite with such id series does not exist";
                      alertErrorReg();
                 }
 
