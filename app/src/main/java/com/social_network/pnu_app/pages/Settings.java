@@ -3,12 +3,18 @@ package com.social_network.pnu_app.pages;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.social_network.pnu_app.R;
+import com.social_network.pnu_app.activity.MainActivity;
 
 public class Settings extends AppCompatActivity {
 
@@ -21,7 +27,48 @@ public class Settings extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.action_settings);
 
         menuChanges(bottomNavigationView);
+
+        Button btnSignOut;
+        btnSignOut = findViewById(R.id.btnSignOut);
+        btnSignOut.setOnClickListener(listenerBtnSignOut);
     }
+
+    public void SignOut(){
+
+        TextView tvExampleSignOut;
+        TextView tvExampleSignOut2;
+
+        tvExampleSignOut = findViewById(R.id.tvExampleSignOut);
+        tvExampleSignOut2 = findViewById(R.id.tvExampleSignOut2);
+
+
+        Context context;
+        Intent intentSignOut = new Intent(this, MainActivity.class);
+        intentSignOut.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intentSignOut);
+
+        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+
+            tvExampleSignOut.append(FirebaseAuth.getInstance().getCurrentUser().toString());
+            FirebaseAuth.getInstance().signOut();
+            tvExampleSignOut2.append(FirebaseAuth.getInstance().getCurrentUser().toString());
+        }
+        else{
+            tvExampleSignOut.append("null");
+
+            tvExampleSignOut2.append("null");
+        }
+    }
+
+    View.OnClickListener listenerBtnSignOut = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if(v.getId() == R.id.btnSignOut){
+                SignOut();
+            }
+        }
+    };
 
     public void menuChanges(BottomNavigationView bottomNavigationView){
 

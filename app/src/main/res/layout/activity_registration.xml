@@ -20,7 +20,7 @@
     android:textSize="26sp"
     android:textAlignment="center"
     android:text="@string/Registration"
-    android:textColor="@color/colorPrimaryDark"
+    android:textColor="@color/registeredFormsMet"
     android:layout_margin="0dp">
 </TextView>
 
@@ -37,7 +37,7 @@
 
     app:met_baseColor="#05080A"
     app:met_floatingLabel="highlight"
-    app:met_primaryColor="#C9AEBE"
+    app:met_primaryColor="@color/registeredFormsMet"
     app:met_singleLineEllipsis="true">
 
 </com.rengwuxian.materialedittext.MaterialEditText>
@@ -56,7 +56,7 @@
 
         app:met_baseColor="#05080A"
         app:met_floatingLabel="highlight"
-        app:met_primaryColor="#C9AEBE"
+        app:met_primaryColor="@color/registeredFormsMet"
         app:met_singleLineEllipsis="true">
 
     </com.rengwuxian.materialedittext.MaterialEditText>
@@ -74,7 +74,7 @@
 
     app:met_floatingLabel="highlight"
     app:met_baseColor="#05080A"
-    app:met_primaryColor="#C9AEBE"
+    app:met_primaryColor="@color/registeredFormsMet"
     app:met_singleLineEllipsis="true"
     >
 
@@ -93,7 +93,7 @@
 
     app:met_floatingLabel="highlight"
     app:met_baseColor="#05080A"
-    app:met_primaryColor="#C9AEBE"
+    app:met_primaryColor="@color/registeredFormsMet"
     app:met_singleLineEllipsis="true"
     >
 
@@ -101,7 +101,7 @@
 
 <Button
     android:id="@+id/btnRegister"
-    android:layout_width="120dp"
+    android:layout_width="130dp"
     android:layout_height="0dp"
     android:textColor="@android:color/white"
     android:background="@drawable/btn_register"

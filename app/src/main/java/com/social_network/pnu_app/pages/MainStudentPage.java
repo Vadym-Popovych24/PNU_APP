@@ -58,7 +58,6 @@ public class MainStudentPage extends AppCompatActivity {
     TextView tvDateOfEntryValue;
     TextView tvFormStudyingValue;
 
-    ImageView imageViewStudentMain;
     Button btnLoadPhotoStudent;
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -123,7 +122,6 @@ public class MainStudentPage extends AppCompatActivity {
         try {
             localFile = createTempImageFile(getExternalCacheDir());
             final File finalLocalFile = localFile;
-
             mStorageRef.child("images/" + mRereference).getFile(localFile)
                     .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                         @Override
@@ -131,6 +129,10 @@ public class MainStudentPage extends AppCompatActivity {
                             Picasso.with(getBaseContext())
                                     .load(Uri.fromFile(finalLocalFile))
                                     .into(imSendPhotoWall);
+
+                            Picasso.with(getBaseContext())
+                                    .load(Uri.fromFile(finalLocalFile))
+                                    .into(imStudentMainPhoto);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -315,6 +317,10 @@ QueriesFirebase qfd = new QueriesFirebase();
                         Picasso.with(getBaseContext())
                                 .load(data.getData())
                                 .into(imSendPhotoWall);
+
+                        Picasso.with(getBaseContext())
+                                .load(data.getData())
+                                .into(imStudentMainPhoto);
                         uploadFileInFireBaseStorage(data.getData());
                     } else if (mImageUri != null) {
                         mImageUri = Uri.fromFile(mTempPhoto).toString();
@@ -322,6 +328,10 @@ QueriesFirebase qfd = new QueriesFirebase();
                         Picasso.with(this)
                                 .load(mImageUri)
                                 .into(imSendPhotoWall);
+
+                        Picasso.with(getBaseContext())
+                                .load(data.getData())
+                                .into(imStudentMainPhoto);
                         uploadFileInFireBaseStorage(Uri.fromFile((mTempPhoto)));
 
                     }

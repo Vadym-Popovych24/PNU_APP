@@ -20,7 +20,7 @@ android:orientation="vertical">
     android:textSize="26sp"
     android:textAlignment="center"
     android:text="@string/btnSingIn"
-    android:textColor="@color/colorPrimaryDark"
+    android:textColor="@color/SignInFormsMet"
     android:layout_margin="10dp">
 </TextView>
 
@@ -38,7 +38,7 @@ android:orientation="vertical">
 
     app:met_baseColor="#05080A"
     app:met_floatingLabel="highlight"
-    app:met_primaryColor="#C9AEBE"
+    app:met_primaryColor="@color/SignInFormsMet"
     app:met_singleLineEllipsis="true">
 
 </com.rengwuxian.materialedittext.MaterialEditText>
@@ -57,7 +57,7 @@ android:orientation="vertical">
 
     app:met_floatingLabel="highlight"
     app:met_baseColor="#05080A"
-    app:met_primaryColor="#C9AEBE"
+    app:met_primaryColor="@color/SignInFormsMet"
     app:met_singleLineEllipsis="true"
     >
 

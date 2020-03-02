@@ -67,6 +67,8 @@ public class PhoneAuthentication extends AppCompatActivity {
         sendCodeVerification();
         verifyCodeSent();
 
+        mAuth.getCurrentUser().getPhoneNumber();
+
 
     }
 

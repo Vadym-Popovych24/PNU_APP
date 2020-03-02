@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".pages.Settings">
 
+
     <TextView
         android:id="@+id/tvSettings"
         android:layout_width="wrap_content"
@@ -15,6 +16,49 @@
         android:textSize="45sp"
         android:layout_centerHorizontal="true"
         android:fontFamily="sans-serif-medium"/>
+
+    <Button
+        android:id="@+id/btnSignOut"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp"
+
+        android:background="@android:color/white"
+        android:layout_below="@+id/tvSettings"
+        android:layout_alignLeft="@+id/tvSettings"
+        android:layout_alignStart="@+id/tvSettings"
+        android:layout_marginTop="10dp"
+        android:paddingEnd="0dp"
+        android:paddingRight="0dp"
+        android:paddingStart="0dp"
+        android:paddingLeft="0dp"
+        android:textSize="20sp"
+        android:text="@string/btnSignOut"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/tvExampleSignOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnSignOut"
+        android:text="Current Uset before SignOut: "
+        android:textSize="25sp"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="sans-serif-medium"/>
+
+    <TextView
+        android:id="@+id/tvExampleSignOut2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvExampleSignOut"
+        android:text="Current Uset after SignOut: "
+        android:layout_marginTop="20dp"
+        android:textSize="25sp"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="sans-serif-medium"/>
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_settings"

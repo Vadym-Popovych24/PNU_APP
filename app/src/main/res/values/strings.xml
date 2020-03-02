@@ -1,17 +1,18 @@
 <resources>
     <string name="app_name">PNU_APP</string>
-    <string name="app_in_name">PNU_APP</string>
-    <string name="app_name_after">Register App</string>
-    <string name="text_bottom">SignUp</string>
-    <string name="btnSingIn">Sign In</string>
-    <string name="btnConfirm">Confirm</string>
-    <string name="btnRegister">Register</string>
-    <string name="btnRegistration">Registration</string>
+    <string name="app_in_name">ПНУ</string>
+    <string name="app_name_after">Соц мережа</string>
+    <string name="text_bottom">Соц мережа</string>
+    <string name="btnSingIn">Вхід</string>
+    <string name="btnEnter">Увійти</string>
+    <string name="btnConfirm">Підтвердити</string>
+    <string name="btnRegister">Зареєструвати</string>
+    <string name="btnRegistration">Реєстрація</string>
     <string name="emailField">Email</string>
     <string name="passField">Password</string>
     <string name="nameField">Name</string>
     <string name="phoneField">Phone +380YYXXXXXXX</string>
-    <string name="Registration">Registration</string>
+    <string name="Registration">Реєстрація</string>
     <string name="ConfirmPass">Confirm password</string>
     <string name="SeriesAndNumIDcard">Series ID student card(ВА12344321)US Letter</string>
     <string name="SignIn">SignIn</string>
@@ -42,4 +43,7 @@
     <string name="menuMainStudentPage">Моя сторінка</string>
     <string name="menuSchedule">Розклад</string>
     <string name="menuSettings">Налаштування</string>
+
+    <!--Settings-->
+    <string name="btnSignOut">Вийти</string>
 </resources>

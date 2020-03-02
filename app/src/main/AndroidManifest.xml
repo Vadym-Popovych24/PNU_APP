@@ -103,7 +103,8 @@
         </activity>
         <activity android:name=".activity.MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"
+                    android:label=""/>
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>

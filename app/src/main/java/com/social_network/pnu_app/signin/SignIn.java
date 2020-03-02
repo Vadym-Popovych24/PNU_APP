@@ -189,11 +189,12 @@ public class SignIn extends AppCompatActivity {
                         FBLastName = (String) student.get("lastName");
 
                         Student.student = student;
-                        // sendCodeVerification();
+                   //      sendCodeVerification();
                         intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
                         startActivity(intentFromSignIn);
-                      //  PhoneAuthCredential credential = PhoneAuthProvider.getCredential("001001", "001001");
-                      //  signInWithPhoneAuthCredential(credential);
+                        PhoneAuthCredential credential = PhoneAuthProvider.getCredential("001001", "001001");
+                        mAuth.signInWithCredential(credential);
+                 //       signInWithPhoneAuthCredential(credential);
                         progressBar.setVisibility(View.GONE);
 
                     }
@@ -263,32 +264,33 @@ public class SignIn extends AppCompatActivity {
 
             }
 
-/*
+
     public void sendCodeVerification(){
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                StudentSqlLite.student.get("phone").toString(),        // Phone number to verify
+                Student.student.get("phone").toString(),        // Phone number to verify
                 60,                               // Timeout duration
                 TimeUnit.SECONDS,                     // Unit of timeout
                 this,                          // Activity (for callback binding)
                 mCallbacks);                          // OnVerificationStateChangedCallbacks
     }
-*/
 
- /*   PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
             Log.d(TAG, "onVerificationCompleted:" + phoneAuthCredential);
-        // TODO  intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-         //   startActivity(intentFromSignIn);
+            // TODO  intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+            //   startActivity(intentFromSignIn);
             // mAuth.signInAnonymously();
 
-        }*/
 
-        //  Toast.makeText(SignInPhone.this, "On verification completed, please sign in ", Toast.LENGTH_LONG).show();
+          Toast.makeText(SignIn .this,"On verification completed, please sign in ",Toast.LENGTH_LONG).
+
+        show();
         // THIS METHOD IS AN AUTO SIGN IN , HE CALLS WHEN USER ALREADY GET CODE VERIFY BUT NOT CONFIRM HIS VERIFY CODE
+    }
 
 
-/*
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
             progressBar.setVisibility(View.GONE);
@@ -313,8 +315,8 @@ public class SignIn extends AppCompatActivity {
                 // Sign in success, update UI with the signed-in user's information
                 Log.d(TAG, "signInWithCredential:success");
 
-       *//*             Toast.makeText(PhoneAuthentication.this, "SignIn Success",
-        Toast.LENGTH_LONG).show();      *//*
+                  Toast.makeText(SignIn.this, "SignIn Success",
+        Toast.LENGTH_LONG).show();
 
             }
 
@@ -339,7 +341,7 @@ public class SignIn extends AppCompatActivity {
             }
 
         });
-    }*/
+    }
 
     public boolean verifycationSeriesIDcard(){
 
