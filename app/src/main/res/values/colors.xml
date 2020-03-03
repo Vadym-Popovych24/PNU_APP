@@ -5,12 +5,12 @@
     <color name="colorAccent">#D81B60</color>
     <color name="text_bottom">#c9c9c9</color>
     <color name="ripple_effect">#aa5353</color>
-    <color name="btn_sign_in">#5171FF</color>            <!-- #ed7171 firstly version-->
+    <color name="btn_sign_in">#5F72D5</color>            <!-- #ed7171 firstly version-->
     <color name="btn_sign_in_stroke">#7992FF</color>    <!-- #d66060 firstly version-->
     <color name="btn_register">#03917A</color>         <!--  #E27A5D firstly version-->
     <color name="btn_register_stroke">#17B9A0</color>  <!-- #d16e53 firstly version-->
     <color name="registeredFormsMet">#03917A</color>
-    <color name="SignInFormsMet">#5171FF</color>
+    <color name="SignInFormsMet">#5F72D5</color>
     <color name="progressBar">#D5C9C4</color>
     <color name="progress_start">#9E9691</color>
     <color name="progress_end">#756D69</color>
@@ -20,10 +20,10 @@
     <color name="textLoadPhotoStudent">#8C8CC2</color>
     <color name="backgroundStudentMainPage">#FFFFFF</color>
     <color name="onlineText">#8D8585</color>
-    <color name="wallBackground">#E9E9E9</color>
+    <color name="wallBackground">#F1F1F1</color>
     <color name="borderWallBackground">#929292</color>
     <color name="StartWallBackground">#858585</color>
-    <color name="lines">#E9E9E9</color>
+    <color name="lines">#F1F1F1</color>
 
     // Message colors
 

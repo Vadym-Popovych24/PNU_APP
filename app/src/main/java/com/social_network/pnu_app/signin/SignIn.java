@@ -73,7 +73,6 @@ public class SignIn extends AppCompatActivity {
     public String FBName;
     public String FBLastName;
 
-    TextView textView;
     String KeyStudent ="default";
     QueriesFirebase qf = new QueriesFirebase();
    static HashMap<Object, Object> student = new HashMap();
@@ -91,7 +90,6 @@ public class SignIn extends AppCompatActivity {
         setContentView(R.layout.activity_signin);
         progressBar = findViewById(R.id.progressbarSignIn);
         progressBar.setVisibility(View.GONE);
-        textView = findViewById(R.id.ExampleTextSignIN);
         mAuth = FirebaseAuth.getInstance();
         getYourName(AppDatabase.getAppDatabase(SignIn.this));
         verifycationStudentIn();
@@ -245,7 +243,6 @@ public class SignIn extends AppCompatActivity {
                         if (verifycationSeriesIDcard() == false &&
                                 verifycationPassword() == false) {
                             queryFB();
-                            textView.setText("FBphone =" + FBphone);
                         }
                         else {
                             progressBar.setVisibility(View.GONE);

@@ -246,8 +246,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="40dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="5dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="13dp"
         android:id="@+id/imSendPhotoWall"
         android:padding="0dp"
         android:layout_marginLeft="10dp"
@@ -267,7 +267,7 @@
         android:padding="0dp"
         android:src="@android:drawable/ic_menu_send"
         android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:background="@android:color/white"
         android:layout_below="@+id/lineAboveEtWall"
 
@@ -294,7 +294,7 @@
     <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
         android:id="@+id/editTextWall"
         android:layout_width="320dp"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:background="@drawable/edittext_wall"
         android:hint="@string/hindEditTextAddNotes"
         android:layout_toLeftOf="@+id/btnSendWall"
@@ -312,7 +312,7 @@
         android:layout_marginTop="10dp"
         android:layout_below="@+id/lineAboveEtWall"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:drawableStart="@drawable/emoji_recent"
         android:paddingStart="8dp"
         android:paddingEnd="12dp"

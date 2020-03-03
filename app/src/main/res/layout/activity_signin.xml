@@ -75,16 +75,6 @@ android:orientation="vertical">
     android:text="@string/btnSingIn"
     android:textColor="@android:color/white" />
 
-    <TextView
-        android:id="@+id/ExampleTextSignIN"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:text=""
-        android:textAlignment="center"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="12sp"></TextView>
-
 </LinearLayout>
 
     <ProgressBar
