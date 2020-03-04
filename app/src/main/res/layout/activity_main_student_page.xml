@@ -140,20 +140,21 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-        <TextView
-            android:id="@+id/tvAboutStudent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/btnLoadPhotoStudent"
-            android:text="@string/studentInfo"
-            android:textColor="@color/studentInfo"
-            android:textSize="22sp"
-            android:layout_marginStart="10dp" />
 
+    <TextView
+        android:id="@+id/tvAboutStudent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnLoadPhotoStudent"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/studentInfo"
 
-        <TextView
+        android:textSize="22sp" />
+
+    <TextView
             android:id="@+id/tvGroup"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
@@ -318,13 +319,64 @@
         android:paddingEnd="12dp"
         android:layout_toEndOf="@+id/imSendPhotoWall" />
 
+    <RelativeLayout
+        android:id="@+id/LinearLoyoutAboweWall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/lineBelowEtWall"
+        android:layout_above="@+id/bottom_navigation_profile">
+
+
+        <Button
+            android:id="@+id/btnWallNotes"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+
+            android:background="@android:color/white"
+            android:text="@string/btnWallNotes"
+            android:textColor="@android:color/black" />
+
+        <ImageView
+            android:id="@+id/btnWallSearch"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:paddingRight="10dp"
+            android:paddingEnd="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:src="@android:drawable/ic_menu_search"
+            android:background="@drawable/ic_menu_person"
+
+            android:textColor="@android:color/black"
+
+             />
+
+        <TextView
+            android:id="@+id/tvTextWall"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/btnWallNotes"
+            android:gravity="center"
+            android:text="@string/emptyWall"
+            android:background="@color/lines"
+            android:textSize="20sp" />
+
+    </RelativeLayout>
+
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:itemBackground="@color/lines"
+        app:itemBackground="@color/colorAccentWhite"
         app:itemIconTint="@drawable/bottom_navigation_item_background_colors"
         app:itemTextColor="@drawable/bottom_navigation_item_background_colors"
         app:menu="@menu/menu_bottom_navigation" />

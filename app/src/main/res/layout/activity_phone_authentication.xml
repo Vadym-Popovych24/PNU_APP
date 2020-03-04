@@ -35,7 +35,7 @@
 
         app:met_baseColor="#05080A"
         app:met_floatingLabel="highlight"
-        app:met_primaryColor="#C9AEBE"
+        app:met_primaryColor="@color/registeredFormsMet"
         app:met_singleLineEllipsis="true">
 
     </com.rengwuxian.materialedittext.MaterialEditText>
