@@ -187,11 +187,9 @@ public class SignIn extends AppCompatActivity {
                         FBLastName = (String) student.get("lastName");
 
                         Student.student = student;
-                   //      sendCodeVerification();
-                        intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-                        startActivity(intentFromSignIn);
-                        PhoneAuthCredential credential = PhoneAuthProvider.getCredential("001001", "001001");
-                        mAuth.signInWithCredential(credential);
+                         sendCodeVerification();
+                    //    PhoneAuthCredential credential = PhoneAuthProvider.getCredential("001001", "001001");
+                   //     mAuth.signInWithCredential(credential);
                  //       signInWithPhoneAuthCredential(credential);
                         progressBar.setVisibility(View.GONE);
 
@@ -276,6 +274,7 @@ public class SignIn extends AppCompatActivity {
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
             Log.d(TAG, "onVerificationCompleted:" + phoneAuthCredential);
+            signInWithPhoneAuthCredential(phoneAuthCredential);
             // TODO  intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
             //   startActivity(intentFromSignIn);
             // mAuth.signInAnonymously();
@@ -314,7 +313,8 @@ public class SignIn extends AppCompatActivity {
 
                   Toast.makeText(SignIn.this, "SignIn Success",
         Toast.LENGTH_LONG).show();
-
+                intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+                startActivity(intentFromSignIn);
             }
 
 

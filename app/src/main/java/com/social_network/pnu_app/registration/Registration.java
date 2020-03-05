@@ -77,7 +77,7 @@ public class Registration extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     static String KeyStudent ="default";
-    HashMap<Object, Object> student = new HashMap();
+    public  static HashMap<Object, Object> student = new HashMap();
     HashMap<Object, Object> studentByPhone = new HashMap();
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
     private Object Query;
@@ -211,24 +211,25 @@ public class Registration extends AppCompatActivity {
 
                     if (FBverify == true && FBidSerie.equals(valueIDcardField)) {
                         progressBar.setVisibility(View.GONE);
-                        ErrorText = "StudentSqlLite already registered";
+                        ErrorText = "Student already registered";
                         alertErrorReg();
 
                     } else if (!FBidSerie.equals(valueIDcardField)) {
                         progressBar.setVisibility(View.GONE);
-                        ErrorText = "StudentSqlLite with such id series does not exist";
+                        ErrorText = "Student with such id series does not exist";
                         alertErrorReg();
 
                     }
-                    else if (getStudentByPhoneFB() == true){
+                else if (getStudentByPhoneFB() == true){
                         progressBar.setVisibility(View.GONE);
-                        ErrorText = "StudentSqlLite with such phone number already registered";
+                        ErrorText = "Student with such phone number already registered";
                         alertErrorReg();
-                        phoneExist = false;
-                    }
+                        phoneExist = false;   /* TODO if change phone number when user already in Registry pages, phone number isn't updatesand
+                                                         need update pages, maybe resons in listenets */
+                         }
                     else if (FBidSerie.equals(valueIDcardField) && FBverify == false) {
 
-                        valuePassField = encryptionPassword(valuePassField); // TODO this coderow encrypt password in database (comment for example)
+                        valuePassField = encryptionPassword(valuePassField);
 
                         valuePhoneField = valuePhoneField.replaceAll(" ", "");
                         progressBar.setVisibility(View.GONE);
@@ -239,7 +240,7 @@ public class Registration extends AppCompatActivity {
 
                 else{
                     progressBar.setVisibility(View.GONE);
-                    ErrorText = "StudentSqlLite with such id series does not exist";
+                    ErrorText = "Student with such id series does not exist";
                      alertErrorReg();
                 }
 

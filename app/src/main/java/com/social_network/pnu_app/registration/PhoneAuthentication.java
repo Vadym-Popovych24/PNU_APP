@@ -67,12 +67,12 @@ public class PhoneAuthentication extends AppCompatActivity {
         sendCodeVerification();
         verifyCodeSent();
 
-        mAuth.getCurrentUser().getPhoneNumber();
+        //mAuth.getCurrentUser().getPhoneNumber();
 
 
     }
 
-    boolean verfy;
+    boolean verify;
     String password = Registration.valuePassField;
     String phone;
     String uid;
@@ -120,6 +120,7 @@ public class PhoneAuthentication extends AppCompatActivity {
                Log.d(TAG, "onVerificationCompleted:" + phoneAuthCredential);
            // tx.append(" codeSent = " + codeSent);
                 Toast.makeText(PhoneAuthentication.this, "On verification completed, please sign in ", Toast.LENGTH_LONG).show();
+            signInWithPhoneAuthCredential(phoneAuthCredential);
             /*     if (codeSent == null) {
                     Toast.makeText(PhoneAuthentication.this, "Code sent == nul OnVerificationCompleted ", Toast.LENGTH_LONG).show();
                 // THIS METHOD IS AN AUTO SIGN IN , HE CALLS WHEN USER ALREADY GET CODE VERIFY BUT NOT CONFIRM HIS VERIFY CODE
@@ -130,10 +131,10 @@ public class PhoneAuthentication extends AppCompatActivity {
                 // in RealTimeDatabase don't allow do register agen.
 
 
-                verfy = true;
+                verify = true;
                 phone = Registration.valuePhoneField;
                 uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                StudentSqlLite studentValue = new StudentSqlLite(verfy, password, phone, uid);
+                StudentSqlLite studentValue = new StudentSqlLite(verify, password, phone, uid);
 
                 reference.child(Registration.KeyStudent).updateChildren((studentValue.toMapUpdateChild()))
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -232,10 +233,11 @@ public class PhoneAuthentication extends AppCompatActivity {
             Toast.LENGTH_LONG).show();
 */
 
-                    verfy = true;
+                    verify = true;
                     phone = Registration.valuePhoneField;
                     uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    Student studentValue = new Student(verfy, password, phone, uid);
+                    Student studentValue = new Student(credential, verify, password, phone, uid);
+                    Student.student = Registration.student;
 
                     reference.child(Registration.KeyStudent).updateChildren((studentValue.toMapUpdateChild()))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -245,7 +247,7 @@ public class PhoneAuthentication extends AppCompatActivity {
                                     progressBar.setVisibility(View.GONE);
                                     Log.d(TAG, "update RealTime Database Success");
                                     codeSent = null;
-                                    Intent intentFromPhoneAuthentication = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+                                   Intent intentFromPhoneAuthentication = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
                                     startActivity(intentFromPhoneAuthentication);
                                     idVerificationCode.setText("");
 

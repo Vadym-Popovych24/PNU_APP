@@ -48,4 +48,5 @@
 
     <!--Settings-->
     <string name="btnSignOut">Вийти</string>
+    <string name="todo">TODO</string>
 </resources>

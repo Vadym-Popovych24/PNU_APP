@@ -29,11 +29,14 @@ public class Settings extends AppCompatActivity {
         menuChanges(bottomNavigationView);
 
         Button btnSignOut;
+        Button Exit;
         btnSignOut = findViewById(R.id.btnSignOut);
         btnSignOut.setOnClickListener(listenerBtnSignOut);
+        Exit = findViewById(R.id.btnExit);
+        Exit.setOnClickListener(listenerBtnExit);
     }
 
-    public void SignOut(){
+    public void SignOut() {
 
         TextView tvExampleSignOut;
         TextView tvExampleSignOut2;
@@ -43,32 +46,58 @@ public class Settings extends AppCompatActivity {
 
 
         Context context;
-        Intent intentSignOut = new Intent(this, MainActivity.class);
-        intentSignOut.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intentSignOut);
 
-        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 
             tvExampleSignOut.append(FirebaseAuth.getInstance().getCurrentUser().toString());
             FirebaseAuth.getInstance().signOut();
-            tvExampleSignOut2.append(FirebaseAuth.getInstance().getCurrentUser().toString());
-        }
-        else{
-            tvExampleSignOut.append("null");
+            if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                tvExampleSignOut.append("null");
 
-            tvExampleSignOut2.append("null");
+                tvExampleSignOut2.append("null");
+            }
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                tvExampleSignOut.append(FirebaseAuth.getInstance().getCurrentUser().toString());
+                tvExampleSignOut2.append(FirebaseAuth.getInstance().getCurrentUser().toString());
+            }
+            else {
+                tvExampleSignOut.append("null");
+
+                tvExampleSignOut2.append("null");
+            }
+        }
+        else {
+            tvExampleSignOut.append("null");
         }
     }
 
-    View.OnClickListener listenerBtnSignOut = new View.OnClickListener() {
+        View.OnClickListener listenerBtnSignOut = new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (v.getId() == R.id.btnSignOut) {
+                    SignOut();
+                }
+            }
+        };
+
+    View.OnClickListener listenerBtnExit = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            if(v.getId() == R.id.btnSignOut){
-                SignOut();
+            if (v.getId() == R.id.btnExit) {
+                Exit();
             }
         }
     };
+
+    private void Exit() {
+        FirebaseAuth.getInstance().signOut();
+        Intent intentSignOut = new Intent(this, MainActivity.class);
+        intentSignOut.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intentSignOut);
+    }
+
 
     public void menuChanges(BottomNavigationView bottomNavigationView){
 

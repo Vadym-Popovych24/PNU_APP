@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/rlActivityMain"
 
     tools:context=".activity.MainActivity">
 
@@ -46,24 +47,43 @@
         android:layout_centerHorizontal="true"
         android:background="@drawable/logo_pnu"/>
 
+    <Button
+        android:id="@+id/btnGetCurrentUser"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logoPNU"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="6dp"
+        android:layout_marginRight="6dp"
+        android:background="@drawable/btn_register"
+        android:paddingStart="0dp"
+        android:paddingLeft="0dp"
+        android:paddingEnd="10dp"
+        android:paddingRight="1dp"
+        android:text="Get Curren tUser"
+        android:textColor="@android:color/white" />
+
     <TextView
         android:id="@+id/text_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/btnGetCurrentUser"
+        android:layout_alignParentBottom="false"
+        android:layout_centerHorizontal="false"
         android:layout_marginBottom="20dp"
-        android:text=""
+        android:text="GetCurrentUser = "
+        android:background="@color/btn_register"
         android:textColor="@color/text_bottom"
-        android:textSize="12sp"
+        android:textSize="16sp"
         app:fontFamily="@font/montserrat" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/text_bottom"
-        android:layout_margin="15dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginBottom="45dp"
+        android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:weightSum="2">
 
