@@ -156,7 +156,7 @@ public class SignIn extends AppCompatActivity {
                 FBid = student.get("id");
                 FBphone = (String) student.get("phone");
                 Registration encrypt = new Registration();
-                valuePassField = encrypt.encryptionPassword(valuePassField); // TODO this coderow encrypt password in database (comment for example)
+                valuePassField = encrypt.encryptionPassword(valuePassField);
 
                 try {
                     FBverify = (boolean) student.get("verify");
@@ -200,7 +200,6 @@ public class SignIn extends AppCompatActivity {
                     alertErrorSign();
                 }
 
-                // TODO sign in
 
             }
             @Override
@@ -275,14 +274,9 @@ public class SignIn extends AppCompatActivity {
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
             Log.d(TAG, "onVerificationCompleted:" + phoneAuthCredential);
             signInWithPhoneAuthCredential(phoneAuthCredential);
-            // TODO  intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-            //   startActivity(intentFromSignIn);
+
             // mAuth.signInAnonymously();
 
-
-          Toast.makeText(SignIn .this,"On verification completed, please sign in ",Toast.LENGTH_LONG).
-
-        show();
         // THIS METHOD IS AN AUTO SIGN IN , HE CALLS WHEN USER ALREADY GET CODE VERIFY BUT NOT CONFIRM HIS VERIFY CODE
     }
 
@@ -291,7 +285,8 @@ public class SignIn extends AppCompatActivity {
         public void onVerificationFailed(@NonNull FirebaseException e) {
             progressBar.setVisibility(View.GONE);
             Log.w(TAG, "onVerificationFailed", e.fillInStackTrace());
-            ErrorText = "On Verification Sending SMS Failed! You are often do requests due to unusual activity and was blocked. Try Later! After 4 hours" ;
+            ErrorText = "On Verification Sending SMS Failed! You are often do requests due to unusual activity" +
+                    " and was blocked. Try Later! After 4 hours" ; // TODO change text
             alertErrorSign();
         }
 
@@ -311,7 +306,7 @@ public class SignIn extends AppCompatActivity {
                 // Sign in success, update UI with the signed-in user's information
                 Log.d(TAG, "signInWithCredential:success");
 
-                  Toast.makeText(SignIn.this, "SignIn Success",
+                  Toast.makeText(SignIn.this, " Verification automatically completed! SignIn Success",
         Toast.LENGTH_LONG).show();
                 intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
                 startActivity(intentFromSignIn);
@@ -332,7 +327,7 @@ public class SignIn extends AppCompatActivity {
                 else {
                     ErrorText = "Registration failure incorrect verification code or problem with sending response. " +
                             "To solve this problem verify that the verification code, which you get in SMS,  inputted correct." +
-                            " If code verification, inputted correct you need restart your phone and repeat registration.";
+                            " If code verification, inputted correct you need restart your phone and repeat registration."; // TODO change text
                     alertErrorSign();
                 }
             }

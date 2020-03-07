@@ -116,56 +116,8 @@ public class PhoneAuthentication extends AppCompatActivity {
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
 
-
                Log.d(TAG, "onVerificationCompleted:" + phoneAuthCredential);
-           // tx.append(" codeSent = " + codeSent);
                 Toast.makeText(PhoneAuthentication.this, "On verification completed, please sign in ", Toast.LENGTH_LONG).show();
-            signInWithPhoneAuthCredential(phoneAuthCredential);
-            /*     if (codeSent == null) {
-                    Toast.makeText(PhoneAuthentication.this, "Code sent == nul OnVerificationCompleted ", Toast.LENGTH_LONG).show();
-                // THIS METHOD IS AN AUTO SIGN IN , HE CALLS WHEN USER ALREADY GET CODE VERIFY BUT NOT CONFIRM HIS VERIFY CODE
-
-                // This case almost unreal but, I add this code for better works app. But student can
-                // sign in a MainStudentPage without confirms verify code it happend if he gets code verify earlier but not confirm it
-                // and it is norm. If user input phone number which he previously ones use, verifing methods and setters phone number
-                // in RealTimeDatabase don't allow do register agen.
-
-
-                verify = true;
-                phone = Registration.valuePhoneField;
-                uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                StudentSqlLite studentValue = new StudentSqlLite(verify, password, phone, uid);
-
-                reference.child(Registration.KeyStudent).updateChildren((studentValue.toMapUpdateChild()))
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                progressBar.setVisibility(View.GONE);
-                                Log.d(TAG, "update RealTime Database Success");
-                                Intent intentFromPhoneAuthentication = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-                                startActivity(intentFromPhoneAuthentication);
-                                idVerificationCode.setText("");
-                            }
-
-
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        progressBar.setVisibility(View.GONE);
-                        //display a failure message in logs
-                        Log.w(TAG, "update RealTimeDatabase:failure", e.fillInStackTrace());
-                        ErrorText = "Registration not success, check your internet connection and try again";
-                        alertErrorPhoneAuthentication();
-                        //  Toast.makeText(PhoneAuthentication.this, "Registration not success, check your internet" +
-                        //          " connection and try again ", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }*/
-         /*   else{
-                ErrorText = "On Verification Failed, You already registered! just Sign In";
-                alertErrorPhoneAuthentication();
-            }*/
 
         }
 
