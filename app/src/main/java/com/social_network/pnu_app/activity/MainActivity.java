@@ -27,12 +27,10 @@ public class MainActivity extends AppCompatActivity {
     private Button btnRegistration;
     private static int buttonCounter;
 
-    Button btnGetCurrentUser;
-    TextView bottomText;
+
     private RelativeLayout rlActivityMain;
 
     private static final String TAG = MainActivity.class.getName();
-    private View clickHereBtn;
 
 
     @Override
@@ -60,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         rlActivityMain = findViewById(R.id.rlActivityMain);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null &&
+                checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false) {
       //  if(!true){ // TODO change on codeLine above
             rlActivityMain = findViewById(R.id.rlActivityMain);
             Intent intentFromMainActivity;
@@ -90,6 +89,19 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     } */
 
+    public boolean checkNullCurrentStudent(final AppDatabase db){
+        boolean nullCurrentStudent;
+        return nullCurrentStudent =(db.studentDao().getCurrentStudent() ) == null ? true : false;
+    }
+
+  public void setNullCurrentStudent(final AppDatabase db){
+      if(db.studentDao().getCurrentStudent() != null) {
+
+          db.studentDao().updateCurrentStudent(Integer.parseInt(db.studentDao().getCurrentStudent()));
+      }
+
+  }
+
     public static void plusCounter(){
         buttonCounter++;
     }
@@ -99,8 +111,6 @@ public class MainActivity extends AppCompatActivity {
         btnMainSignIn = findViewById(R.id.btnMainSignIn);
         btnRegistration = findViewById(R.id.btnRegister);
 
-      //  bottomText = findViewById(R.id.text_bottom);
-       // btnGetCurrentUser = findViewById(R.id.btnGetCurrentUser);
 
         View.OnClickListener listener = new View.OnClickListener(){
             @Override
@@ -108,10 +118,12 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent;
                 switch(view.getId()){
                     case R.id.btnMainSignIn:
+                        setNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this));
                         intent = new Intent( "com.social_network.pnu_app.signin.SignIn");
                         startActivity(intent);
                         break;
                     case R.id.btnRegister:
+                        setNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this));
                         if (buttonCounter == 0){
                             plusCounter();
                      //    MigrationToSQLITE.addDatatoSqliteFromFirebase(AppDatabase.getAppDatabase(MainActivity.this));
@@ -119,27 +131,6 @@ public class MainActivity extends AppCompatActivity {
                         intent = new Intent( "com.social_network.pnu_app.registration.Registration");
                         startActivity(intent);
                         break;
-               /*     case R.id.btnGetCurrentUser:
-
-                        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
-
-                            bottomText.append(FirebaseAuth.getInstance().getCurrentUser().toString());
-                            bottomText.append(" " + FirebaseAuth.getInstance().getCurrentUser().getUid());
-                            FirebaseAuth.getInstance().signOut();
-                            if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-                                bottomText.append("null");
-                            }
-                            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                                bottomText.append(FirebaseAuth.getInstance().getCurrentUser().toString());
-                            }
-                        }
-                        else{
-                            bottomText.append("null");
-                        }
-                        break;
-*/
-
-
                 }
             }
 
@@ -149,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
 
         btnMainSignIn.setOnClickListener(listener);
         btnRegistration.setOnClickListener(listener);
-    //    btnGetCurrentUser.setOnClickListener(listener);
 
 
 

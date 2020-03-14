@@ -65,6 +65,14 @@ public class SignIn extends AppCompatActivity {
     public String FBpassword = "1";
     public String FBemail = "";
     public String FBphone = "";
+
+    public String FBpatronym;
+    public String FBfaculty;
+    public String FBgroup;
+    public String FBdateOfEntry;
+    public String FBformStudying;
+
+
     public static int FBid = 0;
     public String FBName;
     public String FBLastName;
@@ -143,12 +151,20 @@ public class SignIn extends AppCompatActivity {
 
                 }
 
+                FBName = (String) student.get("name");
+                FBLastName = (String) student.get("lastName");
                 FBidSerie = (String) student.get("seriesIDcard");
                 FBpassword = (String) student.get("password");
                 FBid = Integer.parseInt(student.get("id").toString());
                 FBphone = (String) student.get("phone");
                 Registration encrypt = new Registration();
                 valuePassField = encrypt.encryptionPassword(valuePassField);
+
+               FBpatronym = (String) student.get("patronym");
+               FBfaculty = (String) student.get("faculty");
+               FBgroup = (String) student.get("group");
+               FBdateOfEntry = (String) student.get("dateOfEntry");
+               FBformStudying = (String) student.get("formStudying");
 
                 try {
                     FBverify = (boolean) student.get("verify");
@@ -175,8 +191,17 @@ public class SignIn extends AppCompatActivity {
 
 
                     if (FBverify == true && FBidSerie.equals(valueIDcardField) && FBpassword.equals(valuePassField)) {
-                        FBName = (String) student.get("name");
-                        FBLastName = (String) student.get("lastName");
+
+                   /*   Student.student = student;
+                        Student studentSQLite = new Student(valueIDcardField, FBName, FBLastName,FBid , FBemail, FBpassword,
+                                FBphone, KeyStudent, FBverify, FBpatronym, FBfaculty, FBgroup, FBdateOfEntry, FBformStudying);
+                        studentSQLite.synchronizationSQLiteSignIn(AppDatabase.getAppDatabase(SignIn.this));
+                        /////////////////
+
+
+                        intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+                        startActivityForResult(intentFromSignIn,1);
+                        progressBar.setVisibility(View.GONE);*/
 
                         sendCodeVerification();  // TODO розкоментувати рядок
 
@@ -248,7 +273,7 @@ public class SignIn extends AppCompatActivity {
 
     public void sendCodeVerification(){
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                Student.student.get("phone").toString(),        // Phone number to verify
+                FBphone,                              // Phone number to verify
                 60,                               // Timeout duration
                 TimeUnit.SECONDS,                     // Unit of timeout
                 this,                          // Activity (for callback binding)
@@ -297,9 +322,8 @@ public class SignIn extends AppCompatActivity {
         Toast.LENGTH_LONG).show();
                 Student.student = student;
                 Student studentSQLite = new Student(valueIDcardField, FBName, FBLastName,FBid , FBemail, FBpassword,
-                        FBphone,FBverify, KeyStudent);
-                Student synchron = new Student();
-                synchron.synchronizationSQLiteSignIn(AppDatabase.getAppDatabase(SignIn.this));
+                        FBphone, KeyStudent, FBverify, FBpatronym, FBfaculty, FBgroup, FBdateOfEntry, FBformStudying);
+                studentSQLite.synchronizationSQLiteSignIn(AppDatabase.getAppDatabase(SignIn.this));
                 /////////////////
 
 

@@ -30,6 +30,12 @@ public class Student {
     public String phone;
     public boolean verify;
     public String uid;
+
+    public String patronym;
+    String faculty;
+    String group;
+    String dateOfEntry;
+    String formStudying;
     PhoneAuthCredential credentiall;
 
     AppDatabase StudentDatabase;
@@ -40,10 +46,11 @@ public class Student {
         this.seriesIDcard = seriesIDcard;
     }
 
-    public Student(String seriesIDcard2, String name, String lastName, int id, String email,
-            String password,String phone, boolean verify, String uid){
+    public Student(String seriesIDcard, String name, String lastName, int id, String email,
+                   String password,String phone, String uid, boolean verify, String patronym, String faculty,
+                   String group, String dateOfEntry, String formStudying){
 
-        seriesIDcard = seriesIDcard2;
+        this.seriesIDcard = seriesIDcard;
         this.name = name;
         this.lastName = lastName;
         this.id = id;
@@ -52,6 +59,11 @@ public class Student {
         this.phone = phone;
         this.verify = verify;
         this.uid = uid;
+        this.patronym = patronym;
+        this.faculty = faculty;
+        this.group = group;
+        this.dateOfEntry = dateOfEntry;
+        this.formStudying = formStudying;
 
     }
 
@@ -108,35 +120,34 @@ public class Student {
 
     public void updateStudetnSQLite(){
         StudentDatabase.studentDao().updateAllField(
-                student.get("seriesIDcard").toString(),
-                student.get("name").toString(),
-                student.get("lastName").toString(),
-                Integer.parseInt(student.get("id").toString()),
-                student.get("email").toString(),
-                student.get("password").toString(),
-                student.get("phone").toString(),
-                student.get("uid").toString(),
-                (Boolean) student.get("verify")
+                seriesIDcard,
+                name,
+                lastName,
+                id,
+                email,
+                password,
+                phone,
+                uid,
+                verify
                 );
     }
-
     public void setStudentSQLite(){
 
-        studentLocalSet.setSeriesIDcard(student.get("seriesIDcard").toString());
-        studentLocalSet.setFirstName(student.get("name").toString());
-        studentLocalSet.setLastName(student.get("lastName").toString());
-        studentLocalSet.setUid(Integer.parseInt(student.get("id").toString()));
-        studentLocalSet.setEmail(student.get("email").toString());
-        studentLocalSet.setPassword(student.get("password").toString());
-        studentLocalSet.setPhone(student.get("phone").toString());
-        studentLocalSet.setKeyFireBase(student.get("uid").toString());
-        studentLocalSet.setVerify(Boolean.parseBoolean(student.get("verify").toString()));
+        studentLocalSet.setSeriesIDcard(seriesIDcard);
+        studentLocalSet.setFirstName(name);
+        studentLocalSet.setLastName(lastName);
+        studentLocalSet.setUid(id);
+        studentLocalSet.setEmail(email);
+        studentLocalSet.setPassword(password);
+        studentLocalSet.setPhone(phone);
+        studentLocalSet.setKeyFireBase(uid);
+        studentLocalSet.setVerify(verify);
 
-        studentLocalSet.setPatronym(student.get("patronym").toString());
-        studentLocalSet.setFaculty(student.get("faculty").toString());
-        studentLocalSet.setGroupStudent(student.get("group").toString());
-        studentLocalSet.setDateOfEntry(student.get("dateOfEntry").toString());
-        studentLocalSet.setFormStudying(student.get("formStudying").toString());
+        studentLocalSet.setPatronym(patronym);
+        studentLocalSet.setFaculty(faculty);
+        studentLocalSet.setGroupStudent(group);
+        studentLocalSet.setDateOfEntry(dateOfEntry);
+        studentLocalSet.setFormStudying(formStudying);
 
         studentLocalSet.setCurrentStudent(student.get("id").toString());
 
