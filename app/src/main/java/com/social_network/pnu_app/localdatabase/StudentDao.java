@@ -59,6 +59,7 @@ public interface StudentDao {
     @Query("SELECT u_id  FROM student WHERE seriesIDcard = :seriesIDcard")
     int getIdstudentByIDcard(String seriesIDcard);
 
+
     @Query("SELECT u_id  FROM student WHERE password = :password AND u_id =:idSeriesIDCard")
     int getIdstudentByIDPassword(String password, int idSeriesIDCard);
 

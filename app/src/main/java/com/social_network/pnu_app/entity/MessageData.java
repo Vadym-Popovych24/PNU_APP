@@ -1,4 +1,4 @@
-package com.social_network.pnu_app.pages;
+package com.social_network.pnu_app.entity;
 
 import java.util.Date;
 

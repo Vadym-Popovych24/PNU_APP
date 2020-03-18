@@ -12,7 +12,6 @@ import android.widget.Button;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.social_network.pnu_app.R;
-import com.social_network.pnu_app.activity.MainActivity;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
 
 public class Settings extends AppCompatActivity {
