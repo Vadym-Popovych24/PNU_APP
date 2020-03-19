@@ -10,8 +10,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,7 +25,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.storage.FileDownloadTask;
@@ -39,8 +36,8 @@ import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.Student;
 import com.social_network.pnu_app.firebase.QueriesFirebase;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
+import com.social_network.pnu_app.network.NetworkStatus;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +52,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
 
-public class MainStudentPage extends AppCompatActivity {
+public class MainStudentPage extends AppCompatActivity{
 
     TextView tvPIBvalue;
     TextView tvFacultyValue;
@@ -67,10 +64,11 @@ public class MainStudentPage extends AppCompatActivity {
     private FirebaseAnalytics mFirebaseAnalytics;
 
     public static HashMap<Object, Object> studentData = new HashMap();
+    public static Context contextMainStudentPage;
 
-    private CircleImageView imStudentMainPhoto;
+    public CircleImageView imStudentMainPhoto;
 
-    private ImageView imSendPhotoWall;
+    public ImageView imSendPhotoWall;
 
     private Button btnAddPicture;
 
@@ -78,21 +76,23 @@ public class MainStudentPage extends AppCompatActivity {
 
     private String mImageUri = "";
 
-    private String mRereference = "";
+    public String mRereference = "";
 
     private EmojiconEditText emojiconEditText;
 
-    String SeriesIDCard;
-    String nameFileFirebase = "MainStudentPhoto";
+   public String SeriesIDCard;
+   public String nameFileFirebase = "MainStudentPhoto";
+   public String dirImages = "images/";
+   public String pathToFirebaseStorage;
 
 
     private static final int REQUEST_CODE_PERMISSION_RECEIVE_CAMERA = 102;
     private static final int REQUEST_CODE_TAKE_PHOTO = 103;
 
 
-   static File finalLocalFile;
+  public static Uri finalLocalFile;
 
-    private StorageReference mStorageRef;
+    public StorageReference mStorageRef;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -108,76 +108,80 @@ public class MainStudentPage extends AppCompatActivity {
         tvFormStudyingValue = findViewById(R.id.tvFormStudyingValue);
         btnLoadPhotoStudent.setOnClickListener(listenerBtnLoapPhotoStudent);
         //    emojiconEditText = findViewById(R.id.editTextWall);
-
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation_profile);
+        bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
+        menuChanges(bottomNavigationView);
         BuildStudentPage(AppDatabase.getAppDatabase(MainStudentPage.this));
         imStudentMainPhoto = (CircleImageView) findViewById(R.id.imStudentMainPhoto);
         imSendPhotoWall = (ImageView) findViewById(R.id.imSendPhotoWall);
         btnAddPicture = (Button) findViewById(R.id.btnLoadPhotoStudent);
 
-
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)
-                findViewById(R.id.bottom_navigation_profile);
-        bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
-
-        menuChanges(bottomNavigationView);
-
+       loadPhoto();
         // btnAddPicture.setOnClickListener((View.OnClickListener) this);
+    }
+    File localFile = null;
 
-        File localFile = null;
+    public void loadPhoto(){
+
+        System.out.println("CURRENT THREAD FROM LOADPHOTO = " + Thread.currentThread().getName());
 
         mRereference = getIntent().getStringExtra("Reference");
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
-        nameFileFirebase+=SeriesIDCard;
+        pathToFirebaseStorage= dirImages+SeriesIDCard+"/";
 
-        try {
 
         if (finalLocalFile == null) {
 
-
+            try {
                 localFile = createTempImageFile(getExternalCacheDir());
-                finalLocalFile = localFile;
-                mStorageRef.child(SeriesIDCard += "/" + nameFileFirebase).getFile(finalLocalFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-
-                        Picasso.with(getBaseContext())
-                                .load(finalLocalFile)
-                                .placeholder(R.drawable.logo_pnu)
-                                .error(R.mipmap.ic_error2)
-                                .centerCrop()
-                                .fit()
-                                //.resize(1920,2560)
-                                .into(imSendPhotoWall);
-
-                        Toast.makeText(MainStudentPage.this, "Succes get photo from FirebaseStorage onCreate " + finalLocalFile,
-                                Toast.LENGTH_LONG).show();
-
-                        Picasso.with(getBaseContext())
-                                .load(finalLocalFile)
-                                .placeholder(R.drawable.logo_pnu)
-                                .error(R.mipmap.ic_error2)
-                                .centerCrop()
-                                .fit()
-                                // .resize(1920,2560)
-                                .into(imStudentMainPhoto);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i("Load", "" + e);
-
-                        Toast.makeText(MainStudentPage.this, "Not Succes get photo from FirebaseStorage onCreate",
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
+            finalLocalFile = Uri.fromFile(localFile);
+           mStorageRef.child(pathToFirebaseStorage + nameFileFirebase).getFile(finalLocalFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+
+                    Picasso.with(getBaseContext())
+                            .load(finalLocalFile)
+                            .placeholder(R.drawable.logo_pnu)
+                            .error(R.mipmap.ic_error2)
+                            .centerCrop()
+                            .fit()
+                            //.resize(1920,2560)
+                            .into(imSendPhotoWall);
+
+                    Toast.makeText(MainStudentPage.this, "Succes get photo from FirebaseStorage onCreate " + finalLocalFile,
+                            Toast.LENGTH_LONG).show();
+
+                    Picasso.with(getBaseContext())
+                            .load(finalLocalFile)
+                            .placeholder(R.drawable.logo_pnu)
+                            .error(R.mipmap.ic_error2)
+                            .centerCrop()
+                            .fit()
+                            // .resize(1920,2560)
+                            .into(imStudentMainPhoto);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.i("Load", "" + e);
+
+                    Toast.makeText(MainStudentPage.this, "Not Succes get photo from FirebaseStorage onCreate",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
         else{
             Picasso.with(getBaseContext())
                     .load(finalLocalFile)
                     .placeholder(R.drawable.logo_pnu)
                     .error(R.mipmap.ic_error2)
-                    .centerCrop()
+                    .centerInside()
                     .fit()
                     //.resize(1920,2560)
                     .into(imSendPhotoWall);
@@ -189,15 +193,15 @@ public class MainStudentPage extends AppCompatActivity {
                     .load(finalLocalFile)
                     .placeholder(R.drawable.logo_pnu)
                     .error(R.mipmap.ic_error2)
-                    .centerCrop()
+                    .centerInside()
                     .fit()
                     // .resize(1920,2560)
                     .into(imStudentMainPhoto);
         }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
+
+
 
     QueriesFirebase qfd = new QueriesFirebase();
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -212,8 +216,8 @@ public class MainStudentPage extends AppCompatActivity {
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
         studentData = Student.student;
 
-        tvPIBvalue.setText(db.studentDao().getFirstNameById(currentStudent) + " " +
-                db.studentDao().getLastNameById(currentStudent) + " " +
+        tvPIBvalue.setText(db.studentDao().getLastNameById(currentStudent) + " " +
+                db.studentDao().getFirstNameById(currentStudent) + " " +
                 db.studentDao().getPatronymById(currentStudent));
 
         tvFacultyValue.setText(" " + db.studentDao().getFacultyById(currentStudent));
@@ -372,13 +376,14 @@ public class MainStudentPage extends AppCompatActivity {
                 if(resultCode == RESULT_OK) {
                     if (data != null && data.getData() != null) {
                         mImageUri = getRealPathFromURI(data.getData());
-                        Toast.makeText(MainStudentPage.this, "onActivityResult " + Uri.fromFile(finalLocalFile).getUserInfo(),
+                        finalLocalFile = data.getData();
+                        Toast.makeText(MainStudentPage.this, "onActivityResult " + finalLocalFile,
                                 Toast.LENGTH_LONG).show();
                         Picasso.with(getBaseContext())
                                 .load(data.getData())
                                 .placeholder(R.drawable.logo_pnu)
                                 .error(R.drawable.com_facebook_close)
-                                .centerCrop()
+                                .centerInside()
                                 .fit()
                               //  .resize(100,100)
                                 .into(imSendPhotoWall);
@@ -387,7 +392,7 @@ public class MainStudentPage extends AppCompatActivity {
                                 .load(data.getData())
                                 .placeholder(R.drawable.logo_pnu)
                                 .error(R.drawable.com_facebook_close)
-                                .centerCrop()
+                                .centerInside()
                                 .fit()
                            //     .resize(1920,2560)
                                 .into(imStudentMainPhoto);
@@ -395,14 +400,14 @@ public class MainStudentPage extends AppCompatActivity {
                         uploadFileInFireBaseStorage(data.getData());
                     } else if (mImageUri != null) {
                         mImageUri = Uri.fromFile(mTempPhoto).toString();
-                        Toast.makeText(MainStudentPage.this, "onActivityResult 2" + Uri.fromFile(finalLocalFile).getUserInfo(),
+                        Toast.makeText(MainStudentPage.this, "onActivityResult 2" + finalLocalFile,
                                 Toast.LENGTH_LONG).show();
                         uploadFileInFireBaseStorage(Uri.fromFile((mTempPhoto)));
                         Picasso.with(this)
                                 .load(mImageUri)
                                 .placeholder(R.drawable.logo_pnu)
                                 .error(R.drawable.com_facebook_tooltip_black_xout)
-                                .centerCrop()
+                                .centerInside()
                                 .fit()
                            //     .resize(100,100)
                                 .into(imSendPhotoWall);
@@ -411,7 +416,7 @@ public class MainStudentPage extends AppCompatActivity {
                                 .load(data.getData())
                                 .error(R.drawable.com_facebook_tooltip_black_xout)
                                 .placeholder(R.drawable.logo_pnu)
-                                .centerCrop()
+                                .centerInside()
                                 .fit()
                              //   .resize(100,100)
                                 .into(imStudentMainPhoto);
@@ -424,7 +429,7 @@ public class MainStudentPage extends AppCompatActivity {
     }
 
     public void uploadFileInFireBaseStorage (Uri uri){
-        UploadTask uploadTask = mStorageRef.child(SeriesIDCard+="/").putFile(uri);
+        UploadTask uploadTask = mStorageRef.child(pathToFirebaseStorage + nameFileFirebase).putFile(uri);
         uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
@@ -444,10 +449,20 @@ public class MainStudentPage extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            if(v.getId() == R.id.btnLoadPhotoStudent){
-                addPhoto();
+            if(v.getId() == R.id.btnLoadPhotoStudent) {
+                NetworkStatus network = new NetworkStatus();
+                if (!network.isOnline()) {
+                    // progressBar.setVisibility(View.GONE);
+                    Toast.makeText(MainStudentPage.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    addPhoto();
+                }
             }
         }
     };
 
+
 }
+
+
