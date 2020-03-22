@@ -5,7 +5,8 @@
     android:id="@+id/rlMessenger"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".pages.Messenger">
+    tools:context=".pages.Messenger"
+    android:background="@color/backgroundStudentMainPage">
 
     <TextView
         android:id="@+id/tvMessenger"

@@ -49,4 +49,12 @@
     <!--Settings-->
     <string name="btnSignOut">Вийти</string>
     <string name="todo">TODO</string>
+
+    <!--Friends-->
+    <string name="Friends">Друзі</string>
+    <string name="Users">Користувачі</string>
+    <string name="SearchPeople">Пошук</string>
+    <string name="SearchFriend">Пошук друзів</string>
+    <string name="StudentName">Ім\'я</string>
+    <string name="StudentStatus">Статус</string>
 </resources>

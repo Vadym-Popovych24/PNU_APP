@@ -192,7 +192,8 @@ public class SignIn extends AppCompatActivity {
 
                     if (FBverify == true && FBidSerie.equals(valueIDcardField) && FBpassword.equals(valuePassField)) {
 
-                   /*   Student.student = student;
+                   // TODO акоментувати до sendCodeVerification();
+                     Student.student = student;
                         Student studentSQLite = new Student(valueIDcardField, FBName, FBLastName,FBid , FBemail, FBpassword,
                                 FBphone, KeyStudent, FBverify, FBpatronym, FBfaculty, FBgroup, FBdateOfEntry, FBformStudying);
                         studentSQLite.synchronizationSQLiteSignIn(AppDatabase.getAppDatabase(SignIn.this));
@@ -201,9 +202,9 @@ public class SignIn extends AppCompatActivity {
 
                         intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
                         startActivityForResult(intentFromSignIn,1);
-                        progressBar.setVisibility(View.GONE);*/
+                        progressBar.setVisibility(View.GONE);
 
-                        sendCodeVerification();  // TODO розкоментувати рядок
+                 //       sendCodeVerification();  // TODO розкоментувати рядок
 
                     }
                 } else {

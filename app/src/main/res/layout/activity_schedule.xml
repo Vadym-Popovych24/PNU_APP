@@ -5,7 +5,8 @@
     android:id="@+id/rlSchedule"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".pages.Schedule">
+    tools:context=".pages.Schedule"
+    android:background="@color/backgroundStudentMainPage">
 
     <TextView
         android:id="@+id/tvSchedule"

@@ -61,6 +61,7 @@ public class MainStudentPage extends AppCompatActivity{
     TextView tvFormStudyingValue;
 
     Button btnLoadPhotoStudent;
+    Button btnlistFriends;
     private FirebaseAnalytics mFirebaseAnalytics;
 
     public static HashMap<Object, Object> studentData = new HashMap();
@@ -101,12 +102,15 @@ public class MainStudentPage extends AppCompatActivity{
         setContentView(R.layout.activity_main_student_page);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         btnLoadPhotoStudent = findViewById(R.id.btnLoadPhotoStudent);
+        btnlistFriends = findViewById(R.id.btnListFriends);
+
         tvPIBvalue = findViewById(R.id.tvPIBvalue);
         tvFacultyValue = findViewById(R.id.tvFacultyValue);
         tvGroupValue = findViewById(R.id.tvGroupValue);
         tvDateOfEntryValue = findViewById(R.id.tvDateOfEntryValue);
         tvFormStudyingValue = findViewById(R.id.tvFormStudyingValue);
-        btnLoadPhotoStudent.setOnClickListener(listenerBtnLoapPhotoStudent);
+        btnLoadPhotoStudent.setOnClickListener(btnlistener);
+        btnlistFriends.setOnClickListener(btnlistener);
         //    emojiconEditText = findViewById(R.id.editTextWall);
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation_profile);
@@ -445,11 +449,13 @@ public class MainStudentPage extends AppCompatActivity{
         });
     }
 
-    View.OnClickListener listenerBtnLoapPhotoStudent = new View.OnClickListener() {
+    View.OnClickListener btnlistener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            if(v.getId() == R.id.btnLoadPhotoStudent) {
+            switch (v.getId()) {
+                case R.id.btnLoadPhotoStudent:
+
                 NetworkStatus network = new NetworkStatus();
                 if (!network.isOnline()) {
                     // progressBar.setVisibility(View.GONE);
@@ -458,6 +464,13 @@ public class MainStudentPage extends AppCompatActivity{
                 } else {
                     addPhoto();
                 }
+                    break;
+                case R.id.btnListFriends:
+
+                Intent intentlistMyFriends;
+                intentlistMyFriends = new Intent( "com.social_network.pnu_app.pages.Friends");
+                startActivity(intentlistMyFriends);
+                    break;
             }
         }
     };

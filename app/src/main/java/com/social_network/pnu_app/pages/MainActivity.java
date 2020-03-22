@@ -56,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         rlActivityMain = findViewById(R.id.rlActivityMain);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null &&
-                checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false) {
-      //  if(!true){ // TODO change on codeLine above
+      //  if (FirebaseAuth.getInstance().getCurrentUser() != null &&
+        //        checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false) {
+        if(checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false){ // TODO change on codeLine above
             rlActivityMain = findViewById(R.id.rlActivityMain);
             Intent intentFromMainActivity;
             intentFromMainActivity = new Intent("com.social_network.pnu_app.pages.MainStudentPage");

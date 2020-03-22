@@ -5,7 +5,8 @@
     android:id="@+id/rlSearch"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".pages.Search">
+    tools:context=".pages.Search"
+    android:background="@color/backgroundStudentMainPage">
 
     <TextView
         android:id="@+id/tvSearch"

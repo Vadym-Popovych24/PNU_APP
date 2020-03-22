@@ -19,7 +19,26 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".pages.Message"
+        <activity android:name=".pages.FindNewFriends"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="com.social_network.pnu_app.pages.FindNewFriends" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".pages.Friends"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="com.social_network.pnu_app.pages.Friends" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".pages.Message"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="com.social_network.pnu_app.pages.Message" />
@@ -27,7 +46,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".pages.Settings"
             android:theme="@style/AppTheme.NoActionBar">
@@ -103,8 +121,9 @@
         </activity>
         <activity android:name=".pages.MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"
-                    android:label=""/>
+                <action
+                    android:name="android.intent.action.MAIN"
+                    android:label="" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>

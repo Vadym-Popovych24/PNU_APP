@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".pages.Message"
     android:id="@+id/rlMessenger"
-    android:background="@color/colorBackGround">
+    android:background="@color/backgroundStudentMainPage">
 
     <ImageView
         android:id="@+id/emoji_button"
