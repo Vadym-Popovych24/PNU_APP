@@ -30,6 +30,7 @@ public class Student {
     public String phone;
     public boolean verify;
     public String uid;
+    public String linkFirebaseStorageMainPhoto;
 
     public String patronym;
     String faculty;
@@ -46,9 +47,10 @@ public class Student {
         this.seriesIDcard = seriesIDcard;
     }
 
+
     public Student(String seriesIDcard, String name, String lastName, int id, String email,
                    String password,String phone, String uid, boolean verify, String patronym, String faculty,
-                   String group, String dateOfEntry, String formStudying){
+                   String group, String dateOfEntry, String formStudying, String linkFirebaseStorageMainPhoto){
 
         this.seriesIDcard = seriesIDcard;
         this.name = name;
@@ -64,6 +66,7 @@ public class Student {
         this.group = group;
         this.dateOfEntry = dateOfEntry;
         this.formStudying = formStudying;
+        this.linkFirebaseStorageMainPhoto = linkFirebaseStorageMainPhoto;
 
     }
 
@@ -76,6 +79,11 @@ public class Student {
 
     }
 
+
+    public Student(String linkFirebaseStorageMainPhoto, String emptyParametr){
+        this.linkFirebaseStorageMainPhoto = linkFirebaseStorageMainPhoto;
+    }
+
     public Map<String, Object> toMapUpdateChild(){
         HashMap<String, Object> MapDatabase = new HashMap<>();
         MapDatabase.put("verify",verify);
@@ -83,6 +91,12 @@ public class Student {
         MapDatabase.put("uid", uid);
         MapDatabase.put("phone", phone);
 
+        return MapDatabase;
+    }
+
+    public Map<String, Object> toMapUpdatelinkFirebaseStorageMainPhoto(){
+        HashMap<String, Object> MapDatabase = new HashMap<>();
+        MapDatabase.put("linkFirebaseStorageMainPhoto",linkFirebaseStorageMainPhoto);
         return MapDatabase;
     }
 
@@ -98,6 +112,12 @@ public class Student {
         MapDatabase.put("phone", phone);
         MapDatabase.put("uid", uid);
         MapDatabase.put("verify",verify);
+        MapDatabase.put("patronym",patronym);
+        MapDatabase.put("faculty",faculty);
+        MapDatabase.put("group",group);
+        MapDatabase.put("dateOfEntry",dateOfEntry);
+        MapDatabase.put("formStudying",formStudying);
+        MapDatabase.put("linkFirebaseStorageMainPhoto",linkFirebaseStorageMainPhoto);
 
         return MapDatabase;
     }

@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.social_network.pnu_app.R;
+import com.social_network.pnu_app.firebase.QueriesFirebase;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
 import com.social_network.pnu_app.localdatabase.DatabaseInitializer;
 
@@ -55,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         rlActivityMain = findViewById(R.id.rlActivityMain);
+
+       // QueriesFirebase queriesFirebase = new QueriesFirebase();
+       //  queriesFirebase.addStudent(); // TODO THIS METHOD ADD USER
 
       //  if (FirebaseAuth.getInstance().getCurrentUser() != null &&
         //        checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false) {

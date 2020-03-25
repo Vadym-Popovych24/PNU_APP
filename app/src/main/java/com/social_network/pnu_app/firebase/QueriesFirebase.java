@@ -21,13 +21,15 @@ public class QueriesFirebase {
 
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
 
-    static int counter = 5;
-/*    public void addStudent() {
+    static int counter = 10;
+    public void addStudent() {
+
 
         String id = reference.push().getKey();
 
-        Student newStudent = new Student("BA115821360", "Vadym", "Popovych", counter++,
-                "", "", "", false, "");
+        Student newStudent = new Student("BA11582106", "Іван", "Данилів", counter++,
+                 "","", "", "", false, "",  "математики та інформатики", "ІПЗ-41",
+                "01-07-2016", "Денна" , "");
 
         Map<String, Object> studentValues = newStudent.toMap();
 
@@ -36,7 +38,7 @@ public class QueriesFirebase {
 
         reference.updateChildren(student);
 
-    }*/
+    }
 
 
 

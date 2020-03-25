@@ -55,6 +55,10 @@
     <string name="Users">Користувачі</string>
     <string name="SearchPeople">Пошук</string>
     <string name="SearchFriend">Пошук друзів</string>
-    <string name="StudentName">Ім\'я</string>
-    <string name="StudentStatus">Статус</string>
+    <string name="StudentNamaAndLastName">Ім\'я та Прізвище</string>
+    <string name="StudentGroup">Група</string>
+
+    <!--Profile-->
+    <string name="btnAddFriend">Додати в друзі</string>
+    <string name="emptyWallProfile">Тут поки немає записів</string>
 </resources>

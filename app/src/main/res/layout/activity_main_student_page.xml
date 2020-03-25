@@ -4,7 +4,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         tools:context=".pages.MainStudentPage"
-        android:id="@+id/RelativeLayoutImageProfile"
+        android:id="@+id/RelativeLayoutImageMainProfile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -319,7 +319,8 @@
         android:drawableStart="@drawable/emoji_recent"
         android:paddingStart="8dp"
         android:paddingEnd="12dp"
-        android:layout_toEndOf="@+id/imSendPhotoWall" />
+        android:layout_toEndOf="@+id/imSendPhotoWall"
+        android:focusable="false"/>
 
     <RelativeLayout
         android:id="@+id/LinearLoyoutAboweWall"

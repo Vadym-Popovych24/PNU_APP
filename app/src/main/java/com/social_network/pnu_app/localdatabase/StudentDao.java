@@ -99,8 +99,12 @@ public interface StudentDao {
     @Query("SELECT formStudying FROM student WHERE u_id = :uid")
     String getFormStudyingById(int uid);
 
+    @Query("SELECT KeyFireBase FROM student WHERE currentStudent=u_id")
+    String getKeyStudent();
+
     @Query("SELECT currentStudent FROM student WHERE currentStudent=u_id")
     String getCurrentStudent();
+
 
     @Query("UPDATE student SET verify=:verify WHERE u_id= :id")
     void updateVerify(boolean verify, int id);

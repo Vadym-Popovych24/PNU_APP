@@ -14,6 +14,8 @@ import com.social_network.pnu_app.R;
 
 public class Friends extends AppCompatActivity {
 
+    Button btnBackFromFrinedList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,21 +27,31 @@ public class Friends extends AppCompatActivity {
 
         Button btnFindNewFriends;
         btnFindNewFriends = findViewById(R.id.btnFindNewFriends);
+        btnBackFromFrinedList = findViewById(R.id.btnBackFromFriendList);
 
         btnFindNewFriends.setOnClickListener(listenerBtn);
+        btnBackFromFrinedList.setOnClickListener(listenerBtn);
     }
 
     View.OnClickListener listenerBtn = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            if (v.getId() == R.id.btnFindNewFriends) {
-                Intent intentFindNewFriend;
-                intentFindNewFriend = new Intent( "com.social_network.pnu_app.pages.FindNewFriends");
-                startActivity(intentFindNewFriend);
+            switch (v.getId()) {
+                case R.id.btnFindNewFriends:
+                    Intent intentFindNewFriends;
+                    intentFindNewFriends = new Intent( "com.social_network.pnu_app.pages.FindNewFriends");
+                    startActivity(intentFindNewFriends);
+                    break;
+                case R.id.btnBackFromFriendList:
+                    Intent intentBackFriendList;
+                    intentBackFriendList = new Intent( "com.social_network.pnu_app.pages.MainStudentPage");
+                    startActivity(intentBackFriendList);
+                    break;
             }
         }
     };
+
 
     public void menuChanges(BottomNavigationView bottomNavigationView){
 

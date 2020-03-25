@@ -71,7 +71,7 @@ public class SignIn extends AppCompatActivity {
     public String FBgroup;
     public String FBdateOfEntry;
     public String FBformStudying;
-
+    public String FBlinkMainStudentPage;
 
     public static int FBid = 0;
     public String FBName;
@@ -165,6 +165,7 @@ public class SignIn extends AppCompatActivity {
                FBgroup = (String) student.get("group");
                FBdateOfEntry = (String) student.get("dateOfEntry");
                FBformStudying = (String) student.get("formStudying");
+               FBlinkMainStudentPage = (String) student.get("linkMainStudentPage");
 
                 try {
                     FBverify = (boolean) student.get("verify");
@@ -194,8 +195,9 @@ public class SignIn extends AppCompatActivity {
 
                    // TODO акоментувати до sendCodeVerification();
                      Student.student = student;
-                        Student studentSQLite = new Student(valueIDcardField, FBName, FBLastName,FBid , FBemail, FBpassword,
-                                FBphone, KeyStudent, FBverify, FBpatronym, FBfaculty, FBgroup, FBdateOfEntry, FBformStudying);
+                        Student studentSQLite = new Student(valueIDcardField, FBName, FBLastName,FBid , FBemail,
+                                FBpassword, FBphone, KeyStudent, FBverify, FBpatronym, FBfaculty, FBgroup,
+                                FBdateOfEntry, FBformStudying, FBlinkMainStudentPage);
                         studentSQLite.synchronizationSQLiteSignIn(AppDatabase.getAppDatabase(SignIn.this));
                         /////////////////
 
@@ -323,7 +325,7 @@ public class SignIn extends AppCompatActivity {
         Toast.LENGTH_LONG).show();
                 Student.student = student;
                 Student studentSQLite = new Student(valueIDcardField, FBName, FBLastName,FBid , FBemail, FBpassword,
-                        FBphone, KeyStudent, FBverify, FBpatronym, FBfaculty, FBgroup, FBdateOfEntry, FBformStudying);
+                        FBphone, KeyStudent, FBverify, FBpatronym, FBfaculty, FBgroup, FBdateOfEntry, FBformStudying, "");
                 studentSQLite.synchronizationSQLiteSignIn(AppDatabase.getAppDatabase(SignIn.this));
                 /////////////////
 

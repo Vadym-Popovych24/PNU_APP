@@ -26,27 +26,38 @@ public class AllAuthUsers {
         this.group = group;
     }
 
-    public String getLinkMainStudentPage() {
-        return linkMainStudentPage;
+
+    public String getSeriesIDcard() {
+        return seriesIDcard;
     }
 
-    public void setLinkMainStudentPage(String linkMainStudentPage) {
-        this.linkMainStudentPage = linkMainStudentPage;
+    public void setSeriesIDcard(String seriesIDcard) {
+        this.seriesIDcard = seriesIDcard;
     }
 
+    public String seriesIDcard;
     public String name;
     public String lastName;
     public String group;
-    public String linkMainStudentPage;
+
+    public String getLinkFirebaseStorageMainPhoto() {
+        return linkFirebaseStorageMainPhoto;
+    }
+
+    public void setLinkFirebaseStorageMainPhoto(String linkFirebaseStorageMainPhoto) {
+        this.linkFirebaseStorageMainPhoto = linkFirebaseStorageMainPhoto;
+    }
+
+    public String linkFirebaseStorageMainPhoto;
 
 
     public AllAuthUsers(){}
 
-    public AllAuthUsers(String studentName, String studentLastName, String studentGroup ,String studentImage){
+    public AllAuthUsers(String studentName, String studentLastName, String studentGroup ,String studentImage, String seriesIDcard){
         this.name = studentName;
         this.lastName = studentLastName;
         this.group = studentGroup;
-        this.linkMainStudentPage = studentImage;
-
+        this.linkFirebaseStorageMainPhoto = studentImage;
+        this.seriesIDcard = seriesIDcard;
     }
 }

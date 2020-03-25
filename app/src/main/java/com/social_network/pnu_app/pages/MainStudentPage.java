@@ -23,14 +23,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.Student;
@@ -41,6 +46,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,10 +87,12 @@ public class MainStudentPage extends AppCompatActivity{
 
     private EmojiconEditText emojiconEditText;
 
-   public String SeriesIDCard;
+   public static String SeriesIDCard;
    public String nameFileFirebase = "MainStudentPhoto";
    public String dirImages = "images/";
    public String pathToFirebaseStorage;
+   public String castomPathToFirebaseStorage;
+   public String urlMainStudentPhoto;
 
 
     private static final int REQUEST_CODE_PERMISSION_RECEIVE_CAMERA = 102;
@@ -122,9 +130,17 @@ public class MainStudentPage extends AppCompatActivity{
         btnAddPicture = (Button) findViewById(R.id.btnLoadPhotoStudent);
 
        loadPhoto();
-        // btnAddPicture.setOnClickListener((View.OnClickListener) this);
     }
     File localFile = null;
+
+    public void updateLinkMainStudentPage(final AppDatabase db){
+       String keyStudent = db.studentDao().getKeyStudent();
+
+        Student linkFirebaseStorageMainPhoto = new Student(urlMainStudentPhoto, null);
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
+        reference.child(keyStudent).updateChildren(linkFirebaseStorageMainPhoto.toMapUpdatelinkFirebaseStorageMainPhoto());
+    }
 
     public void loadPhoto(){
 
@@ -134,7 +150,8 @@ public class MainStudentPage extends AppCompatActivity{
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
         pathToFirebaseStorage= dirImages+SeriesIDCard+"/";
-
+        castomPathToFirebaseStorage =pathToFirebaseStorage.replace("/" , "%2F");
+        urlMainStudentPhoto = "https://firebasestorage.googleapis.com/v0/b/pnu-app.appspot.com/o/".concat(castomPathToFirebaseStorage).concat(nameFileFirebase).concat("?alt=media&");
 
         if (finalLocalFile == null) {
 
@@ -145,12 +162,13 @@ public class MainStudentPage extends AppCompatActivity{
             }
 
             finalLocalFile = Uri.fromFile(localFile);
-           mStorageRef.child(pathToFirebaseStorage + nameFileFirebase).getFile(finalLocalFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            final StorageReference maa = FirebaseStorage.getInstance().getReference();
+            mStorageRef.child(pathToFirebaseStorage + nameFileFirebase).getFile(finalLocalFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-
+                    System.out.println("urlMainStudentPhoto" + urlMainStudentPhoto);
                     Picasso.with(getBaseContext())
-                            .load(finalLocalFile)
+                            .load(urlMainStudentPhoto)
                             .placeholder(R.drawable.logo_pnu)
                             .error(R.mipmap.ic_error2)
                             .centerCrop()
@@ -221,8 +239,7 @@ public class MainStudentPage extends AppCompatActivity{
         studentData = Student.student;
 
         tvPIBvalue.setText(db.studentDao().getLastNameById(currentStudent) + " " +
-                db.studentDao().getFirstNameById(currentStudent) + " " +
-                db.studentDao().getPatronymById(currentStudent));
+                db.studentDao().getFirstNameById(currentStudent));
 
         tvFacultyValue.setText(" " + db.studentDao().getFacultyById(currentStudent));
         tvGroupValue.setText(" " + db.studentDao().getGroupById(currentStudent));
@@ -432,23 +449,25 @@ public class MainStudentPage extends AppCompatActivity{
         }
     }
 
-    public void uploadFileInFireBaseStorage (Uri uri){
-        UploadTask uploadTask = mStorageRef.child(pathToFirebaseStorage + nameFileFirebase).putFile(uri);
-        uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+    public void uploadFileInFireBaseStorage (final Uri uri){
+       /* final UploadTask uploadTask = */mStorageRef.child(pathToFirebaseStorage + nameFileFirebase).putFile(uri).addOnCompleteListener(
+                new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        updateLinkMainStudentPage(AppDatabase.getAppDatabase(MainStudentPage.this));
+                 String thumb_downloadUri = task.getResult().getUploadSessionUri().toString();
+                 System.out.println("15+ " + thumb_downloadUri);
+                    }
+                });
+  /*      uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                 double progress = (100.0 * taskSnapshot.getBytesTransferred());
                 Log.i("Load","Upload is " + progress + "% done");
             }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                //    Task<Uri> donwoldUri = mStorageRef.getDownloadUrl();
-                //       Log.i("Load" , "Uri donwlod" + donwoldUri);
-            }
-        });
-    }
+        });*/
 
+    }
     View.OnClickListener btnlistener = new View.OnClickListener() {
 
         @Override
