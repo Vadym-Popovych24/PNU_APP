@@ -94,9 +94,9 @@ public class FindNewFriends extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             if (!allAuthUsers.getSeriesIDcard().equals(SerieIDCard)){
-                                String VisitStudentKey = getRef(i).getKey();
+                                String VisitedStudentKey = getRef(i).getKey();
                                 Intent profileIntent = new Intent(FindNewFriends.this, ProfileStudent.class);
-                                profileIntent.putExtra("VisitStudentKey", VisitStudentKey);
+                                profileIntent.putExtra("VisitedStudentKey", VisitedStudentKey);
                                 startActivity(profileIntent);
                             } else {
                                 Intent myProfileIntent = new Intent("com.social_network.pnu_app.pages.MainStudentPage");

@@ -19,6 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.database.DataSnapshot;
@@ -53,6 +56,13 @@ public class ProfileStudent extends AppCompatActivity {
 
 
     private String CurrentStateFriend;
+
+    private DatabaseReference FriendRequestsReferenceReceiver;  //  Отримувач
+    private DatabaseReference FriendRequestsReferenceSender;  //  Відправник
+
+    String senderUserId;
+    String ReceiverStudentKey;
+
     public CircleImageView imStudentMainPhoto;
     public ImageView imSendPhotoWall;
 
@@ -63,7 +73,6 @@ public class ProfileStudent extends AppCompatActivity {
     String formStudying;
     String faculty;
     String linkFirebaseStorageMainPhoto;
-    private HashMap student = new HashMap();
     ValueEventListener valueEventListener;
     NetworkStatus network = new NetworkStatus();
     private ProgressBar progressBar;
@@ -74,6 +83,14 @@ public class ProfileStudent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        ReceiverStudentKey = getIntent().getExtras().get("VisitedStudentKey").toString();
+        senderUserId = getKeyCurrentStudend(AppDatabase.getAppDatabase(ProfileStudent.this));
+
+        FriendRequestsReferenceReceiver = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey).
+                child("FriendRequestReceiver").child(senderUserId).child("requestType");
+
+        FriendRequestsReferenceSender = FirebaseDatabase.getInstance().getReference("students").child(senderUserId).
+                child("FriendRequestSender").child(ReceiverStudentKey).child("requestType");
 
         btnAddToFriends = findViewById(R.id.btnAddToFriends);
         btnlistFriends = findViewById(R.id.btnListFriendsProfile);
@@ -91,6 +108,8 @@ public class ProfileStudent extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_profileProfile);
         bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
 
+        CurrentStateFriend = "notFriend";
+
         menuChanges(bottomNavigationView);
 
         imStudentMainPhoto = findViewById(R.id.imStudentMainPhotoProfile);
@@ -102,10 +121,14 @@ public class ProfileStudent extends AppCompatActivity {
 
     }
 
+    private String getKeyCurrentStudend(final AppDatabase db) {
+        String keyStudent = db.studentDao().getKeyStudent();
+        return keyStudent;
+    }
+
 
     public void BuildStudentPage(){
-        String VisitStudentKey = getIntent().getExtras().get("VisitStudentKey").toString();
-        Query queryByKey = FirebaseDatabase.getInstance().getReference("students").child(VisitStudentKey);
+        Query queryByKey = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey);
 
         if(!network.isOnline()){
             progressBar.setVisibility(View.GONE);
@@ -116,17 +139,17 @@ public class ProfileStudent extends AppCompatActivity {
         queryByKey.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                student = (HashMap) dataSnapshot.getValue();
+
 
                 System.out.println("dataSnapshot =" + dataSnapshot);
 
-                name = student.get("name").toString();
-                lastName = student.get("lastName").toString();
-                group = student.get("group").toString();
-                dateOfEntry = student.get("dateOfEntry").toString();
-                formStudying = student.get("formStudying").toString();
-                faculty = student.get("faculty").toString();
-                linkFirebaseStorageMainPhoto = student.get("linkFirebaseStorageMainPhoto").toString();
+                name = dataSnapshot.child("name").getValue().toString();
+                lastName = dataSnapshot.child("lastName").getValue().toString();
+                group = dataSnapshot.child("group").getValue().toString();
+                dateOfEntry = dataSnapshot.child("dateOfEntry").getValue().toString();
+                formStudying = dataSnapshot.child("formStudying").getValue().toString();
+                faculty = dataSnapshot.child("faculty").getValue().toString();
+                linkFirebaseStorageMainPhoto = dataSnapshot.child("linkFirebaseStorageMainPhoto").getValue().toString();
 
                 tvPIBvalue.setText(lastName + " " + name);
                 tvFacultyValue.setText(" " + faculty);
@@ -151,6 +174,28 @@ public class ProfileStudent extends AppCompatActivity {
                         .fit()
                         // .resize(1920,2560)
                         .into(imSendPhotoWall);
+
+                DatabaseReference referenceCheckFriendRequestsReceiver;
+
+                referenceCheckFriendRequestsReceiver = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey);
+                referenceCheckFriendRequestsReceiver.child("FriendRequestReceiver").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChild(senderUserId)) {
+                            String reqType = dataSnapshot.child(senderUserId).child("requestType").getValue().toString();
+
+                            if (reqType.equals("sent")){
+                                CurrentStateFriend = "requestSent";
+                                btnAddToFriends.setText("Відхилити запит в друзі");
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
             }
 
             @Override
@@ -212,16 +257,16 @@ public class ProfileStudent extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.btnLoadPhotoStudent:
+                case R.id.btnAddToFriends:
+                    btnAddToFriends.setEnabled(false);
 
-                    NetworkStatus network = new NetworkStatus();
-                    if (!network.isOnline()) {
-                        // progressBar.setVisibility(View.GONE);
-                      //  Toast.makeText(MainStudentPage.this, " Please Connect to Internet",
-                        //        Toast.LENGTH_LONG).show();
-                    } else {
-                     //   addPhoto();
+                    if(CurrentStateFriend.equals("notFriend")) {
+                        SendRequestOnAFriendship();
                     }
+                    if(CurrentStateFriend.equals("requestSent")) {
+                        CancelFriendRequest();
+                    }
+
                     break;
                 case R.id.btnListFriends:
 
@@ -233,7 +278,91 @@ public class ProfileStudent extends AppCompatActivity {
         }
     };
 
+    private void CancelFriendRequest() {
+        FriendRequestsReferenceReceiver.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    FriendRequestsReferenceSender.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
 
-}
+                                btnAddToFriends.setEnabled(true);
+                                CurrentStateFriend ="notFriend";
+                                btnAddToFriends.setText("Додати в друзі");
+                            }
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            if (!network.isOnline()) {
+                                progressBar.setVisibility(View.GONE);
+                                Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (!network.isOnline()) {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void SendRequestOnAFriendship() {
+        FriendRequestsReferenceReceiver.setValue("sent").addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    FriendRequestsReferenceSender.setValue("receiver").addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+
+                            btnAddToFriends.setEnabled(true);
+                            CurrentStateFriend = "requestSent";
+                            btnAddToFriends.setText("Відхилити запит в друзі");
+
+                            }
+                        }
+                        }
+                    ).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            if (!network.isOnline()) {
+                                progressBar.setVisibility(View.GONE);
+                                Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                }
+                }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (!network.isOnline()) {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    }
+
+
 
 
