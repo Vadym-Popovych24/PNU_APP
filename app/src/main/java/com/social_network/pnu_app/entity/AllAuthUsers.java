@@ -39,6 +39,7 @@ public class AllAuthUsers {
     public String name;
     public String lastName;
     public String group;
+    public String linkFirebaseStorageMainPhoto;
 
     public String getLinkFirebaseStorageMainPhoto() {
         return linkFirebaseStorageMainPhoto;
@@ -47,8 +48,6 @@ public class AllAuthUsers {
     public void setLinkFirebaseStorageMainPhoto(String linkFirebaseStorageMainPhoto) {
         this.linkFirebaseStorageMainPhoto = linkFirebaseStorageMainPhoto;
     }
-
-    public String linkFirebaseStorageMainPhoto;
 
 
     public AllAuthUsers(){}

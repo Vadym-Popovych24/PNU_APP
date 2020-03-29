@@ -26,6 +26,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.AllAuthUsers;
+import com.social_network.pnu_app.localdatabase.AppDatabase;
 import com.social_network.pnu_app.network.NetworkStatus;
 import com.social_network.pnu_app.signin.SignIn;
 import com.squareup.picasso.Picasso;
@@ -40,6 +41,7 @@ public class FindNewFriends extends AppCompatActivity {
     private Query allDatabaseUsersReference;
     Button btnBackFromlUserList;
     ValueEventListener valueEventListener;
+    String SerieIDCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +59,22 @@ public class FindNewFriends extends AppCompatActivity {
         allUsersList.setHasFixedSize(true);
         allUsersList.setLayoutManager(new LinearLayoutManager(this));
 
-         allDatabaseUsersReference = FirebaseDatabase.getInstance().getReference().child("students").child("friends");
+         allDatabaseUsersReference = FirebaseDatabase.getInstance().getReference().child("students")
+                 .orderByChild("verify")
+                 .equalTo(true);
 
+    }
+
+    public String getStudentSeriesIDCard(final AppDatabase db){
+        int currentStudent = Integer.parseInt(db.studentDao().getCurrentStudent());
+        String SeriesIDCard = db.studentDao().getSeriesBYId(currentStudent);
+        return SeriesIDCard;
     }
 
    @Override
     public void onStart() {
         super.onStart();
+        SerieIDCard = getStudentSeriesIDCard(AppDatabase.getAppDatabase(FindNewFriends.this));
         FirebaseRecyclerAdapter<AllAuthUsers, AllAuthUsersViewHolder> firebaseRecyclerAdapter
                 = new FirebaseRecyclerAdapter<AllAuthUsers, AllAuthUsersViewHolder>
                 (
@@ -74,7 +85,7 @@ public class FindNewFriends extends AppCompatActivity {
 
                 ) {
             @Override
-            protected void populateViewHolder(final AllAuthUsersViewHolder allAuthUsersViewHolder, final AllAuthUsers allAuthUsers, final int i) {
+            protected void populateViewHolder(AllAuthUsersViewHolder allAuthUsersViewHolder, final AllAuthUsers allAuthUsers, final int i) {
 
                 allAuthUsersViewHolder.setStudentName(allAuthUsers.getName(), allAuthUsers.getLastName());
                 allAuthUsersViewHolder.setStudentGroup(allAuthUsers.getGroup());
@@ -82,22 +93,21 @@ public class FindNewFriends extends AppCompatActivity {
                 allAuthUsersViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (!allAuthUsers.getName().equals("Вадим")) {
-                                String visit_user_id = getRef(i).getKey();
+                            if (!allAuthUsers.getSeriesIDcard().equals(SerieIDCard)){
+                                String VisitStudentKey = getRef(i).getKey();
                                 Intent profileIntent = new Intent(FindNewFriends.this, ProfileStudent.class);
-                                profileIntent.putExtra("visit_user_id", visit_user_id);
+                                profileIntent.putExtra("VisitStudentKey", VisitStudentKey);
                                 startActivity(profileIntent);
                             } else {
                                 Intent myProfileIntent = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
                                 startActivity(myProfileIntent);
 
-                            }
+                           }
                         }
                     });
 
             }
         };
-
         allUsersList.setAdapter(firebaseRecyclerAdapter);
 
     }

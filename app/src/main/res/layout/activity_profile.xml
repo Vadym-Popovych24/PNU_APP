@@ -122,7 +122,7 @@
         android:layout_toEndOf="@+id/btnListPollProfile" />
 
     <Button
-        android:id="@+id/btnLoadPhotoStudentProfile"
+        android:id="@+id/btnAddToFriends"
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
@@ -145,7 +145,7 @@
         android:id="@+id/tvAboutStudentProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnLoadPhotoStudentProfile"
+        android:layout_below="@+id/btnAddToFriends"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="0dp"
