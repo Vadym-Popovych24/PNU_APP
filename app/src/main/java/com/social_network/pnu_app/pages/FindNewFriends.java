@@ -29,6 +29,8 @@ import com.social_network.pnu_app.entity.AllAuthUsers;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
 import com.social_network.pnu_app.network.NetworkStatus;
 import com.social_network.pnu_app.signin.SignIn;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -62,6 +64,8 @@ public class FindNewFriends extends AppCompatActivity {
          allDatabaseUsersReference = FirebaseDatabase.getInstance().getReference().child("students")
                  .orderByChild("verify")
                  .equalTo(true);
+
+         allDatabaseUsersReference.keepSynced(true);
 
     }
 
@@ -185,46 +189,51 @@ public class FindNewFriends extends AppCompatActivity {
          group.setText(studentGroup);
      }
 
-     public void setStudentImage(Context context, String studentImage) {
-         CircleImageView image = mView.findViewById(R.id.all_users_profile_image);
-         if (studentImage != null) {
-             if (!studentImage.isEmpty()) {
-                 Picasso.with(context)
-                         .load(studentImage)
-                         .placeholder(R.drawable.logo_pnu)
-                         .error(R.mipmap.ic_error2)
-                         .centerCrop()
-                         .fit()
-                         //.resize(1920,2560)
-                         .into(image);
+     public void setStudentImage( final Context context, final String studentImage) {
+         final CircleImageView image = mView.findViewById(R.id.all_users_profile_image);
+         Picasso.with(context)
+                 .load(studentImage)
+                 .networkPolicy(NetworkPolicy.OFFLINE)
+                 .placeholder(R.drawable.com_facebook_profile_picture_blank_square)
+                 .error(R.mipmap.ic_error2)
+                 .centerCrop()
+                 .fit()
+                 //.resize(1920,2560)
+                 .into(image, new Callback() {
+                     @Override
+                     public void onSuccess() {
 
-             }
-         } else {
-             Picasso.with(context)
-                     .load(R.drawable.com_facebook_profile_picture_blank_square)
-                     .placeholder(R.drawable.logo_pnu)
-                     .error(R.mipmap.ic_error2)
-                     .centerCrop()
-                     .fit()
-                     //.resize(1920,2560)
-                     .into(image);
-         }
+                     }
+
+                     @Override
+                     public void onError() {
+                         if (studentImage != null) {
+                             if (!studentImage.isEmpty()) {
+                         Picasso.with(context)
+                                 .load(studentImage)
+                                 .placeholder(R.drawable.logo_pnu)
+                                 .error(R.mipmap.ic_error2)
+                                 .centerCrop()
+                                 .fit()
+                                 //.resize(1920,2560)
+                                 .into(image);
+                             }
+                         } else {
+                             Picasso.with(context)
+                                     .load(R.drawable.com_facebook_profile_picture_blank_square)
+                                     .placeholder(R.drawable.logo_pnu)
+                                     .error(R.mipmap.ic_error2)
+                                     .centerCrop()
+                                     .fit()
+                                     //.resize(1920,2560)
+                                     .into(image);
+                         }
+
+                     }
+                 });
+
      }
 
-         public void setCurrentStudentName(){
-             TextView nameAndLastName = mView.findViewById(R.id.all_users_username);
-             nameAndLastName.setText("");
-         }
-         public void setCurrentStudentGroup(){
-             TextView group = mView.findViewById(R.id.all_users_status);
-             group.setText("");
-         }
-
-         public void setCurrentStudentImage() {
-             CircleImageView image = mView.findViewById(R.id.all_users_profile_image2);
-             image.setEnabled(false);
-
-     }
 
 
 

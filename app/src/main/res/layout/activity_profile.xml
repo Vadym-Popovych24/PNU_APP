@@ -121,31 +121,67 @@
         android:layout_toRightOf="@+id/btnListPollProfile"
         android:layout_toEndOf="@+id/btnListPollProfile" />
 
+<!--    <LinearLayout
+        android:id="@+id/LinerLayouProfileButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imStudentMainPhotoProfile"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:gravity="center">-->
+    <Button
+        android:id="@+id/btnSendMessageProfile"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="37dp"
+
+        android:background="@drawable/btn_write_message"
+        android:paddingEnd="10dp"
+        android:paddingRight="10dp"
+        android:paddingStart="10dp"
+        android:paddingLeft="10dp"
+        android:text="@string/btnSendMessageProfile"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+
+        android:layout_below="@+id/imStudentMainPhotoProfile"
+        android:layout_toLeftOf="@+id/btnAddToFriends"
+        android:layout_toStartOf="@+id/btnAddToFriends"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="5dp" />
+
+
     <Button
         android:id="@+id/btnAddToFriends"
         style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="37dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginRight="0dp"
-        android:background="@drawable/btn_loadphoto"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/btn_add_friend"
         android:paddingEnd="10dp"
-        android:paddingRight="1dp"
-        android:paddingStart="0dp"
-        android:paddingLeft="0dp"
+        android:paddingRight="10dp"
+        android:paddingStart="10dp"
+        android:paddingLeft="10dp"
         android:text="@string/btnAddFriend"
         android:textColor="@android:color/white"
-
+        android:textSize="14sp"
         android:layout_below="@+id/imStudentMainPhotoProfile"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/btnListFriendsProfile"
+        android:layout_toEndOf="@+id/btnListFriendsProfile" />
+
+<!--    </LinearLayout>-->
 
 
     <TextView
         android:id="@+id/tvAboutStudentProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnAddToFriends"
+        android:layout_below="@+id/btnSendMessageProfile"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="0dp"

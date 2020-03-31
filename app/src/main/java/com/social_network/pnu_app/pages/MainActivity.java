@@ -59,10 +59,9 @@ public class MainActivity extends AppCompatActivity {
 
        // QueriesFirebase queriesFirebase = new QueriesFirebase();
        //  queriesFirebase.addStudent(); // TODO THIS METHOD ADD USER
-
-        if (FirebaseAuth.getInstance().getCurrentUser() != null){// &&
+     //   if (FirebaseAuth.getInstance().getCurrentUser() != null){// &&
         //        checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false) {
-     //   if(checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false){ // TODO change on codeLine above
+        if(checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false){ // TODO change on codeLine above
             rlActivityMain = findViewById(R.id.rlActivityMain);
             Intent intentFromMainActivity;
             intentFromMainActivity = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
   public void setNullCurrentStudent(final AppDatabase db){
       if(db.studentDao().getCurrentStudent() != null) {
-
+          MainStudentPage.linkStorageFromFireBase = null;
           db.studentDao().updateCurrentStudent(Integer.parseInt(db.studentDao().getCurrentStudent()));
       }
 

@@ -46,6 +46,7 @@ public class Settings extends AppCompatActivity {
         FirebaseAuth.getInstance().signOut();
         db.studentDao().updateCurrentStudent(Integer.parseInt(db.studentDao().getCurrentStudent()));
         MainStudentPage.finalLocalFile = null;
+        MainStudentPage.linkStorageFromFireBase = null;
         Intent intentSignOut = new Intent(this, MainActivity.class);
         intentSignOut.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intentSignOut);

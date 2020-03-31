@@ -59,6 +59,8 @@
     <string name="StudentGroup">Група</string>
 
     <!--Profile-->
-    <string name="btnAddFriend">Додати в друзі</string>
+    <string name="btnAddFriend">Додати в друзі  </string>
+    <string name="btnRejectFriend">Відхилити</string>
     <string name="emptyWallProfile">Тут поки немає записів</string>
+    <string name="btnSendMessageProfile">Написати</string>
 </resources>

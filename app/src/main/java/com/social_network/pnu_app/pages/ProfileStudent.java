@@ -1,29 +1,23 @@
 package com.social_network.pnu_app.pages;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.service.autofill.VisibilitySetterAction;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,12 +25,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
-import com.social_network.pnu_app.entity.Student;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
 import com.social_network.pnu_app.network.NetworkStatus;
 import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -57,11 +52,21 @@ public class ProfileStudent extends AppCompatActivity {
 
     private String CurrentStateFriend;
 
-    private DatabaseReference FriendRequestsReferenceReceiver;  //  Отримувач
-    private DatabaseReference FriendRequestsReferenceSender;  //  Відправник
+    private DatabaseReference FriendRequestsReferenceAlienReceiver;  //  Отримувач
+    private DatabaseReference FriendRequestsReferenceMySender;  //  Відправник
+
+    private DatabaseReference FriendReferenceAlien; //  Отримувач
+    private DatabaseReference FriendReferenceMy;  //  Відправник;
+
+    DatabaseReference CheckFriendReferenceRequestsMyReceiver;  // Check
+    DatabaseReference CheckFriendReferenceRequestMySender;     // Check
+    DatabaseReference CheckFriendReferenceRequestAlienSender;  // Check
 
     String senderUserId;
     String ReceiverStudentKey;
+
+    String SendeRequestType;
+    String ReceiverRequestType;
 
     public CircleImageView imStudentMainPhoto;
     public ImageView imSendPhotoWall;
@@ -75,7 +80,6 @@ public class ProfileStudent extends AppCompatActivity {
     String linkFirebaseStorageMainPhoto;
     ValueEventListener valueEventListener;
     NetworkStatus network = new NetworkStatus();
-    private ProgressBar progressBar;
 
 
     @Override
@@ -86,11 +90,42 @@ public class ProfileStudent extends AppCompatActivity {
         ReceiverStudentKey = getIntent().getExtras().get("VisitedStudentKey").toString();
         senderUserId = getKeyCurrentStudend(AppDatabase.getAppDatabase(ProfileStudent.this));
 
-        FriendRequestsReferenceReceiver = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey).
+        // SEND AND CANCEL REQUESTS
+        FriendRequestsReferenceAlienReceiver = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey).
                 child("FriendRequestReceiver").child(senderUserId).child("requestType");
+        FriendRequestsReferenceAlienReceiver.keepSynced(true);
 
-        FriendRequestsReferenceSender = FirebaseDatabase.getInstance().getReference("students").child(senderUserId).
+        FriendRequestsReferenceMySender = FirebaseDatabase.getInstance().getReference("students").child(senderUserId).
                 child("FriendRequestSender").child(ReceiverStudentKey).child("requestType");
+        FriendRequestsReferenceMySender.keepSynced(true);
+
+        // CHECK MY AND ALIEN REFERENCE
+
+        CheckFriendReferenceRequestsMyReceiver = FirebaseDatabase.getInstance().getReference("students").child(senderUserId).
+        child("FriendRequestReceiver");
+        CheckFriendReferenceRequestsMyReceiver.keepSynced(true);
+
+        CheckFriendReferenceRequestMySender = FirebaseDatabase.getInstance().getReference("students").child(senderUserId)
+        .child("FriendRequestSender");
+        CheckFriendReferenceRequestMySender.keepSynced(true);
+
+        // -> DELETE ALIEN SENDER WHEN ACCEPT FRIEND
+        CheckFriendReferenceRequestAlienSender = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey)
+                .child("FriendRequestSender");
+        CheckFriendReferenceRequestAlienSender.keepSynced(true);
+
+
+        // FRIENDS
+
+        FriendReferenceAlien = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey).
+                child("Friends");
+        FriendReferenceAlien.keepSynced(true);
+
+        FriendReferenceMy = FirebaseDatabase.getInstance().getReference("students").child(senderUserId).
+                child("Friends");
+        FriendReferenceMy.keepSynced(true);
+
+
 
         btnAddToFriends = findViewById(R.id.btnAddToFriends);
         btnlistFriends = findViewById(R.id.btnListFriendsProfile);
@@ -130,12 +165,11 @@ public class ProfileStudent extends AppCompatActivity {
     public void BuildStudentPage(){
         Query queryByKey = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey);
 
-        if(!network.isOnline()){
-            progressBar.setVisibility(View.GONE);
+  /*      if(!network.isOnline()){
             Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
-                    Toast.LENGTH_LONG).show();
-        }
-        else{
+                    Toast.LENGTH_LONG).show();*/
+      //  }
+     //   else{
         queryByKey.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -149,14 +183,18 @@ public class ProfileStudent extends AppCompatActivity {
                 dateOfEntry = dataSnapshot.child("dateOfEntry").getValue().toString();
                 formStudying = dataSnapshot.child("formStudying").getValue().toString();
                 faculty = dataSnapshot.child("faculty").getValue().toString();
-                linkFirebaseStorageMainPhoto = dataSnapshot.child("linkFirebaseStorageMainPhoto").getValue().toString();
-
+                try {
+                    linkFirebaseStorageMainPhoto = dataSnapshot.child("linkFirebaseStorageMainPhoto").getValue().toString();
+                } catch (Exception castToBool) {
+                    linkFirebaseStorageMainPhoto = "";
+                }
                 tvPIBvalue.setText(lastName + " " + name);
                 tvFacultyValue.setText(" " + faculty);
                 tvGroupValue.setText(" " + group);
                 tvDateOfEntryValue.setText(" " + dateOfEntry);
                 tvFormStudyingValue.setText(" " + formStudying);
 
+                if (!linkFirebaseStorageMainPhoto.isEmpty()){
                 Picasso.with(ProfileStudent.this)
                         .load(linkFirebaseStorageMainPhoto)
                         .placeholder(R.drawable.logo_pnu)
@@ -174,34 +212,111 @@ public class ProfileStudent extends AppCompatActivity {
                         .fit()
                         // .resize(1920,2560)
                         .into(imSendPhotoWall);
+                }
+                else {
+                    Picasso.with(ProfileStudent.this)
+                            .load(R.drawable.com_facebook_profile_picture_blank_square)
+                            .placeholder(R.drawable.logo_pnu)
+                            .error(R.mipmap.ic_error2)
+                            .centerCrop()
+                            .fit()
+                            // .resize(1920,2560)
+                            .into(imStudentMainPhoto);
 
-                DatabaseReference referenceCheckFriendRequestsReceiver;
+                    Picasso.with(ProfileStudent.this)
+                            .load(R.drawable.com_facebook_profile_picture_blank_square)
+                            .placeholder(R.drawable.logo_pnu)
+                            .error(R.mipmap.ic_error2)
+                            .centerCrop()
+                            .fit()
+                            // .resize(1920,2560)
+                            .into(imSendPhotoWall);
+                }
 
-                referenceCheckFriendRequestsReceiver = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey);
-                referenceCheckFriendRequestsReceiver.child("FriendRequestReceiver").addListenerForSingleValueEvent(new ValueEventListener() {
+                // CHECK ON MY RECEIVED
+                CheckFriendReferenceRequestsMyReceiver.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.hasChild(senderUserId)) {
-                            String reqType = dataSnapshot.child(senderUserId).child("requestType").getValue().toString();
-
-                            if (reqType.equals("sent")){
-                                CurrentStateFriend = "requestSent";
-                                btnAddToFriends.setText("Відхилити запит в друзі");
+                        if (dataSnapshot.exists()) {
+                            if (dataSnapshot.hasChild(ReceiverStudentKey)) {
+                                ReceiverRequestType = dataSnapshot.child(ReceiverStudentKey).child("requestType").getValue().toString();
+                                if (ReceiverRequestType != null) {
+                                    if (ReceiverRequestType.equals("received")) {
+                                        CurrentStateFriend = "requestReceived";
+                                        btnAddToFriends.setText("Прийняти заявку ");
+                                    }
+                                }
                             }
                         }
                     }
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    public void onCancelled (@NonNull DatabaseError databaseError){
+                        if (!network.isOnline()) {
+                            //      progressBar.setVisibility(View.GONE);
+                            Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
 
+                });
+
+                // CHECK ON MY SENT
+                CheckFriendReferenceRequestMySender.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            if (dataSnapshot.hasChild(ReceiverStudentKey)) {
+                                SendeRequestType = dataSnapshot.child(ReceiverStudentKey).child("requestType").getValue().toString();
+
+                                if (SendeRequestType != null) {
+                                    if (SendeRequestType.equals("sent")) {
+                                        CurrentStateFriend = "requestSent";
+                                        btnAddToFriends.setText("Скасувати заявку");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                        @Override
+                        public void onCancelled (@NonNull DatabaseError databaseError){
+                            if (!network.isOnline()) {
+                            //    progressBar.setVisibility(View.GONE);
+                                Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                });
+
+                // CHECK ON FRIEND
+                FriendReferenceMy.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            if (dataSnapshot.hasChild(ReceiverStudentKey)) {
+                                        CurrentStateFriend = "friends";
+                                        btnAddToFriends.setText("Видалити з друзів");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        if (!network.isOnline()) {
+                            //    progressBar.setVisibility(View.GONE);
+                            Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                    Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
+
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 if (!network.isOnline()) {
-                    progressBar.setVisibility(View.GONE);
+                 //   progressBar.setVisibility(View.GONE);
                     Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
                             Toast.LENGTH_LONG).show();
                 }
@@ -210,7 +325,7 @@ public class ProfileStudent extends AppCompatActivity {
         }
 
 
-    }
+ //   }
 
     public void menuChanges(BottomNavigationView bottomNavigationView){
 
@@ -266,6 +381,12 @@ public class ProfileStudent extends AppCompatActivity {
                     if(CurrentStateFriend.equals("requestSent")) {
                         CancelFriendRequest();
                     }
+                    if(CurrentStateFriend.equals("requestReceived")){
+                        AcceptFriendRequst();
+                    }
+                    if(CurrentStateFriend.equals("friends")){
+                        DeleteFriend();
+                    }
 
                     break;
                 case R.id.btnListFriends:
@@ -278,19 +399,138 @@ public class ProfileStudent extends AppCompatActivity {
         }
     };
 
+    private void DeleteFriend() {
+        FriendReferenceMy.child(ReceiverStudentKey).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    FriendReferenceAlien.child(senderUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            btnAddToFriends.setEnabled(true);
+                            CurrentStateFriend = "notFriend";
+                            btnAddToFriends.setText("Додати в друзі  ");
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            if (!network.isOnline()) {
+                                //     progressBar.setVisibility(View.GONE);
+                                Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (!network.isOnline()) {
+                    //     progressBar.setVisibility(View.GONE);
+                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+    }
+
+    private void AcceptFriendRequst() {
+        DateFormat calForDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date currentDate = new Date();
+        final String saveCurrentDate = calForDate.format(currentDate);
+
+        FriendReferenceAlien.child(senderUserId).setValue(saveCurrentDate).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+           FriendReferenceMy.child(ReceiverStudentKey).setValue(saveCurrentDate).addOnSuccessListener(new OnSuccessListener<Void>() {
+               @Override
+               public void onSuccess(Void aVoid) {
+
+
+                   CheckFriendReferenceRequestsMyReceiver.child(ReceiverStudentKey).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                       @Override
+                       public void onComplete(@NonNull Task<Void> task) {
+                           if (task.isSuccessful()){
+                               CheckFriendReferenceRequestAlienSender.child(senderUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                   @Override
+                                   public void onComplete(@NonNull Task<Void> task) {
+                                       if (task.isSuccessful()){
+
+                                           btnAddToFriends.setEnabled(true);
+                                           CurrentStateFriend ="friends";
+                                           btnAddToFriends.setText("Видалити з друзів");
+                                       }
+
+                                   }
+                               }).addOnFailureListener(new OnFailureListener() {
+                                   @Override
+                                   public void onFailure(@NonNull Exception e) {
+                                       if (!network.isOnline()) {
+                                   //        progressBar.setVisibility(View.GONE);
+                                           Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                                   Toast.LENGTH_LONG).show();
+                                       }
+                                   }
+                               });
+
+                           }
+
+                       }
+                   }).addOnFailureListener(new OnFailureListener() {
+                       @Override
+                       public void onFailure(@NonNull Exception e) {
+                           if (!network.isOnline()) {
+                          //     progressBar.setVisibility(View.GONE);
+                               Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                       Toast.LENGTH_LONG).show();
+                           }
+                       }
+                   });
+
+               }
+
+           }).addOnFailureListener(new OnFailureListener() {
+               @Override
+               public void onFailure(@NonNull Exception e) {
+                   if (!network.isOnline()) {
+                    //   progressBar.setVisibility(View.GONE);
+                       Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                               Toast.LENGTH_LONG).show();
+                   }
+               }
+           });
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (!network.isOnline()) {
+                 //   progressBar.setVisibility(View.GONE);
+                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+
+    }
+
     private void CancelFriendRequest() {
-        FriendRequestsReferenceReceiver.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+        FriendRequestsReferenceAlienReceiver.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()){
-                    FriendRequestsReferenceSender.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    FriendRequestsReferenceMySender.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()){
 
                                 btnAddToFriends.setEnabled(true);
                                 CurrentStateFriend ="notFriend";
-                                btnAddToFriends.setText("Додати в друзі");
+                                btnAddToFriends.setText("Додати в друзі  ");
                             }
 
                         }
@@ -298,7 +538,7 @@ public class ProfileStudent extends AppCompatActivity {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             if (!network.isOnline()) {
-                                progressBar.setVisibility(View.GONE);
+                         //       progressBar.setVisibility(View.GONE);
                                 Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
                                         Toast.LENGTH_LONG).show();
                             }
@@ -312,7 +552,7 @@ public class ProfileStudent extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 if (!network.isOnline()) {
-                    progressBar.setVisibility(View.GONE);
+                 //   progressBar.setVisibility(View.GONE);
                     Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
                             Toast.LENGTH_LONG).show();
                 }
@@ -321,18 +561,18 @@ public class ProfileStudent extends AppCompatActivity {
     }
 
     private void SendRequestOnAFriendship() {
-        FriendRequestsReferenceReceiver.setValue("sent").addOnCompleteListener(new OnCompleteListener<Void>() {
+        FriendRequestsReferenceAlienReceiver.setValue("received").addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()){
-                    FriendRequestsReferenceSender.setValue("receiver").addOnCompleteListener(new OnCompleteListener<Void>() {
+                    FriendRequestsReferenceMySender.setValue("sent").addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
 
                             btnAddToFriends.setEnabled(true);
                             CurrentStateFriend = "requestSent";
-                            btnAddToFriends.setText("Відхилити запит в друзі");
+                            btnAddToFriends.setText("Скасувати заявку");
 
                             }
                         }
@@ -341,7 +581,7 @@ public class ProfileStudent extends AppCompatActivity {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             if (!network.isOnline()) {
-                                progressBar.setVisibility(View.GONE);
+                    //            progressBar.setVisibility(View.GONE);
                                 Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
                                         Toast.LENGTH_LONG).show();
                             }
@@ -353,7 +593,7 @@ public class ProfileStudent extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 if (!network.isOnline()) {
-                    progressBar.setVisibility(View.GONE);
+                //    progressBar.setVisibility(View.GONE);
                     Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
                             Toast.LENGTH_LONG).show();
                 }
