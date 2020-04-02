@@ -1,8 +1,10 @@
 package com.social_network.pnu_app.pages;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -18,6 +20,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -62,6 +65,11 @@ public class ProfileStudent extends AppCompatActivity {
     DatabaseReference CheckFriendReferenceRequestMySender;     // Check
     DatabaseReference CheckFriendReferenceRequestAlienSender;  // Check
 
+    DatabaseReference SubscribersReferenceMy;                 // Subscribers My
+    DatabaseReference SubscribersReferenceAlien;              // Subscribers Alien
+    DatabaseReference SubscribedReferenceMy;                  // Subscribed My
+    DatabaseReference SubscribedReferenceAlien;               // Subscribed Alien
+
     String senderUserId;
     String ReceiverStudentKey;
 
@@ -82,6 +90,13 @@ public class ProfileStudent extends AppCompatActivity {
     NetworkStatus network = new NetworkStatus();
 
 
+    int activeColorButtonAddToFriends;
+    int activeColorTextButtonAddToFriends;
+
+    int disactivateColorButtonAddToFriends;
+    int disactivateColorTextButtonAddToFriends;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,41 +106,62 @@ public class ProfileStudent extends AppCompatActivity {
         senderUserId = getKeyCurrentStudend(AppDatabase.getAppDatabase(ProfileStudent.this));
 
         // SEND AND CANCEL REQUESTS
-        FriendRequestsReferenceAlienReceiver = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey).
+        FriendRequestsReferenceAlienReceiver = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).
                 child("FriendRequestReceiver").child(senderUserId).child("requestType");
         FriendRequestsReferenceAlienReceiver.keepSynced(true);
 
-        FriendRequestsReferenceMySender = FirebaseDatabase.getInstance().getReference("students").child(senderUserId).
+        FriendRequestsReferenceMySender = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).
                 child("FriendRequestSender").child(ReceiverStudentKey).child("requestType");
         FriendRequestsReferenceMySender.keepSynced(true);
 
         // CHECK MY AND ALIEN REFERENCE
 
-        CheckFriendReferenceRequestsMyReceiver = FirebaseDatabase.getInstance().getReference("students").child(senderUserId).
+        CheckFriendReferenceRequestsMyReceiver = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).
         child("FriendRequestReceiver");
         CheckFriendReferenceRequestsMyReceiver.keepSynced(true);
 
-        CheckFriendReferenceRequestMySender = FirebaseDatabase.getInstance().getReference("students").child(senderUserId)
+        CheckFriendReferenceRequestMySender = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId)
         .child("FriendRequestSender");
         CheckFriendReferenceRequestMySender.keepSynced(true);
 
         // -> DELETE ALIEN SENDER WHEN ACCEPT FRIEND
-        CheckFriendReferenceRequestAlienSender = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey)
+        CheckFriendReferenceRequestAlienSender = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey)
                 .child("FriendRequestSender");
         CheckFriendReferenceRequestAlienSender.keepSynced(true);
 
 
         // FRIENDS
 
-        FriendReferenceAlien = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey).
+        FriendReferenceAlien = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).
                 child("Friends");
         FriendReferenceAlien.keepSynced(true);
 
-        FriendReferenceMy = FirebaseDatabase.getInstance().getReference("students").child(senderUserId).
+        FriendReferenceMy = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).
                 child("Friends");
         FriendReferenceMy.keepSynced(true);
 
+       // Subscribers
 
+        SubscribersReferenceMy = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).child("Subscribers");
+        SubscribersReferenceMy.keepSynced(true);
+
+        SubscribersReferenceAlien = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).child("Subscribers");
+        SubscribersReferenceAlien.keepSynced(true);
+        // Subscribed
+
+        SubscribedReferenceAlien = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).child("Subscribed");
+
+        SubscribedReferenceMy = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).child("Subscribed");
+        SubscribedReferenceMy.keepSynced(true);
+
+        // Colors
+        activeColorButtonAddToFriends = getResources().getColor(R.color.lines);
+        activeColorTextButtonAddToFriends = getResources().getColor(R.color.btn_sign_in);
+
+        disactivateColorButtonAddToFriends = getResources().getColor(R.color.btn_sign_in);
+        disactivateColorTextButtonAddToFriends = getResources().getColor(R.color.colorAccentWhite);
+
+        // Views
 
         btnAddToFriends = findViewById(R.id.btnAddToFriends);
         btnlistFriends = findViewById(R.id.btnListFriendsProfile);
@@ -142,6 +178,7 @@ public class ProfileStudent extends AppCompatActivity {
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_profileProfile);
         bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
+
 
         CurrentStateFriend = "notFriend";
 
@@ -198,7 +235,7 @@ public class ProfileStudent extends AppCompatActivity {
                 Picasso.with(ProfileStudent.this)
                         .load(linkFirebaseStorageMainPhoto)
                         .placeholder(R.drawable.logo_pnu)
-                        .error(R.mipmap.ic_error2)
+                        .error(R.drawable.com_facebook_close)
                         .centerCrop()
                         .fit()
                         // .resize(1920,2560)
@@ -207,7 +244,7 @@ public class ProfileStudent extends AppCompatActivity {
                 Picasso.with(ProfileStudent.this)
                         .load(linkFirebaseStorageMainPhoto)
                         .placeholder(R.drawable.logo_pnu)
-                        .error(R.mipmap.ic_error2)
+                        .error(R.drawable.com_facebook_close)
                         .centerCrop()
                         .fit()
                         // .resize(1920,2560)
@@ -217,7 +254,7 @@ public class ProfileStudent extends AppCompatActivity {
                     Picasso.with(ProfileStudent.this)
                             .load(R.drawable.com_facebook_profile_picture_blank_square)
                             .placeholder(R.drawable.logo_pnu)
-                            .error(R.mipmap.ic_error2)
+                            .error(R.drawable.com_facebook_close)
                             .centerCrop()
                             .fit()
                             // .resize(1920,2560)
@@ -226,89 +263,27 @@ public class ProfileStudent extends AppCompatActivity {
                     Picasso.with(ProfileStudent.this)
                             .load(R.drawable.com_facebook_profile_picture_blank_square)
                             .placeholder(R.drawable.logo_pnu)
-                            .error(R.mipmap.ic_error2)
+                            .error(R.drawable.com_facebook_close)
                             .centerCrop()
                             .fit()
                             // .resize(1920,2560)
                             .into(imSendPhotoWall);
                 }
 
-                // CHECK ON MY RECEIVED
-                CheckFriendReferenceRequestsMyReceiver.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            if (dataSnapshot.hasChild(ReceiverStudentKey)) {
-                                ReceiverRequestType = dataSnapshot.child(ReceiverStudentKey).child("requestType").getValue().toString();
-                                if (ReceiverRequestType != null) {
-                                    if (ReceiverRequestType.equals("received")) {
-                                        CurrentStateFriend = "requestReceived";
-                                        btnAddToFriends.setText("Прийняти заявку ");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    @Override
-                    public void onCancelled (@NonNull DatabaseError databaseError){
-                        if (!network.isOnline()) {
-                            //      progressBar.setVisibility(View.GONE);
-                            Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                });
+               // CHECK ON MY RECEIVED
+                checkOnMyReceivedRequest();
 
                 // CHECK ON MY SENT
-                CheckFriendReferenceRequestMySender.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            if (dataSnapshot.hasChild(ReceiverStudentKey)) {
-                                SendeRequestType = dataSnapshot.child(ReceiverStudentKey).child("requestType").getValue().toString();
+                checkOnMySentRequest();
 
-                                if (SendeRequestType != null) {
-                                    if (SendeRequestType.equals("sent")) {
-                                        CurrentStateFriend = "requestSent";
-                                        btnAddToFriends.setText("Скасувати заявку");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                        @Override
-                        public void onCancelled (@NonNull DatabaseError databaseError){
-                            if (!network.isOnline()) {
-                            //    progressBar.setVisibility(View.GONE);
-                                Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        }
+                // CHECK ON MY FRIEND
+                checkOnMyFriend();
 
-                });
+                // CHECK ON YOU SUBSCRIBED
+                checkOnYouSubscribed();
 
-                // CHECK ON FRIEND
-                FriendReferenceMy.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            if (dataSnapshot.hasChild(ReceiverStudentKey)) {
-                                        CurrentStateFriend = "friends";
-                                        btnAddToFriends.setText("Видалити з друзів");
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        if (!network.isOnline()) {
-                            //    progressBar.setVisibility(View.GONE);
-                            Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+                // CHECK YOU ARE SUBSCRIBED
+                checkAreYouSubscribed();
 
 
             }
@@ -324,8 +299,149 @@ public class ProfileStudent extends AppCompatActivity {
         });
         }
 
+    // CHECK ON MY RECEIVED
+    private void checkOnMyReceivedRequest() {
+        CheckFriendReferenceRequestsMyReceiver.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange (@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (dataSnapshot.hasChild(ReceiverStudentKey)) {
+                        ReceiverRequestType = dataSnapshot.child(ReceiverStudentKey).child("requestType").getValue().toString();
+                        if (ReceiverRequestType != null) {
+                            if (ReceiverRequestType.equals("received")) {
+                                CurrentStateFriend = "requestReceived";
+                                btnAddToFriends.setText("Відповісти на заявку в друзі");
+                                btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
+                                btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
+                            }
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled (@NonNull DatabaseError databaseError){
+                if (!network.isOnline()) {
+                    //      progressBar.setVisibility(View.GONE);
+                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
 
- //   }
+        });
+    }
+
+    // CHECK ON MY SENT
+    private void checkOnMySentRequest() {
+        CheckFriendReferenceRequestMySender.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (dataSnapshot.hasChild(ReceiverStudentKey)) {
+                        SendeRequestType = dataSnapshot.child(ReceiverStudentKey).child("requestType").getValue().toString();
+
+                        if (SendeRequestType != null) {
+                            if (SendeRequestType.equals("sent")) {
+                                CurrentStateFriend = "requestSent";
+                                btnAddToFriends.setText("Скасувати заявку");
+                                btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
+                                btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
+                            }
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled (@NonNull DatabaseError databaseError){
+                if (!network.isOnline()) {
+                    //    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+        });
+    }
+
+    // CHECK ON MY FRIEND
+    private void checkOnMyFriend() {
+        FriendReferenceMy.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (dataSnapshot.hasChild(ReceiverStudentKey)) {
+                        CurrentStateFriend = "friends";
+                        btnAddToFriends.setText("Видалити з друзів");
+                        btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
+                        btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                if (!network.isOnline()) {
+                    //    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+    }
+
+    // CHECK ON YOU SUBSCRIBED
+    private void checkOnYouSubscribed(){
+        SubscribersReferenceMy.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (dataSnapshot.hasChild(ReceiverStudentKey)) {
+                        CurrentStateFriend ="onYouSubscribed";
+                        btnAddToFriends.setText("Ваш підписник");
+                        btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
+                        btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                if (!network.isOnline()) {
+                    //    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+    }
+
+    // CHECK YOU ARE SUBSCRIBED
+    private void checkAreYouSubscribed(){
+
+        SubscribersReferenceAlien.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (dataSnapshot.hasChild(senderUserId)) {
+                        CurrentStateFriend ="youAreSubscribed";
+                        btnAddToFriends.setText("Ви підписані");
+                        btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
+                        btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                if (!network.isOnline()) {
+                    //    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+    }
+
 
     public void menuChanges(BottomNavigationView bottomNavigationView){
 
@@ -367,30 +483,45 @@ public class ProfileStudent extends AppCompatActivity {
                 });
     }
 
+
     View.OnClickListener btnlistener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
+
             switch (v.getId()) {
+
                 case R.id.btnAddToFriends:
-                    btnAddToFriends.setEnabled(false);
 
                     if(CurrentStateFriend.equals("notFriend")) {
+                        btnAddToFriends.setEnabled(false);
+                        btnAddToFriends.setBackgroundColor(disactivateColorButtonAddToFriends);
+                        btnAddToFriends.setTextColor(disactivateColorTextButtonAddToFriends);
                         SendRequestOnAFriendship();
                     }
                     if(CurrentStateFriend.equals("requestSent")) {
+                        btnAddToFriends.setEnabled(false);
                         CancelFriendRequest();
                     }
                     if(CurrentStateFriend.equals("requestReceived")){
-                        AcceptFriendRequst();
+                        // add or subscribe friend
+                         alertDialogRespondToAFrinedRequest();
+
                     }
                     if(CurrentStateFriend.equals("friends")){
+                        btnAddToFriends.setEnabled(false);
                         DeleteFriend();
                     }
-
+                    if(CurrentStateFriend.equals("onYouSubscribed")) {
+                        // add  friend
+                        alertDialogRespondOnYouSubscribed();
+                    }
+                    if(CurrentStateFriend.equals("youAreSubscribed")) {
+                        // Un subscribe
+                        alertDialogRespondUnSubscribed();
+                    }
                     break;
-                case R.id.btnListFriends:
-
+                case R.id.btnListFriendsProfile:
                     Intent intentlistMyFriends;
                     intentlistMyFriends = new Intent( "com.social_network.pnu_app.pages.Friends");
                     startActivity(intentlistMyFriends);
@@ -398,6 +529,192 @@ public class ProfileStudent extends AppCompatActivity {
             }
         }
     };
+
+    private void alertDialogRespondUnSubscribed() {
+        String mass[] = new String[] {"Відписатися"};
+        AlertDialog.Builder a_builder = new AlertDialog.Builder(ProfileStudent.this);
+
+        a_builder.setTitle("Ви підписник")
+                .setItems( mass, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0){
+                            // Unsubscribe
+                            UnSubscribed();
+                        }
+                    }
+                });
+        AlertDialog alert = a_builder.create();
+        alert.show();
+    }
+
+
+    private void alertDialogRespondOnYouSubscribed() {
+        String mass[] = new String[] {"Добавити в друзі"};
+        AlertDialog.Builder a_builder = new AlertDialog.Builder(ProfileStudent.this);
+
+        a_builder.setTitle("Добавити підписника в друзі")
+                .setItems( mass, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0){
+                           // Add Subscriber On a Friends
+                            AcceptFriendRequst();
+                        }
+                    }
+                });
+        AlertDialog alert = a_builder.create();
+        alert.show();
+    }
+
+    public void alertDialogRespondToAFrinedRequest(){
+        String mass[] = new String[] {"Добавити в друзі", "Відхилити (добавити в підписники)"};
+        AlertDialog.Builder a_builder = new AlertDialog.Builder(ProfileStudent.this);
+
+        a_builder.setTitle("Відповісти на заявку в друзі")
+                .setItems( mass, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0){
+                            // Accept frined
+                            AcceptFriendRequst();
+                        }
+                        else if (which == 1){
+                            // Subscribe
+                            SubscribeFriendRequest();
+                        }
+                    }
+                });
+        AlertDialog alert = a_builder.create();
+        alert.show();
+    }
+
+    private void UnSubscribed() {
+        btnAddToFriends.setEnabled(false);
+    SubscribedReferenceMy.child(ReceiverStudentKey).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+        @Override
+        public void onComplete(@NonNull Task<Void> task) {
+            SubscribersReferenceAlien.child(senderUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    btnAddToFriends.setEnabled(true);
+                    CurrentStateFriend = "notFriend";
+                    btnAddToFriends.setText("Додати в друзі");
+                    btnAddToFriends.setBackgroundColor(disactivateColorButtonAddToFriends);
+                    btnAddToFriends.setTextColor(disactivateColorTextButtonAddToFriends);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    if (!network.isOnline()) {
+                        //        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
+    }).addOnFailureListener(new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+            if (!network.isOnline()) {
+                //        progressBar.setVisibility(View.GONE);
+                Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    });
+    }
+
+    private void SubscribeFriendRequest() {
+        btnAddToFriends.setEnabled(false);
+        DateFormat calForDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date currentDate = new Date();
+        final String saveCurrentDate = calForDate.format(currentDate);
+
+        SubscribersReferenceMy.child(ReceiverStudentKey).setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                SubscribedReferenceAlien.child(senderUserId).setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        CheckFriendReferenceRequestsMyReceiver.child(ReceiverStudentKey).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    CheckFriendReferenceRequestAlienSender.child(senderUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()){
+
+                                                btnAddToFriends.setEnabled(true);
+                                                CurrentStateFriend ="onYouSubscribed";
+                                                btnAddToFriends.setText("Ваш підписник");
+                                                btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
+                                                btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
+
+                                                // Remove My Sender and Alien Receiver (if in receiver happens interrupt internet connection)
+
+                                                FriendRequestsReferenceMySender.getParent().removeValue();
+                                                FriendRequestsReferenceAlienReceiver.getParent().removeValue();
+
+                                                Toast.makeText(ProfileStudent.this, "Добавлено в підписники",
+                                                        Toast.LENGTH_LONG).show();
+
+                                            }
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            if (!network.isOnline()) {
+                                                //        progressBar.setVisibility(View.GONE);
+                                                Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                                        Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+
+                                }
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                if (!network.isOnline()) {
+                                    //     progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if (!network.isOnline()) {
+                            //        progressBar.setVisibility(View.GONE);
+                            Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
+            }
+
+            //////////
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (!network.isOnline()) {
+                    //        progressBar.setVisibility(View.GONE);
+                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        //////////
+
+
+    }
 
     private void DeleteFriend() {
         FriendReferenceMy.child(ReceiverStudentKey).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -409,7 +726,9 @@ public class ProfileStudent extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             btnAddToFriends.setEnabled(true);
                             CurrentStateFriend = "notFriend";
-                            btnAddToFriends.setText("Додати в друзі  ");
+                            btnAddToFriends.setText("Додати в друзі");
+                            btnAddToFriends.setBackgroundColor(disactivateColorButtonAddToFriends);
+                            btnAddToFriends.setTextColor(disactivateColorTextButtonAddToFriends);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -459,9 +778,49 @@ public class ProfileStudent extends AppCompatActivity {
                                    public void onComplete(@NonNull Task<Void> task) {
                                        if (task.isSuccessful()){
 
+                                           // Remove My Sender and Alien Receiver (if in receiver happens interrupt internet connection)
+
+                                           FriendRequestsReferenceMySender.getParent().removeValue();
+                                           FriendRequestsReferenceAlienReceiver.getParent().removeValue();
+
+
+                                           // Remove Subscribers and Subscribed if this method calls from alertDialogRespondOnYouSubscribed()
+
+
+                                           SubscribersReferenceMy.child(ReceiverStudentKey).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                               @Override
+                                               public void onComplete(@NonNull Task<Void> task) {
+                                                   SubscribedReferenceAlien.child(senderUserId).removeValue().addOnFailureListener(new OnFailureListener() {
+                                                       // Кінець  Можливо тут треба додаткових умов для видалення ? --> Тут видаляємо підписника з групи підписників якщо він є
+                                                       @Override
+                                                       public void onFailure(@NonNull Exception e) {
+                                                           if (!network.isOnline()) {
+                                                               //        progressBar.setVisibility(View.GONE);
+                                                               Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                                                       Toast.LENGTH_LONG).show();
+                                                           }
+                                                       }
+                                                   });
+                                               }
+                                           }).addOnFailureListener(new OnFailureListener() {
+                                               @Override
+                                               public void onFailure(@NonNull Exception e) {
+                                                   if (!network.isOnline()) {
+                                                       //        progressBar.setVisibility(View.GONE);
+                                                       Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                                               Toast.LENGTH_LONG).show();
+                                                   }
+                                               }
+                                           });
+
                                            btnAddToFriends.setEnabled(true);
                                            CurrentStateFriend ="friends";
                                            btnAddToFriends.setText("Видалити з друзів");
+                                           btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
+                                           btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
+
+                                           Toast.makeText(ProfileStudent.this, "Друзі",
+                                                   Toast.LENGTH_LONG).show();
                                        }
 
                                    }
@@ -530,7 +889,9 @@ public class ProfileStudent extends AppCompatActivity {
 
                                 btnAddToFriends.setEnabled(true);
                                 CurrentStateFriend ="notFriend";
-                                btnAddToFriends.setText("Додати в друзі  ");
+                                btnAddToFriends.setText("Додати в друзі");
+                                btnAddToFriends.setBackgroundColor(disactivateColorButtonAddToFriends);
+                                btnAddToFriends.setTextColor(disactivateColorTextButtonAddToFriends);
                             }
 
                         }
@@ -573,6 +934,8 @@ public class ProfileStudent extends AppCompatActivity {
                             btnAddToFriends.setEnabled(true);
                             CurrentStateFriend = "requestSent";
                             btnAddToFriends.setText("Скасувати заявку");
+                            btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
+                            btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
 
                             }
                         }

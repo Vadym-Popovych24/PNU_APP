@@ -75,13 +75,13 @@ public class Message extends AppCompatActivity {
         });
 
         // Користувач не зареєстрований
-        if (FirebaseAuth.getInstance().getCurrentUser() == null)
+    /*    if (FirebaseAuth.getInstance().getCurrentUser() == null)
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(), SIGN_IN_CODE);
-        else {
+        else {*/
             Snackbar.make(relativeLayoutMessage, "Ви автризовані", Snackbar.LENGTH_LONG).show();
             displayAllMessages();
             //    mess_current_user.setText("current_user(displayName) = " + FirebaseAuth.getInstance().getCurrentUser().getUid() );
-        }
+      //  }
     }
 
     private void displayAllMessages() {
