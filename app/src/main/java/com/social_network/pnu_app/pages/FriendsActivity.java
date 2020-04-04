@@ -8,31 +8,57 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.social_network.pnu_app.R;
 
-public class Friends extends AppCompatActivity {
+public class FriendsActivity extends AppCompatActivity {
 
+    Toolbar mToolbar;
     Button btnBackFromFrinedList;
+
+    private ViewPager viewPagerFriends;
+    private TabLayout tabLayoutFriends;
+    private TabsFriendsAdapter friendsAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+
+/*        mToolbar = (Toolbar) findViewById(R.id.friends_toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle(R.string.FriendsActivity);*/
+
+        // Tabs for FriendsActivity Activity
+
+        viewPagerFriends = findViewById(R.id.friend_tabs_pages);
+        friendsAdapter = new TabsFriendsAdapter(getSupportFragmentManager());
+        viewPagerFriends.setAdapter(friendsAdapter);
+        tabLayoutFriends = findViewById(R.id.tabs_friends);
+        tabLayoutFriends.setupWithViewPager(viewPagerFriends);
+/*        viewPagerFriends.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayoutFriends));
+        tabLayoutFriends.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPagerFriends));*/
+
+    /*    BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation_friends);
         bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
-        menuChanges(bottomNavigationView);
+        menuChanges(bottomNavigationView);*/
 
-        Button btnFindNewFriends;
+
+      /*  Button btnFindNewFriends;
         btnFindNewFriends = findViewById(R.id.btnFindNewFriends);
         btnBackFromFrinedList = findViewById(R.id.btnBackFromFriendList);
 
         btnFindNewFriends.setOnClickListener(listenerBtn);
-        btnBackFromFrinedList.setOnClickListener(listenerBtn);
+        btnBackFromFrinedList.setOnClickListener(listenerBtn);*/
     }
 
+/*
     View.OnClickListener listenerBtn = new View.OnClickListener() {
 
         @Override
@@ -92,4 +118,6 @@ public class Friends extends AppCompatActivity {
                     }
                 });
     }
+}
+*/
 }

@@ -532,7 +532,7 @@ public class MainStudentPage extends AppCompatActivity{
                 case R.id.btnListFriends:
 
                 Intent intentlistMyFriends;
-                intentlistMyFriends = new Intent( "com.social_network.pnu_app.pages.Friends");
+                intentlistMyFriends = new Intent( "com.social_network.pnu_app.pages.FriendsActivity");
                 startActivity(intentlistMyFriends);
                     break;
             }

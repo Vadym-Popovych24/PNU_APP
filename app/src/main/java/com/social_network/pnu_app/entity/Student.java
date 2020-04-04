@@ -37,6 +37,7 @@ public class Student {
     String group;
     String dateOfEntry;
     String formStudying;
+    String deviceToken;
     PhoneAuthCredential credentiall;
 
     AppDatabase StudentDatabase;
@@ -70,12 +71,13 @@ public class Student {
 
     }
 
-    public Student(PhoneAuthCredential credential, boolean verify, String password,String phone,String uid){
+    public Student(PhoneAuthCredential credential, boolean verify, String password,String phone,String uid, String deviceToken){
         this.credentiall = credential;
         this.verify = verify;
         this.password = password;
         this.phone = phone;
         this.uid = uid;
+        this.deviceToken = deviceToken;
 
     }
 
@@ -90,6 +92,7 @@ public class Student {
         MapDatabase.put("password", password);
         MapDatabase.put("uid", uid);
         MapDatabase.put("phone", phone);
+        MapDatabase.put("deviceToken",deviceToken);
 
         return MapDatabase;
     }

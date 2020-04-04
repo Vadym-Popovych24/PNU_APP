@@ -24,9 +24,12 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.social_network.pnu_app.entity.Student;
 import com.social_network.pnu_app.firebase.QueriesFirebase;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
@@ -38,6 +41,7 @@ import com.social_network.pnu_app.R;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -77,6 +81,7 @@ public class SignIn extends AppCompatActivity {
     public String FBName;
     public String FBLastName;
 
+    DatabaseReference studentsReference;
     String KeyStudent ="default";
     QueriesFirebase qf = new QueriesFirebase();
    static HashMap<Object, Object> student = new HashMap();
@@ -95,6 +100,7 @@ public class SignIn extends AppCompatActivity {
         progressBar = findViewById(R.id.progressbarSignIn);
         progressBar.setVisibility(View.GONE);
         mAuth = FirebaseAuth.getInstance();
+        studentsReference = FirebaseDatabase.getInstance().getReference("students");
         verifycationStudentIn();
 
     }
@@ -194,19 +200,37 @@ public class SignIn extends AppCompatActivity {
                     if (FBverify == true && FBidSerie.equals(valueIDcardField) && FBpassword.equals(valuePassField)) {
 
                    // TODO акоментувати до sendCodeVerification();
-                     Student.student = student;
-                        Student studentSQLite = new Student(valueIDcardField, FBName, FBLastName,FBid , FBemail,
-                                FBpassword, FBphone, KeyStudent, FBverify, FBpatronym, FBfaculty, FBgroup,
-                                FBdateOfEntry, FBformStudying, FBlinkMainStudentPage);
-                        studentSQLite.synchronizationSQLiteSignIn(AppDatabase.getAppDatabase(SignIn.this));
-                        /////////////////
+                         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( new OnSuccessListener<InstanceIdResult>() {
+                            @Override
+                            public void onSuccess(InstanceIdResult instanceIdResult) {
+                                String deviceToken = instanceIdResult.getToken();
 
+                                studentsReference.child(KeyStudent).child("deviceToken").setValue(deviceToken)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
 
-                        intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-                        startActivityForResult(intentFromSignIn,1);
-                        progressBar.setVisibility(View.GONE);
+                                                Student.student = student;
+                                                Student studentSQLite = new Student(valueIDcardField, FBName, FBLastName,FBid , FBemail, FBpassword,
+                                                        FBphone, KeyStudent, FBverify, FBpatronym, FBfaculty, FBgroup, FBdateOfEntry, FBformStudying, "");
+                                                studentSQLite.synchronizationSQLiteSignIn(AppDatabase.getAppDatabase(SignIn.this));
+                                                /////////////////
 
-                      //  sendCodeVerification();  // TODO розкоментувати рядок
+                                                intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+                                                startActivityForResult(intentFromSignIn,1);
+                                                progressBar.setVisibility(View.GONE);
+
+                                            }
+                                        });
+                                progressBar.setVisibility(View.GONE);
+
+                                // Do whatever you want with your token now
+                                // i.e. store it on SharedPreferences or DB
+                                // or directly send it to server
+                            }
+                        });
+
+                    //    sendCodeVerification();  // TODO розкоментувати рядок
 
                     }
                 } else {
@@ -321,18 +345,36 @@ public class SignIn extends AppCompatActivity {
                 // Sign in success, update UI with the signed-in user's information
                 Log.d(TAG, "signInWithCredential:success");
 
-                  Toast.makeText(SignIn.this, " Verification automatically completed! SignIn Success",
-        Toast.LENGTH_LONG).show();
-                Student.student = student;
-                Student studentSQLite = new Student(valueIDcardField, FBName, FBLastName,FBid , FBemail, FBpassword,
-                        FBphone, KeyStudent, FBverify, FBpatronym, FBfaculty, FBgroup, FBdateOfEntry, FBformStudying, "");
-                studentSQLite.synchronizationSQLiteSignIn(AppDatabase.getAppDatabase(SignIn.this));
-                /////////////////
+                FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( new OnSuccessListener<InstanceIdResult>() {
+                    @Override
+                    public void onSuccess(InstanceIdResult instanceIdResult) {
+                        String deviceToken = instanceIdResult.getToken();
 
+                        studentsReference.child(KeyStudent).child("deviceToken").setValue(deviceToken)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(SignIn.this, " Verification automatically completed! SignIn Success",
+                                                Toast.LENGTH_LONG).show();
+                                        Student.student = student;
+                                        Student studentSQLite = new Student(valueIDcardField, FBName, FBLastName,FBid , FBemail, FBpassword,
+                                                FBphone, KeyStudent, FBverify, FBpatronym, FBfaculty, FBgroup, FBdateOfEntry, FBformStudying, "");
+                                        studentSQLite.synchronizationSQLiteSignIn(AppDatabase.getAppDatabase(SignIn.this));
+                                        /////////////////
 
-                intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-                startActivityForResult(intentFromSignIn,1);
-                progressBar.setVisibility(View.GONE);
+                                        intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+                                        startActivityForResult(intentFromSignIn,1);
+                                        progressBar.setVisibility(View.GONE);
+                                    }
+                                });
+                        progressBar.setVisibility(View.GONE);
+
+                        // Do whatever you want with your token now
+                        // i.e. store it on SharedPreferences or DB
+                        // or directly send it to server
+                    }
+                });
+
             }
 
 

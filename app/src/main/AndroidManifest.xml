@@ -39,10 +39,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".pages.Friends"
+            android:name=".pages.FriendsActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="com.social_network.pnu_app.pages.Friends" />
+                <action android:name="com.social_network.pnu_app.pages.FriendsActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

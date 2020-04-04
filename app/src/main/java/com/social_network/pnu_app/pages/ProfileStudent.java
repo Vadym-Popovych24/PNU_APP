@@ -35,6 +35,7 @@ import com.squareup.picasso.Picasso;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -69,6 +70,7 @@ public class ProfileStudent extends AppCompatActivity {
     DatabaseReference SubscribersReferenceAlien;              // Subscribers Alien
     DatabaseReference SubscribedReferenceMy;                  // Subscribed My
     DatabaseReference SubscribedReferenceAlien;               // Subscribed Alien
+    DatabaseReference NotificationReference;                  // Notification
 
     String senderUserId;
     String ReceiverStudentKey;
@@ -147,12 +149,19 @@ public class ProfileStudent extends AppCompatActivity {
 
         SubscribersReferenceAlien = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).child("Subscribers");
         SubscribersReferenceAlien.keepSynced(true);
+
         // Subscribed
 
         SubscribedReferenceAlien = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).child("Subscribed");
 
         SubscribedReferenceMy = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).child("Subscribed");
         SubscribedReferenceMy.keepSynced(true);
+
+        // Notification
+        NotificationReference = FirebaseDatabase.getInstance().getReference("students");
+        NotificationReference.keepSynced(true);
+
+
 
         // Colors
         activeColorButtonAddToFriends = getResources().getColor(R.color.lines);
@@ -193,7 +202,7 @@ public class ProfileStudent extends AppCompatActivity {
 
     }
 
-    private String getKeyCurrentStudend(final AppDatabase db) {
+        String getKeyCurrentStudend(final AppDatabase db) {
         String keyStudent = db.studentDao().getKeyStudent();
         return keyStudent;
     }
@@ -304,7 +313,6 @@ public class ProfileStudent extends AppCompatActivity {
         CheckFriendReferenceRequestsMyReceiver.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange (@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
                     if (dataSnapshot.hasChild(ReceiverStudentKey)) {
                         ReceiverRequestType = dataSnapshot.child(ReceiverStudentKey).child("requestType").getValue().toString();
                         if (ReceiverRequestType != null) {
@@ -313,7 +321,7 @@ public class ProfileStudent extends AppCompatActivity {
                                 btnAddToFriends.setText("Відповісти на заявку в друзі");
                                 btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
                                 btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
-                            }
+
                         }
                     }
                 }
@@ -335,7 +343,6 @@ public class ProfileStudent extends AppCompatActivity {
         CheckFriendReferenceRequestMySender.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
                     if (dataSnapshot.hasChild(ReceiverStudentKey)) {
                         SendeRequestType = dataSnapshot.child(ReceiverStudentKey).child("requestType").getValue().toString();
 
@@ -345,7 +352,7 @@ public class ProfileStudent extends AppCompatActivity {
                                 btnAddToFriends.setText("Скасувати заявку");
                                 btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
                                 btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
-                            }
+
                         }
                     }
                 }
@@ -367,13 +374,12 @@ public class ProfileStudent extends AppCompatActivity {
         FriendReferenceMy.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
                     if (dataSnapshot.hasChild(ReceiverStudentKey)) {
                         CurrentStateFriend = "friends";
                         btnAddToFriends.setText("Видалити з друзів");
                         btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
                         btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
-                    }
+
                 }
             }
 
@@ -394,13 +400,12 @@ public class ProfileStudent extends AppCompatActivity {
         SubscribersReferenceMy.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
                     if (dataSnapshot.hasChild(ReceiverStudentKey)) {
                         CurrentStateFriend ="onYouSubscribed";
                         btnAddToFriends.setText("Ваш підписник");
                         btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
                         btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
-                    }
+
                 }
             }
             @Override
@@ -421,13 +426,12 @@ public class ProfileStudent extends AppCompatActivity {
         SubscribersReferenceAlien.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
                     if (dataSnapshot.hasChild(senderUserId)) {
                         CurrentStateFriend ="youAreSubscribed";
                         btnAddToFriends.setText("Ви підписані");
                         btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
                         btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
-                    }
+
                 }
             }
             @Override
@@ -523,7 +527,7 @@ public class ProfileStudent extends AppCompatActivity {
                     break;
                 case R.id.btnListFriendsProfile:
                     Intent intentlistMyFriends;
-                    intentlistMyFriends = new Intent( "com.social_network.pnu_app.pages.Friends");
+                    intentlistMyFriends = new Intent( "com.social_network.pnu_app.pages.FriendsActivity");
                     startActivity(intentlistMyFriends);
                     break;
             }
@@ -556,7 +560,7 @@ public class ProfileStudent extends AppCompatActivity {
                 .setItems( mass, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0){
-                           // Add Subscriber On a Friends
+                           // Add Subscriber On a FriendsActivity
                             AcceptFriendRequst();
                         }
                     }
@@ -724,11 +728,13 @@ public class ProfileStudent extends AppCompatActivity {
                     FriendReferenceAlien.child(senderUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            btnAddToFriends.setEnabled(true);
+                            SubscribeFriendRequest();
+
+                         /*   btnAddToFriends.setEnabled(true);
                             CurrentStateFriend = "notFriend";
                             btnAddToFriends.setText("Додати в друзі");
                             btnAddToFriends.setBackgroundColor(disactivateColorButtonAddToFriends);
-                            btnAddToFriends.setTextColor(disactivateColorTextButtonAddToFriends);
+                            btnAddToFriends.setTextColor(disactivateColorTextButtonAddToFriends);*/
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -761,10 +767,10 @@ public class ProfileStudent extends AppCompatActivity {
         Date currentDate = new Date();
         final String saveCurrentDate = calForDate.format(currentDate);
 
-        FriendReferenceAlien.child(senderUserId).setValue(saveCurrentDate).addOnSuccessListener(new OnSuccessListener<Void>() {
+        FriendReferenceAlien.child(senderUserId).child("date").setValue(saveCurrentDate).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-           FriendReferenceMy.child(ReceiverStudentKey).setValue(saveCurrentDate).addOnSuccessListener(new OnSuccessListener<Void>() {
+           FriendReferenceMy.child(ReceiverStudentKey).child("date").setValue(saveCurrentDate).addOnSuccessListener(new OnSuccessListener<Void>() {
                @Override
                public void onSuccess(Void aVoid) {
 
@@ -892,6 +898,9 @@ public class ProfileStudent extends AppCompatActivity {
                                 btnAddToFriends.setText("Додати в друзі");
                                 btnAddToFriends.setBackgroundColor(disactivateColorButtonAddToFriends);
                                 btnAddToFriends.setTextColor(disactivateColorTextButtonAddToFriends);
+
+                                CheckFriendReferenceRequestsMyReceiver.removeValue();
+                                CheckFriendReferenceRequestAlienSender.removeValue();
                             }
 
                         }
@@ -931,11 +940,35 @@ public class ProfileStudent extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
 
-                            btnAddToFriends.setEnabled(true);
-                            CurrentStateFriend = "requestSent";
-                            btnAddToFriends.setText("Скасувати заявку");
-                            btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
-                            btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
+                                HashMap<String, String> notificationData = new HashMap<String, String>();
+                                notificationData.put("from", senderUserId);
+                                notificationData.put("type", "requestSent");
+
+                                NotificationReference.child(ReceiverStudentKey).child("Notification").push().setValue(notificationData)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful()) {
+
+                                                    btnAddToFriends.setEnabled(true);
+                                                    CurrentStateFriend = "requestSent";
+                                                    btnAddToFriends.setText("Скасувати заявку");
+                                                    btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
+                                                    btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
+                                                }
+
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        if (!network.isOnline()) {
+                                            //            progressBar.setVisibility(View.GONE);
+                                            Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                });
+
 
                             }
                         }

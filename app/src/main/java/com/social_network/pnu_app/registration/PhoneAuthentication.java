@@ -28,9 +28,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.Student;
+import com.social_network.pnu_app.localdatabase.AppDatabase;
 import com.social_network.pnu_app.network.NetworkStatus;
 
 import java.util.HashMap;
@@ -77,6 +80,7 @@ public class PhoneAuthentication extends AppCompatActivity {
     String phone;
     String uid;
     String ErrorText;
+    String deviceToken;
    public static HashMap<Object, Object> student = new HashMap();
 
     NetworkStatus network = new NetworkStatus();
@@ -184,24 +188,44 @@ public class PhoneAuthentication extends AppCompatActivity {
            /*             Toast.makeText(PhoneAuthentication.this, "SignIn Success",
             Toast.LENGTH_LONG).show();
 */
+                    FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                        @Override
+                        public void onSuccess(InstanceIdResult instanceIdResult) {
 
-                    verify = true;
-                    phone = Registration.valuePhoneField;
-                    uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    Student studentValue = new Student(credential, verify, password, phone, uid);
-                    Student.student = Registration.student;
 
-                    reference.child(Registration.KeyStudent).updateChildren((studentValue.toMapUpdateChild()))
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            deviceToken = instanceIdResult.getToken();
+                            verify = true;
+                            phone = Registration.valuePhoneField;
+                            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            Student studentValue = new Student(credential, verify, password, phone, uid, deviceToken);
+                            Student.student = Registration.student;
 
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    progressBar.setVisibility(View.GONE);
-                                    Log.d(TAG, "update RealTime Database Success");
-                                    codeSent = null;
-                                   Intent intentFromPhoneAuthentication = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-                                    startActivity(intentFromPhoneAuthentication);
-                                    idVerificationCode.setText("");
+                            reference.child(Registration.KeyStudent).updateChildren((studentValue.toMapUpdateChild()))
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            progressBar.setVisibility(View.GONE);
+                                            Log.d(TAG, "update RealTime Database Success");
+                                            codeSent = null;
+                                            Intent intentFromPhoneAuthentication = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+                                            startActivity(intentFromPhoneAuthentication);
+                                            idVerificationCode.setText("");
+
+                                            Toast.makeText(PhoneAuthentication.this, "Registered Success",
+                                                    Toast.LENGTH_LONG).show();
+                                     /*       Student studentSQLite = new Student(valueIDcardField, FBName, FBLastName,FBid , FBemail, FBpassword,
+                                                    FBphone, KeyStudent, FBverify, FBpatronym, FBfaculty, FBgroup, FBdateOfEntry, FBformStudying, "");
+                                            studentSQLite.synchronizationSQLiteSignIn(AppDatabase.getAppDatabase(SignIn.this));*/
+                                            /////////////////
+
+                            progressBar.setVisibility(View.GONE);
+
+                            // Do whatever you want with your token now
+                            // i.e. store it on SharedPreferences or DB
+                            // or directly send it to server
+                        }
+                    });
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {

@@ -5,7 +5,7 @@
     android:id="@+id/rlAllUsers"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".pages.Friends"
+    tools:context=".pages.FriendsActivity"
     android:background="@color/backgroundStudentMainPage">
 
     <TextView

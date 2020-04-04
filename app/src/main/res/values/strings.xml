@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PNU</string>
+    <string name="app_name">ПНУ</string>
     <string name="app_in_name">ПНУ</string>
     <string name="app_name_after">Соц мережа</string>
     <string name="text_bottom">Соц мережа</string>
@@ -50,17 +50,24 @@
     <string name="btnSignOut">Вийти</string>
     <string name="todo">TODO</string>
 
-    <!--Friends-->
+    <!--FriendsActivity-->
     <string name="Friends">Друзі</string>
+    <string name="FriendsOnline">Друзі онлайн</string>
     <string name="Users">Користувачі</string>
     <string name="SearchPeople">Пошук</string>
     <string name="SearchFriend">Пошук друзів</string>
     <string name="StudentNamaAndLastName">Ім\'я та Прізвище</string>
     <string name="StudentGroup">Група</string>
-
+    <string name="DefaultTextListFriend">У вас поки немає друзів</string>
     <!--Profile-->
     <string name="btnAddFriend">Додати в друзі  </string>
     <string name="btnRejectFriend">Відхилити</string>
     <string name="emptyWallProfile">Тут поки немає записів</string>
     <string name="btnSendMessageProfile">Написати</string>
+
+    <!--OnlineFriendsFragment-->
+    <string name="DefaultTextOnlineListFriend">Немає друзів онлайн</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

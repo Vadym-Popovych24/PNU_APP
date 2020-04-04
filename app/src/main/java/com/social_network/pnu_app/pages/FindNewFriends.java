@@ -4,36 +4,26 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Database;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.AllAuthUsers;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
-import com.social_network.pnu_app.network.NetworkStatus;
-import com.social_network.pnu_app.signin.SignIn;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
-
-import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -124,7 +114,7 @@ public class FindNewFriends extends AppCompatActivity {
             switch (v.getId()) {
                 case R.id.btnBackFromUserList:
                     Intent intentlistMyFriends;
-                    intentlistMyFriends = new Intent( "com.social_network.pnu_app.pages.Friends");
+                    intentlistMyFriends = new Intent( "com.social_network.pnu_app.pages.FriendsActivity");
                     startActivity(intentlistMyFriends);
                     break;
             }
