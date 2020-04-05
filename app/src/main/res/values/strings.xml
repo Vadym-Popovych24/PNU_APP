@@ -56,6 +56,7 @@
     <string name="Users">Користувачі</string>
     <string name="SearchPeople">Пошук</string>
     <string name="SearchFriend">Пошук друзів</string>
+    <string name="btnTextRequests">Заявки</string>
     <string name="StudentNamaAndLastName">Ім\'я та Прізвище</string>
     <string name="StudentGroup">Група</string>
     <string name="DefaultTextListFriend">У вас поки немає друзів</string>

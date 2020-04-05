@@ -3,7 +3,7 @@
     android:height="24dp"
     android:viewportWidth="22"
     android:viewportHeight="22"
-    android:tint="#A7A7A7"
+    android:tint="@color/btn_sign_in"
     android:alpha="0.8"
     android:opticalInsetRight="10dp">
   <group android:translateX="-1"

@@ -98,6 +98,7 @@ public class MainStudentPage extends AppCompatActivity{
    public String pathToFirebaseStorage;
    public String castomPathToFirebaseStorage;
    public String urlMainStudentPhoto;
+    String countMyFriends;
 
 
     private static final int REQUEST_CODE_PERMISSION_RECEIVE_CAMERA = 102;
@@ -203,13 +204,13 @@ public class MainStudentPage extends AppCompatActivity{
 
         String keyStudent = db.studentDao().getKeyStudent();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
+        reference.keepSynced(true);
         reference.child(keyStudent).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("linkFirebaseStorageMainPhoto")){
                 linkStorageFromFireBase = dataSnapshot.child("linkFirebaseStorageMainPhoto").getValue().toString();
 
-                System.out.println("urlMainStudentPhoto" + urlMainStudentPhoto);
-                System.out.println("linkStorageFromFireBase " + linkStorageFromFireBase);
                 Picasso.with(getBaseContext())
                         .load(linkStorageFromFireBase)
                         .placeholder(R.drawable.logo_pnu)
@@ -231,6 +232,7 @@ public class MainStudentPage extends AppCompatActivity{
                         // .resize(1920,2560)
                         .into(imStudentMainPhoto);
             }
+            }
 
 
 
@@ -251,6 +253,30 @@ public class MainStudentPage extends AppCompatActivity{
     QueriesFirebase qfd = new QueriesFirebase();
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void BuildStudentPage(final AppDatabase db){
+
+        String keyStudent = db.studentDao().getKeyStudent();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
+        reference.keepSynced(true);
+        reference.child(keyStudent).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild("counterFriends")) {
+                    countMyFriends = dataSnapshot.child("counterFriends").getValue().toString();
+                    btnlistFriends.setText(countMyFriends + " " + "Друзі");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                NetworkStatus network = new NetworkStatus();
+                if (!network.isOnline()) {
+                    // progressBar.setVisibility(View.GONE);
+                    Toast.makeText(MainStudentPage.this, " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+        });
 
         int currentStudent = Integer.parseInt(db.studentDao().getCurrentStudent());
         SeriesIDCard = db.studentDao().getSeriesBYId(currentStudent);

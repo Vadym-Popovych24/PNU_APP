@@ -42,7 +42,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class FriendsFragment extends Fragment {
 
     private View myMainView;
-    Button btnBackFromFrinedList;
+    Button btnRequests;
 
     private RecyclerView myFriendsList;
     private DatabaseReference myFriendsReference;
@@ -52,6 +52,7 @@ public class FriendsFragment extends Fragment {
     String SerieIDCard;
 
     String senderUserId;
+    long countFriends;
     NetworkStatus network = new NetworkStatus();
 
     public FriendsFragment() {
@@ -82,18 +83,18 @@ public class FriendsFragment extends Fragment {
         myFriendsList.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) myMainView.findViewById(R.id.bottom_navigation_friends);
-        bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
+      //  BottomNavigationView bottomNavigationView = (BottomNavigationView) myMainView.findViewById(R.id.bottom_navigation_friends);
+      //  bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
 
 
         Button btnFindNewFriends;
         btnFindNewFriends = myMainView.findViewById(R.id.btnFindNewFriends);
-        btnBackFromFrinedList = myMainView.findViewById(R.id.btnBackFromFriendList);
+        btnRequests = myMainView.findViewById(R.id.btnFindRequests);
 
         btnFindNewFriends.setOnClickListener(listenerBtn);
-        btnBackFromFrinedList.setOnClickListener(listenerBtn);
+        btnRequests.setOnClickListener(listenerBtn);
 
-        menuChanges(bottomNavigationView);
+     //   menuChanges(bottomNavigationView);
         // Inflate the layout for this fragment
         return myMainView;
     }
@@ -108,123 +109,99 @@ public class FriendsFragment extends Fragment {
                     intentFindNewFriends = new Intent( "com.social_network.pnu_app.pages.FindNewFriends");
                     startActivity(intentFindNewFriends);
                     break;
-                case R.id.btnBackFromFriendList:
+                case R.id.btnFindRequests:
                     Intent intentBackFriendList;
                     intentBackFriendList = new Intent( "com.social_network.pnu_app.pages.MainStudentPage");
                     startActivity(intentBackFriendList);
                     break;
             } }};
 
-    public void menuChanges(BottomNavigationView bottomNavigationView){
-
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        Intent intentMenu;
-                        switch (item.getItemId()) {
-                            case R.id.action_search:
-                                intentMenu = new Intent( "com.social_network.pnu_app.pages.Search");
-                                startActivity(intentMenu);
-
-                                break;
-                            case R.id.action_message:
-                                intentMenu = new Intent( "com.social_network.pnu_app.pages.Messenger");
-                                startActivity(intentMenu);
-
-
-                                break;
-                            case R.id.action_main_student_page:
-                                intentMenu = new Intent( "com.social_network.pnu_app.pages.MainStudentPage");
-                                startActivity(intentMenu);
-
-                                break;
-                            case R.id.action_schedule:
-                                intentMenu = new Intent( "com.social_network.pnu_app.pages.Schedule");
-                                startActivity(intentMenu);
-
-                                break;
-                            case R.id.action_settings:
-                                intentMenu = new Intent( "com.social_network.pnu_app.pages.Settings");
-                                startActivity(intentMenu);
-
-                                break;
-                        }
-                        return false;
-                    }
-                });
-    }
-
 
     @Override
     public void onStart() {
         super.onStart();
+        students.child(senderUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild("counterFriends")) {
+                    countFriends = (long) dataSnapshot.child("counterFriends").getValue();
 
-        if(myFriendsReference != null) {
-            textViewDefaultText.setText(String.valueOf(myFriendsReference));
-            FindNewFriends findNewFriends = new FindNewFriends();
-            SerieIDCard = findNewFriends.getStudentSeriesIDCard(AppDatabase.getAppDatabase(getContext()));
-            FirebaseRecyclerAdapter<Friends, FriendsViewHolder> firebaseRecyclerAdapter
-                    = new FirebaseRecyclerAdapter<Friends, FriendsViewHolder>
-                    (
-                            Friends.class,
-                            R.layout.all_users_display_layout,
-                            FriendsViewHolder.class,
-                            myFriendsReference
 
-                    ) {
-                @Override
-                protected void populateViewHolder(final FriendsViewHolder friendsViewHolder, final Friends friends, final int i) {
+                    if (countFriends != 0) {
+                        textViewDefaultText.setText("");
+                        FindNewFriends findNewFriends = new FindNewFriends();
+                        SerieIDCard = findNewFriends.getStudentSeriesIDCard(AppDatabase.getAppDatabase(getContext()));
+                        FirebaseRecyclerAdapter<Friends, FriendsViewHolder> firebaseRecyclerAdapter
+                                = new FirebaseRecyclerAdapter<Friends, FriendsViewHolder>
+                                (
+                                        Friends.class,
+                                        R.layout.all_users_display_layout,
+                                        FriendsViewHolder.class,
+                                        myFriendsReference
 
-                    String currentFriend = getRef(i).getKey();
-                    students.child(currentFriend).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            String name = dataSnapshot.child("name").getValue().toString();
-                            String lastName = dataSnapshot.child("lastName").getValue().toString();
-                            String grop = dataSnapshot.child("group").getValue().toString();
-                            final String seriesIDcard = dataSnapshot.child("seriesIDcard").getValue().toString();
-                            String linkFirebaseStorageMainPhoto = dataSnapshot.child("linkFirebaseStorageMainPhoto").getValue().toString();
+                                ) {
+                            @Override
+                            protected void populateViewHolder(final FriendsViewHolder friendsViewHolder, final Friends friends, final int i) {
 
-                            friendsViewHolder.setStudentName(name, lastName);
-                            friendsViewHolder.setStudentGroup(grop);
-                            friendsViewHolder.setStudentImage(getContext(), linkFirebaseStorageMainPhoto);
-                            friendsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
+                                String currentFriend = getRef(i).getKey();
+                                students.child(currentFriend).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        String name = dataSnapshot.child("name").getValue().toString();
+                                        String lastName = dataSnapshot.child("lastName").getValue().toString();
+                                        String grop = dataSnapshot.child("group").getValue().toString();
+                                        final String seriesIDcard = dataSnapshot.child("seriesIDcard").getValue().toString();
+                                        String linkFirebaseStorageMainPhoto = dataSnapshot.child("linkFirebaseStorageMainPhoto").getValue().toString();
 
-                                    if (!seriesIDcard.equals(SerieIDCard)) {
-                                        String VisitedStudentKey = getRef(i).getKey();
-                                        Intent profileIntent = new Intent("com.social_network.pnu_app.pages.ProfileStudent");
-                                        profileIntent.putExtra("VisitedStudentKey", VisitedStudentKey);
-                                        startActivity(profileIntent);
-                                    } else {
-                                        Intent myProfileIntent = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-                                        startActivity(myProfileIntent);
+                                        friendsViewHolder.setStudentName(name, lastName);
+                                        friendsViewHolder.setStudentGroup(grop);
+                                        friendsViewHolder.setStudentImage(getContext(), linkFirebaseStorageMainPhoto);
+                                        friendsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
 
+                                                if (!seriesIDcard.equals(SerieIDCard)) {
+                                                    String VisitedStudentKey = getRef(i).getKey();
+                                                    Intent profileIntent = new Intent("com.social_network.pnu_app.pages.ProfileStudent");
+                                                    profileIntent.putExtra("VisitedStudentKey", VisitedStudentKey);
+                                                    startActivity(profileIntent);
+                                                } else {
+                                                    Intent myProfileIntent = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+                                                    startActivity(myProfileIntent);
+
+                                                }
+                                            }
+                                        });
                                     }
-                                }
-                            });
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            if (!network.isOnline()) {
-                                //        progressBar.setVisibility(View.GONE);
-                                Toast.makeText(getContext(), " Please Connect to Internet",
-                                        Toast.LENGTH_LONG).show();
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        if (!network.isOnline()) {
+                                            //        progressBar.setVisibility(View.GONE);
+                                            Toast.makeText(getContext(), " Please Connect to Internet",
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                });
+
+
                             }
-                        }
-                    });
-
-
+                        };
+                        myFriendsList.setAdapter(firebaseRecyclerAdapter);
+                    } else {
+                        textViewDefaultText.setText(R.string.DefaultTextListFriend);
+                    }
                 }
-            };
-            myFriendsList.setAdapter(firebaseRecyclerAdapter);
-        }
-        else {
-            textViewDefaultText.setText(R.string.DefaultTextListFriend);
-        }
+            }
+                @Override
+                public void onCancelled (@NonNull DatabaseError databaseError){
+                    if (!network.isOnline()) {
+                        //        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(getContext(), " Please Connect to Internet",
+                                Toast.LENGTH_LONG).show();
+                    }
+            }
+        });
     }
 
 }

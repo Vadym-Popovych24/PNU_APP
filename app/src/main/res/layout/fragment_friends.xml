@@ -14,14 +14,12 @@
             android:id="@+id/editTextFindFriends"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:layout_marginLeft="0dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
             android:layout_marginTop="60dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_toEndOf="@+id/btnBackFromFriendList"
+            android:layout_marginEnd="15dp"
+            android:layout_marginRight="15dp"
 
-            android:layout_toRightOf="@+id/btnBackFromFriendList"
             android:autofillHints="@string/name_hint"
             android:background="@drawable/edittext"
             android:drawableStart="@drawable/ic_menu_search"
@@ -42,66 +40,63 @@
             android:textSize="15sp"
             tools:targetApi="o" />
 
-        <TextView
-            android:id="@+id/tvFriends"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/editTextFindFriends"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_toEndOf="@+id/btnFindNewFriends"
-            android:layout_toRightOf="@+id/btnFindNewFriends"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/Friends"
-            android:textColor="@color/black"
-            android:textSize="26sp" />
+<RelativeLayout
+    android:id="@+id/rlButtonsFriends"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/editTextFindFriends"
+    android:gravity="center">
+    <Button
+        android:id="@+id/btnFindRequests"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="7dp"
+        android:layout_marginRight="7dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/btn_find_people"
+        android:drawableStart="@drawable/person_add"
+        android:drawableLeft="@drawable/person_add"
+        android:drawablePadding="20dp"
+        android:fontFamily="@font/montserrat"
+        android:paddingStart="30dp"
+        android:paddingLeft="30dp"
+        android:paddingEnd="10dp"
+        android:paddingRight="10dp"
+
+        android:text="@string/btnTextRequests"
+        android:textColor="@android:color/black"
+        android:textSize="14sp" />
 
         <Button
             android:id="@+id/btnFindNewFriends"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="140dp"
-            android:layout_height="50dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/editTextFindFriends"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_toRightOf="@+id/btnFindRequests"
+            android:layout_toEndOf="@+id/btnFindRequests"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
             android:background="@drawable/btn_find_people"
-            android:drawableStart="@drawable/person_add"
-            android:drawableLeft="@drawable/person_add"
-            android:drawablePadding="2dp"
+            android:drawableStart="@drawable/btn_drawable_requests"
+            android:drawableLeft="@drawable/btn_drawable_requests"
+            android:drawablePadding="20dp"
             android:fontFamily="@font/montserrat"
-            android:padding="15dp"
+            android:paddingStart="30dp"
+            android:paddingLeft="30dp"
+            android:paddingEnd="10dp"
+            android:paddingRight="10dp"
 
             android:text="@string/SearchPeople"
             android:textColor="@android:color/black"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
-
-        <Button
-
-            android:id="@+id/btnBackFromFriendList"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="70dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginRight="15dp"
-
-            android:background="@drawable/arrow_back"
-            android:paddingStart="0dp"
-
-            android:paddingLeft="0dp"
-            android:paddingEnd="0dp"
-            android:paddingRight="0dp"
-            android:textColor="@android:color/black" />
+</RelativeLayout>
 
 
     <TextView
@@ -117,18 +112,9 @@
             android:id="@+id/friendsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/btnFindNewFriends"
+            android:layout_below="@+id/rlButtonsFriends"
             android:layout_marginTop="10dp"
             android:layout_above="@+id/bottom_navigation_friends"/>
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation_friends"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            app:itemBackground="@color/colorAccentWhite"
-            app:itemIconTint="@drawable/bottom_navigation_item_background_colors"
-            app:itemTextColor="@drawable/bottom_navigation_item_background_colors"
-            app:menu="@menu/menu_bottom_navigation" />
 
 </RelativeLayout>

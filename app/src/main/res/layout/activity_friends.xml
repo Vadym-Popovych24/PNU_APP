@@ -12,7 +12,7 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/onlineText">
+        android:background="@color/backgroundStudentMainPage">
 
 <!--    <include layout="@layout/friends_bar_layout"
         android:id="@+id/friends_toolbar">
@@ -35,107 +35,6 @@
         android:layout_height="wrap_content">
 
     </androidx.viewpager.widget.ViewPager>
-
- <!--   <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/appBarLayout">
-
-        <TextView
-            android:id="@+id/tvFriends"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_toEndOf="@+id/btnFindNewFriends"
-            android:layout_toRightOf="@+id/btnFindNewFriends"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/FriendsActivity"
-            android:textColor="@color/black"
-            android:textSize="26sp" />
-
-        <Button
-            android:id="@+id/btnFindNewFriends"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="140dp"
-            android:layout_height="50dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/btn_find_people"
-            android:drawableStart="@drawable/person_add"
-            android:drawableLeft="@drawable/person_add"
-            android:drawablePadding="2dp"
-            android:fontFamily="@font/montserrat"
-            android:padding="15dp"
-
-            android:text="@string/SearchPeople"
-            android:textColor="@android:color/black"
-            android:textSize="16sp" />
-
-
-        <Button
-
-            android:id="@+id/btnBackFromFriendList"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-
-            android:layout_below="@+id/tvFriends"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="35dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginRight="15dp"
-
-            android:background="@drawable/arrow_back"
-            android:paddingStart="0dp"
-
-            android:paddingLeft="0dp"
-            android:paddingEnd="0dp"
-            android:paddingRight="0dp"
-            android:textColor="@android:color/black" />
-
-        <EditText
-            android:id="@+id/editTextFindFriends"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/btnFindNewFriends"
-            android:layout_marginStart="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_toEndOf="@+id/btnBackFromFriendList"
-
-            android:layout_toRightOf="@+id/btnBackFromFriendList"
-            android:autofillHints="@string/name_hint"
-            android:background="@drawable/edittext"
-            android:drawableStart="@drawable/ic_menu_search"
-            android:drawableLeft="@drawable/ic_menu_search"
-            android:drawablePadding="20dp"
-            android:focusable="false"
-
-            android:hint="@string/SearchFriend"
-            android:inputType="textPersonName"
-
-            android:paddingStart="8dp"
-            android:paddingLeft="8dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="12dp"
-            android:paddingRight="12dp"
-            android:paddingBottom="12dp"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            tools:targetApi="o" />
-
-    </RelativeLayout>
--->
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_friends"

@@ -324,7 +324,7 @@ public class SignIn extends AppCompatActivity {
         public void onVerificationFailed(@NonNull FirebaseException e) {
             progressBar.setVisibility(View.GONE);
             Log.w(TAG, "onVerificationFailed", e.fillInStackTrace());
-            ErrorText = "On Verification Sending SMS Failed! You are often do requests due to unusual activity" +
+            ErrorText = "On Verification Sending SMS Failed! You are often do btn_drawable_requests due to unusual activity" +
                     " and was blocked. Try Later! After 4 hours" ; // TODO change text
             alertErrorSign();
         }
