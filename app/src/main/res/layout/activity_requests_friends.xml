@@ -2,24 +2,24 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rlFriends"
+    android:id="@+id/rlRequestsFriends"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".pages.FriendsActivity"
+    tools:context=".pages.RequestsFriends"
     android:background="@color/backgroundStudentMainPage">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayoutFriends"
+        android:id="@+id/appBarLayoutRequestsFriends"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/backgroundStudentMainPage">
 
-<!--    <include layout="@layout/friends_bar_layout"
-        android:id="@+id/friends_toolbar">
-    </include>-->
+        <!--    <include layout="@layout/friends_bar_layout"
+                android:id="@+id/friends_toolbar">
+            </include>-->
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs_friends"
+            android:id="@+id/tabsRequestsFriends"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#00D1C5C5"
@@ -30,14 +30,14 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/friend_tabs_pages"
+        android:id="@+id/requestsFriend_tabs_pages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
     </androidx.viewpager.widget.ViewPager>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation_friends"
+        android:id="@+id/bottom_navigation_requests_friends"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

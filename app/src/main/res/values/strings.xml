@@ -69,6 +69,9 @@
     <!--OnlineFriendsFragment-->
     <string name="DefaultTextOnlineListFriend">Немає друзів онлайн</string>
 
+    <string name="DefaultTextSenderedFriendsRequestsList">Немає надісланих запитів на дружбу</string>
+    <string name="DefaultTextRequestsFriendsList">Немає отриманих запитів на дружбу</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

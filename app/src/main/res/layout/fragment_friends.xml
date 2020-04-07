@@ -5,13 +5,13 @@
     android:id="@+id/rlFriends"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_below="@+id/appBarLayout"
+    android:layout_below="@+id/appBarLayoutFriends"
     tools:context=".pages.FriendsActivity"
     android:background="@color/backgroundStudentMainPage">
 
 
         <EditText
-            android:id="@+id/editTextFindFriends"
+            android:id="@+id/editTextFriends"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
@@ -44,7 +44,7 @@
     android:id="@+id/rlButtonsFriends"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@+id/editTextFindFriends"
+    android:layout_below="@+id/editTextFriends"
     android:gravity="center">
     <Button
         android:id="@+id/btnFindRequests"

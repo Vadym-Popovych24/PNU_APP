@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,13 +37,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FriendsFragment extends Fragment {
+public class RequestsFriendsFragment extends Fragment {
 
     private View myMainView;
     Button btnRequests;
 
-    private RecyclerView myFriendsList;
-    private DatabaseReference myFriendsReference;
+    private RecyclerView myRequestsFriendsList;
+    private DatabaseReference myFriendRequestReceiverReference;
     private DatabaseReference students;
 
     private TextView textViewDefaultText;
@@ -55,7 +53,8 @@ public class FriendsFragment extends Fragment {
     long countFriends;
     NetworkStatus network = new NetworkStatus();
 
-    public FriendsFragment() {
+
+    public RequestsFriendsFragment() {
         // Required empty public constructor
     }
 
@@ -64,40 +63,40 @@ public class FriendsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        myMainView = inflater.inflate(R.layout.fragment_friends, container, false);
+        myMainView = inflater.inflate(R.layout.fragment_requests_friends, container, false);
 
-        textViewDefaultText = myMainView.findViewById(R.id.defaultTextListFriend);
+        textViewDefaultText = myMainView.findViewById(R.id.defaultTextListRequestsFriend);
 
-        myFriendsList = myMainView.findViewById(R.id.friendsRecyclerView);
+        myRequestsFriendsList = myMainView.findViewById(R.id.requestsFriendsRecyclerView);
         ProfileStudent profileStudent = new ProfileStudent();
         senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(getContext()));
 
-        myFriendsReference = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).
-                child("Friends");
-        myFriendsReference.keepSynced(true);
+        myFriendRequestReceiverReference = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).
+                child("FriendRequestReceiver");
+        myFriendRequestReceiverReference.keepSynced(true);
 
         students = FirebaseDatabase.getInstance().getReference("students");
         students.keepSynced(true);
 
-        myFriendsList.setHasFixedSize(true);
-        myFriendsList.setLayoutManager(new LinearLayoutManager(getContext()));
+        myRequestsFriendsList.setHasFixedSize(true);
+        myRequestsFriendsList.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
-      //  BottomNavigationView bottomNavigationView = (BottomNavigationView) myMainView.findViewById(R.id.bottom_navigation_friends);
-      //  bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
+        //  BottomNavigationView bottomNavigationView = (BottomNavigationView) myMainView.findViewById(R.id.bottom_navigation_friends);
+        //  bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
 
 
-        Button btnFindNewFriends;
+        // TODO buttons
+/*        Button btnFindNewFriends;
         btnFindNewFriends = myMainView.findViewById(R.id.btnFindNewFriends);
         btnRequests = myMainView.findViewById(R.id.btnFindRequests);
 
         btnFindNewFriends.setOnClickListener(listenerBtn);
-        btnRequests.setOnClickListener(listenerBtn);
+        btnRequests.setOnClickListener(listenerBtn);*/
 
         // Inflate the layout for this fragment
         return myMainView;
     }
-
     View.OnClickListener listenerBtn = new View.OnClickListener() {
 
         @Override
@@ -110,7 +109,7 @@ public class FriendsFragment extends Fragment {
                     break;
                 case R.id.btnFindRequests:
                     Intent intentBackFriendList;
-                    intentBackFriendList = new Intent( "com.social_network.pnu_app.pages.RequestsFriends");
+                    intentBackFriendList = new Intent( "com.social_network.pnu_app.pages.MainStudentPage");
                     startActivity(intentBackFriendList);
                     break;
             } }};
@@ -130,17 +129,17 @@ public class FriendsFragment extends Fragment {
                         textViewDefaultText.setText("");
                         FindNewFriends findNewFriends = new FindNewFriends();
                         SerieIDCard = findNewFriends.getStudentSeriesIDCard(AppDatabase.getAppDatabase(getContext()));
-                        FirebaseRecyclerAdapter<Friends, FriendsViewHolder> firebaseRecyclerAdapter
-                                = new FirebaseRecyclerAdapter<Friends, FriendsViewHolder>
+                        FirebaseRecyclerAdapter<RequestsFriends, RequestsFriendsViewHolder> firebaseRecyclerAdapter
+                                = new FirebaseRecyclerAdapter<RequestsFriends, RequestsFriendsViewHolder>
                                 (
-                                        Friends.class,
+                                        RequestsFriends.class,
                                         R.layout.all_users_display_layout,
-                                        FriendsViewHolder.class,
-                                        myFriendsReference
+                                        RequestsFriendsViewHolder.class,
+                                        myFriendRequestReceiverReference
 
                                 ) {
                             @Override
-                            protected void populateViewHolder(final FriendsViewHolder friendsViewHolder, final Friends friends, final int i) {
+                            protected void populateViewHolder(final RequestsFriendsViewHolder requestsFriendsViewHolder, final RequestsFriends requestsFriends, final int i) {
 
                                 String currentFriend = getRef(i).getKey();
                                 students.child(currentFriend).addValueEventListener(new ValueEventListener() {
@@ -152,10 +151,10 @@ public class FriendsFragment extends Fragment {
                                         final String seriesIDcard = dataSnapshot.child("seriesIDcard").getValue().toString();
                                         String linkFirebaseStorageMainPhoto = dataSnapshot.child("linkFirebaseStorageMainPhoto").getValue().toString();
 
-                                        friendsViewHolder.setStudentName(name, lastName);
-                                        friendsViewHolder.setStudentGroup(grop);
-                                        friendsViewHolder.setStudentImage(getContext(), linkFirebaseStorageMainPhoto);
-                                        friendsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                                        requestsFriendsViewHolder.setStudentName(name, lastName);
+                                        requestsFriendsViewHolder.setStudentGroup(grop);
+                                        requestsFriendsViewHolder.setStudentImage(getContext(), linkFirebaseStorageMainPhoto);
+                                        requestsFriendsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
 
@@ -186,29 +185,29 @@ public class FriendsFragment extends Fragment {
 
                             }
                         };
-                        myFriendsList.setAdapter(firebaseRecyclerAdapter);
+                        myRequestsFriendsList.setAdapter(firebaseRecyclerAdapter);
                     } else {
                         textViewDefaultText.setText(R.string.DefaultTextListFriend);
                     }
                 }
             }
-                @Override
-                public void onCancelled (@NonNull DatabaseError databaseError){
-                    if (!network.isOnline()) {
-                        //        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), " Please Connect to Internet",
-                                Toast.LENGTH_LONG).show();
-                    }
+            @Override
+            public void onCancelled (@NonNull DatabaseError databaseError){
+                if (!network.isOnline()) {
+                    //        progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
 
 }
 
-class FriendsViewHolder extends RecyclerView.ViewHolder {
+class RequestsFriendsViewHolder extends RecyclerView.ViewHolder {
     View mView;
 
-    public FriendsViewHolder(View itemView){
+    public RequestsFriendsViewHolder(View itemView){
         super(itemView);
 
         mView= itemView;
@@ -267,7 +266,3 @@ class FriendsViewHolder extends RecyclerView.ViewHolder {
 
     }
 }
-
-
-
-
