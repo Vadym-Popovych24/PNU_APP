@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.firebase.QueriesFirebase;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
@@ -25,6 +28,10 @@ public class MainActivity extends AppCompatActivity {
     private Button btnMainSignIn;
     private Button btnRegistration;
     private static int buttonCounter;
+
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentStudent;
+    DatabaseReference studentsReference;
 
 
     private RelativeLayout rlActivityMain;
@@ -56,12 +63,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         rlActivityMain = findViewById(R.id.rlActivityMain);
+        mAuth = FirebaseAuth.getInstance();
+        currentStudent= mAuth.getCurrentUser();
+
+        System.out.println("currentStudentonCreate = " + currentStudent);
+
 
        // QueriesFirebase queriesFirebase = new QueriesFirebase();
        //  queriesFirebase.addStudent(); // TODO THIS METHOD ADD USER
-     //   if (FirebaseAuth.getInstance().getCurrentUser() != null){// &&
-        //        checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false) {
-        if(checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false){ // TODO change on codeLine above
+
+
+       if (currentStudent != null  &&
+           checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false) {
+
+           ProfileStudent profileStudent = new ProfileStudent();
+           final String senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(getApplicationContext()));
+           studentsReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId);
+
+   //     if(checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false){ // TODO change on codeLine above if
             rlActivityMain = findViewById(R.id.rlActivityMain);
             Intent intentFromMainActivity;
             intentFromMainActivity = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
@@ -84,11 +103,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-  /*  @Override
-    protected void onDestroy() {
-        AppDatabase.destroyInstance();
-        super.onDestroy();
-    } */
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        System.out.println("currentStudentonStart = " + currentStudent);
+        if (currentStudent != null){
+            studentsReference.child("online").setValue(false);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (currentStudent != null){
+            studentsReference.child("online").setValue(true);
+        }
+    }
+
+
 
     public boolean checkNullCurrentStudent(final AppDatabase db){
         boolean nullCurrentStudent;

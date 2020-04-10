@@ -2,72 +2,37 @@ package com.social_network.pnu_app.pages;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.social_network.pnu_app.R;
-import com.social_network.pnu_app.localdatabase.AppDatabase;
 
-public class FriendsActivity extends AppCompatActivity {
+public class MySubscribersActivity extends AppCompatActivity {
 
-    private ViewPager viewPagerFriends;
-    private TabLayout tabLayoutFriends;
-    private TabsFriendsAdapter friendsAdapter;
+    private ViewPager viewPagerSubscribers;
+    private TabLayout tabLayoutSubscribers;
+    private TabMySubscribersAdapter subscribersAdapter;
 
-    private FirebaseUser currentStudent;
-    DatabaseReference studentsReference;
-    private FirebaseAuth mAuth;
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        System.out.println("currentStudentonStart = " + currentStudent);
-        if (currentStudent != null){
-            studentsReference.child("online").setValue(false);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (currentStudent != null){
-            studentsReference.child("online").setValue(true);
-        }
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friends);
+        setContentView(R.layout.activity_my_subscribers);
 
-        ProfileStudent profileStudent = new ProfileStudent();
+        viewPagerSubscribers = findViewById(R.id.subscribers_tabs_pages);
+        subscribersAdapter = new TabMySubscribersAdapter(getSupportFragmentManager());
+        viewPagerSubscribers.setAdapter(subscribersAdapter);
+        tabLayoutSubscribers = findViewById(R.id.tabs_subscribers);
+        tabLayoutSubscribers.setupWithViewPager(viewPagerSubscribers);
 
-        mAuth = FirebaseAuth.getInstance();
-        currentStudent= mAuth.getCurrentUser();
-
-        String senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(FriendsActivity.this));
-        studentsReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId);
-
-        viewPagerFriends = findViewById(R.id.friend_tabs_pages);
-        friendsAdapter = new TabsFriendsAdapter(getSupportFragmentManager());
-        viewPagerFriends.setAdapter(friendsAdapter);
-        tabLayoutFriends = findViewById(R.id.tabs_friends);
-        tabLayoutFriends.setupWithViewPager(viewPagerFriends);
-
-       BottomNavigationView bottomNavigationView = (BottomNavigationView)
-               findViewById(R.id.bottom_navigation_friends);
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation_subscribers);
         bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
         menuChanges(bottomNavigationView);
-
 
     }
 

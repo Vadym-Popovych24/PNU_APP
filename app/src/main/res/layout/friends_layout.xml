@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="3dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/all_users_profile_image"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:src="@drawable/com_facebook_profile_picture_blank_square"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:id="@+id/all_users_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/StudentNameAndLastName"
+            android:textSize="16sp"
+            android:textStyle=""
+            android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/all_users_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/StudentGroup"
+            android:textSize="13sp"
+            android:textStyle=""
+            android:textColor="@color/onlineText"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="end"
+        android:gravity="end"
+        >
+
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/btnCancelSenderedRequestFriends"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="16dp"
+            android:drawableTop="@drawable/send_message"
+            android:paddingEnd="5dp"
+            android:paddingRight="10dp"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            >
+        </Button>
+    </LinearLayout>
+
+</LinearLayout>

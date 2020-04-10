@@ -106,10 +106,10 @@ public class Message extends AppCompatActivity {
                 System.out.println("mess_text_current_user " + mess_text_current_user);
                 FirebaseAuth.getInstance().getCurrentUser().getDisplayName();*/
 
-                model.userName = "2";// FirebaseAuth.getInstance().getCurrentUser().toString();
+             //   model.userName = "2";// FirebaseAuth.getInstance().getCurrentUser().toString();
 
-                if (model.userName.equals(FirebaseAuth.getInstance().getCurrentUser().toString())) {
-
+       //         if (model.userName != null || model.userName !="") {
+/*
 
                     mess_user.setBackgroundResource(R.drawable.rectangle_rounded_all);
 
@@ -131,7 +131,7 @@ public class Message extends AppCompatActivity {
                     //    mess_current_user.setText(model.getUserName() + "\n" + DateFormat.format("dd-MM-yyyy HH:mm:ss", model.getMessageTime()));
                     //   mess_text_current_user.setText(model.getTextMessage());
 
-                } else {
+                } else {*/
 
                     mess_user.setBackgroundResource(R.drawable.rectangle_rounded_all_rights);
                     mess_user.setText(model.getUserName() + "\n" + DateFormat.format("dd-MM-yyyy HH:mm:ss", model.getMessageTime()));
@@ -145,7 +145,7 @@ public class Message extends AppCompatActivity {
                     paramsName.addRule(RelativeLayout.BELOW, R.id.message_user);
                     paramsName.addRule(RelativeLayout.ALIGN_PARENT_START);
                     mess_text.setLayoutParams(paramsName);
-                }
+             //   }
             }
 
         };

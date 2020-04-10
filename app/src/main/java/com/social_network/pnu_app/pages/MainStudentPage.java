@@ -33,10 +33,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
@@ -77,6 +80,7 @@ public class MainStudentPage extends AppCompatActivity{
 
     Button btnLoadPhotoStudent;
     Button btnlistFriends;
+    Button btnlistSubscribers;
     private FirebaseAnalytics mFirebaseAnalytics;
 
     public static HashMap<Object, Object> studentData = new HashMap();
@@ -98,16 +102,35 @@ public class MainStudentPage extends AppCompatActivity{
    public String pathToFirebaseStorage;
    public String castomPathToFirebaseStorage;
    public String urlMainStudentPhoto;
-    String countMyFriends;
-
 
     private static final int REQUEST_CODE_PERMISSION_RECEIVE_CAMERA = 102;
     private static final int REQUEST_CODE_TAKE_PHOTO = 103;
 
     public static Uri finalLocalFile;
     Bitmap thumb_bitmap = null;
+    long countMyFriends;
+    long countMySubscribers;
+
+    NetworkStatus network = new NetworkStatus();
+
+    String name;
+    String lastName;
+    String group;
+    String dateOfEntry;
+    String formStudying;
+    String faculty;
+    String linkFirebaseStorageMainPhoto;
 
     static String linkStorageFromFireBase;
+
+    DatabaseReference referenceMyFriends;
+    DatabaseReference referenceMySubsribers;
+    String senderUserId;
+    DatabaseReference studentsReference;
+
+
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentStudent;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -117,6 +140,12 @@ public class MainStudentPage extends AppCompatActivity{
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         btnLoadPhotoStudent = findViewById(R.id.btnLoadPhotoStudent);
         btnlistFriends = findViewById(R.id.btnListFriends);
+        btnlistSubscribers = findViewById(R.id.btnListSubscribers);
+
+        mAuth = FirebaseAuth.getInstance();
+        currentStudent= mAuth.getCurrentUser();
+
+
 
         tvPIBvalue = findViewById(R.id.tvPIBvalue);
         tvFacultyValue = findViewById(R.id.tvFacultyValue);
@@ -125,6 +154,22 @@ public class MainStudentPage extends AppCompatActivity{
         tvFormStudyingValue = findViewById(R.id.tvFormStudyingValue);
         btnLoadPhotoStudent.setOnClickListener(btnlistener);
         btnlistFriends.setOnClickListener(btnlistener);
+        btnlistSubscribers.setOnClickListener(btnlistener);
+
+        ProfileStudent profileStudent = new ProfileStudent();
+
+        senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(MainStudentPage.this));
+
+        studentsReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId);
+
+        referenceMyFriends = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).
+                child("Friends");
+        referenceMyFriends.keepSynced(true);
+
+        referenceMySubsribers = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).
+                child("Subscribers");
+        referenceMySubsribers.keepSynced(true);
+
         //    emojiconEditText = findViewById(R.id.editTextWall);
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation_profile);
@@ -249,51 +294,129 @@ public class MainStudentPage extends AppCompatActivity{
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        System.out.println("currentStudentonStart = " + currentStudent);
+        if (currentStudent != null){
+            studentsReference.child("online").setValue(false);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (currentStudent != null){
+            studentsReference.child("online").setValue(true);
+        }
+        System.out.println("onResumeMainStudentPage");
+    }
+
 
     QueriesFirebase qfd = new QueriesFirebase();
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void BuildStudentPage(final AppDatabase db){
 
         String keyStudent = db.studentDao().getKeyStudent();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
-        reference.keepSynced(true);
-        reference.child(keyStudent).addListenerForSingleValueEvent(new ValueEventListener() {
+
+        Query queryByKey = FirebaseDatabase.getInstance().getReference("students").child(keyStudent);
+
+        queryByKey.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("counterFriends")) {
-                    countMyFriends = dataSnapshot.child("counterFriends").getValue().toString();
-                    btnlistFriends.setText(countMyFriends + " " + "Друзі");
-                }
-            }
 
+
+                name = dataSnapshot.child("name").getValue().toString();
+                lastName = dataSnapshot.child("lastName").getValue().toString();
+                group = dataSnapshot.child("group").getValue().toString();
+                dateOfEntry = dataSnapshot.child("dateOfEntry").getValue().toString();
+                formStudying = dataSnapshot.child("formStudying").getValue().toString();
+                faculty = dataSnapshot.child("faculty").getValue().toString();
+                try {
+                    linkFirebaseStorageMainPhoto = dataSnapshot.child("linkFirebaseStorageMainPhoto").getValue().toString();
+                } catch (NullPointerException nullLinkPhoto) {
+                    linkFirebaseStorageMainPhoto = "";
+                }
+
+                referenceMyFriends.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            countMyFriends = dataSnapshot.getChildrenCount();
+                            btnlistFriends.setText(countMyFriends + " " + "Друзі");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        NetworkStatus network = new NetworkStatus();
+                        if (!network.isOnline()) {
+                            // progressBar.setVisibility(View.GONE);
+                            Toast.makeText(MainStudentPage.this, " Please Connect to Internet",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                });
+
+                referenceMySubsribers.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        countMySubscribers = dataSnapshot.getChildrenCount();
+                        btnlistSubscribers.setText(countMySubscribers + " " + "Підписники");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        NetworkStatus network = new NetworkStatus();
+                        if (!network.isOnline()) {
+                            // progressBar.setVisibility(View.GONE);
+                            Toast.makeText(MainStudentPage.this, " Please Connect to Internet",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                });
+
+
+                int currentStudent = Integer.parseInt(db.studentDao().getCurrentStudent());
+                SeriesIDCard = db.studentDao().getSeriesBYId(currentStudent);
+                Bundle bundle = new Bundle();
+                //  bundle.putString(FirebaseAnalytics.Param.ITEM_ID,  studentData.get("id"));
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, (String) db.studentDao().getFirstNameById(currentStudent));
+                // bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                studentData = Student.student;
+
+                // Local DB
+
+              /*  tvPIBvalue.setText(db.studentDao().getLastNameById(currentStudent) + " " +
+                        db.studentDao().getFirstNameById(currentStudent));
+
+                tvFacultyValue.setText(" " + db.studentDao().getFacultyById(currentStudent));
+                tvGroupValue.setText(" " + db.studentDao().getGroupById(currentStudent));
+                tvDateOfEntryValue.setText(" " + db.studentDao().getDateOfEntryById(currentStudent));
+                tvFormStudyingValue.setText(" " + db.studentDao().getFormStudyingById(currentStudent));*/
+
+
+                tvPIBvalue.setText(lastName + " " + name);
+                tvFacultyValue.setText(" " + faculty);
+                tvGroupValue.setText(" " + group);
+                tvDateOfEntryValue.setText(" " + dateOfEntry);
+                tvFormStudyingValue.setText(" " + formStudying);
+
+            }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                NetworkStatus network = new NetworkStatus();
                 if (!network.isOnline()) {
-                    // progressBar.setVisibility(View.GONE);
+                    //   progressBar.setVisibility(View.GONE);
                     Toast.makeText(MainStudentPage.this, " Please Connect to Internet",
                             Toast.LENGTH_LONG).show();
                 }
             }
-
         });
 
-        int currentStudent = Integer.parseInt(db.studentDao().getCurrentStudent());
-        SeriesIDCard = db.studentDao().getSeriesBYId(currentStudent);
-        Bundle bundle = new Bundle();
-        //  bundle.putString(FirebaseAnalytics.Param.ITEM_ID,  studentData.get("id"));
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, (String) db.studentDao().getFirstNameById(currentStudent));
-        // bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-        studentData = Student.student;
-
-        tvPIBvalue.setText(db.studentDao().getLastNameById(currentStudent) + " " +
-                db.studentDao().getFirstNameById(currentStudent));
-
-        tvFacultyValue.setText(" " + db.studentDao().getFacultyById(currentStudent));
-        tvGroupValue.setText(" " + db.studentDao().getGroupById(currentStudent));
-        tvDateOfEntryValue.setText(" " + db.studentDao().getDateOfEntryById(currentStudent));
-        tvFormStudyingValue.setText(" " + db.studentDao().getFormStudyingById(currentStudent));
 
 
     }
@@ -466,8 +589,10 @@ public class MainStudentPage extends AppCompatActivity{
                         thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 75,byteArrayOutputStream);
                         final byte[] thumb_byte = byteArrayOutputStream.toByteArray();
 
+                        /*
                         Toast.makeText(MainStudentPage.this, "onActivityResult " + finalLocalFile,
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG).show();*/
+
                         Picasso.with(getBaseContext())
                                 .load(data.getData())
                                 .placeholder(R.drawable.logo_pnu)
@@ -560,6 +685,13 @@ public class MainStudentPage extends AppCompatActivity{
                 Intent intentlistMyFriends;
                 intentlistMyFriends = new Intent( "com.social_network.pnu_app.pages.FriendsActivity");
                 startActivity(intentlistMyFriends);
+                    break;
+
+                case R.id.btnListSubscribers:
+
+                    Intent intentlistMySubscribers;
+                    intentlistMySubscribers = new Intent( "com.social_network.pnu_app.pages.MySubscribersActivity");
+                    startActivity(intentlistMySubscribers);
                     break;
             }
         }

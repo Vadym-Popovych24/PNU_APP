@@ -39,7 +39,7 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_friends"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:layout_alignParentBottom="true"
         app:itemBackground="@color/colorAccentWhite"
         app:itemIconTint="@drawable/bottom_navigation_item_background_colors"

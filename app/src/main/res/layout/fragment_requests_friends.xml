@@ -9,7 +9,6 @@
     tools:context=".pages.FriendsActivity"
     android:background="@color/backgroundStudentMainPage">
 
-
     <EditText
         android:id="@+id/editTextReguestsFriends"
         android:layout_width="match_parent"
@@ -48,7 +47,7 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/btnReguestsFindRequests"
+            android:id="@+id/btnRequestsFriends"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
@@ -69,7 +68,7 @@
             android:paddingEnd="10dp"
             android:paddingRight="10dp"
 
-            android:text="@string/btnTextRequests"
+            android:text="@string/btnRequestFriendBack"
             android:textColor="@android:color/black"
             android:textSize="14sp" />
 
@@ -78,8 +77,8 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_toRightOf="@+id/btnReguestsFindRequests"
-            android:layout_toEndOf="@+id/btnReguestsFindRequests"
+            android:layout_toRightOf="@+id/btnRequestsFriends"
+            android:layout_toEndOf="@+id/btnRequestsFriends"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
@@ -105,7 +104,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="@string/DefaultTextRequestsFriendsList"
         android:textColor="@color/onlineText"
         android:textSize="20sp" />
 
@@ -114,8 +112,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/rlButtonsReguestsFriends"
-        android:layout_marginTop="10dp"
-        android:layout_above="@+id/bottom_navigation_requests_friends"/>
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="55dp" />
 
 
 </RelativeLayout>

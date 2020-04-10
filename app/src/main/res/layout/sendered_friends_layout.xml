@@ -6,10 +6,11 @@
     android:layout_margin="3dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/all_users_profile_image"
+            android:id="@+id/sendered_friend_profile_image"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:src="@drawable/com_facebook_profile_picture_blank_square"/>
+
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -18,7 +19,7 @@
             android:layout_margin="5dp">
 
             <TextView
-                android:id="@+id/all_users_username"
+                android:id="@+id/sendered_friend_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/StudentNameAndLastName"
@@ -26,41 +27,41 @@
                 android:textStyle=""
                 android:textColor="@color/black"/>
             <TextView
-                android:id="@+id/all_users_status"
+                android:id="@+id/sendered_friend_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/StudentGroup"
                 android:textSize="13sp"
                 android:textStyle=""
-                android:textColor="@color/onlineText"/>
-        </LinearLayout>
-
+                android:textColor="@color/onlineText" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="end"
-                android:gravity="end"
-                >
+                android:orientation="horizontal">
 
                 <Button
                     style="?android:attr/buttonBarButtonStyle"
-                    android:id="@+id/btnAddFriendAllUsers"
+                    android:id="@+id/btnCancelSenderedRequestFriends"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
+                    android:text="@string/btnDeclineFriendRequest"
                     android:layout_marginEnd="10dp"
                     android:layout_marginRight="10dp"
-                    android:layout_marginTop="16dp"
-                    android:drawableTop="@drawable/person_add_all_users"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/btn_decline_friend"
                     android:paddingEnd="10dp"
                     android:paddingRight="10dp"
                     android:paddingStart="10dp"
                     android:paddingLeft="10dp"
                     android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                 >
+                    android:textSize="12sp">
                 </Button>
-    </LinearLayout>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
 
 </LinearLayout>

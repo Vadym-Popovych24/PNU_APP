@@ -1,11 +1,10 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="26dp"
-    android:height="26dp"
+    android:width="30dp"
+    android:height="30dp"
     android:viewportWidth="22"
     android:viewportHeight="22"
     android:tint="@color/btn_sign_in"
-    android:alpha="0.8"
-    android:opticalInsetRight="10dp">
+    android:alpha="0.8">
   <group android:translateX="-1"
       android:translateY="-1">
       <path

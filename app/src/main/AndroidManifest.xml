@@ -20,16 +20,23 @@
         android:roundIcon="@mipmap/logopnu"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".pages.RequestsFriends"
+        <activity android:name=".pages.MySubscribersActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="com.social_network.pnu_app.pages.RequestsFriends" />
+                <action android:name="com.social_network.pnu_app.pages.MySubscribersActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".pages.RequestsFriendsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="com.social_network.pnu_app.pages.RequestsFriendsActivity" />
 
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".pages.ProfileStudent"
             android:theme="@style/AppTheme.NoActionBar">

@@ -13,7 +13,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.social_network.pnu_app.R;
 
 
-public class RequestsFriends extends AppCompatActivity {
+public class RequestsFriendsActivity extends AppCompatActivity {
 
     private ViewPager viewRequestsPagerFriends;
     private TabLayout tabLayoutRequestsFriends;

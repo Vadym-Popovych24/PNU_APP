@@ -104,7 +104,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="@string/DefaultTextListFriend"
         android:textColor="@color/onlineText"
         android:textSize="20sp" />
 
@@ -115,6 +114,14 @@
             android:layout_below="@+id/rlButtonsFriends"
             android:layout_marginTop="10dp"
             android:layout_above="@+id/bottom_navigation_friends"/>
+
+    <ProgressBar
+        android:id="@+id/progressBarMyFriends"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
 
 
 </RelativeLayout>

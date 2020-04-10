@@ -63,7 +63,6 @@ public class ProfileStudent extends AppCompatActivity {
 
     DatabaseReference CheckFriendReferenceRequestMyReceiver;  // Check
     DatabaseReference CheckFriendReferenceRequestMySender;     // Check
-    DatabaseReference CheckFriendReferenceRequestAlienReceiver; // Check in counter receiver
     DatabaseReference CheckFriendReferenceRequestAlienSender;  // Check
 
     DatabaseReference SubscribersReferenceMy;                 // Subscribers My
@@ -123,10 +122,6 @@ public class ProfileStudent extends AppCompatActivity {
         child("FriendRequestReceiver");
         CheckFriendReferenceRequestMyReceiver.keepSynced(true);
 
-        CheckFriendReferenceRequestAlienReceiver = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).
-                child("FriendRequestReceiver");
-        CheckFriendReferenceRequestAlienReceiver.keepSynced(true);
-
         CheckFriendReferenceRequestMySender = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId)
         .child("FriendRequestSender");
         CheckFriendReferenceRequestMySender.keepSynced(true);
@@ -158,6 +153,7 @@ public class ProfileStudent extends AppCompatActivity {
         // Subscribed
 
         SubscribedReferenceAlien = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).child("Subscribed");
+        SubscribedReferenceAlien.keepSynced(true);
 
         SubscribedReferenceMy = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).child("Subscribed");
         SubscribedReferenceMy.keepSynced(true);
@@ -207,7 +203,7 @@ public class ProfileStudent extends AppCompatActivity {
 
     }
 
-        String getKeyCurrentStudend(final AppDatabase db) {
+      public String getKeyCurrentStudend(final AppDatabase db) {
         String keyStudent = db.studentDao().getKeyStudent();
         return keyStudent;
     }
@@ -241,11 +237,23 @@ public class ProfileStudent extends AppCompatActivity {
                     linkFirebaseStorageMainPhoto = "";
                 }
 
-                if (dataSnapshot.hasChild("counterFriends")){
-                    countFriends = (long) dataSnapshot.child("counterFriends").getValue();
-                    btnlistFriends.setText(countFriends + " " + "Друзі");
-                }
+                FriendReferenceAlien.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        countFriends = dataSnapshot.getChildrenCount();
 
+                        btnlistFriends.setText(countFriends + " " + "Друзі");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        if (!network.isOnline()) {
+                            //   progressBar.setVisibility(View.GONE);
+                            Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
                 tvPIBvalue.setText(lastName + " " + name);
                 tvFacultyValue.setText(" " + faculty);
                 tvGroupValue.setText(" " + group);
@@ -638,16 +646,16 @@ public class ProfileStudent extends AppCompatActivity {
     });
     }
 
-    private void SubscribeFriendRequest() {
+    public void SubscribeFriendRequest() {
         btnAddToFriends.setEnabled(false);
         DateFormat calForDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date currentDate = new Date();
         final String saveCurrentDate = calForDate.format(currentDate);
 
-        SubscribersReferenceMy.child(ReceiverStudentKey).setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+        SubscribersReferenceMy.child(ReceiverStudentKey).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                SubscribedReferenceAlien.child(senderUserId).setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                SubscribedReferenceAlien.child(senderUserId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         CheckFriendReferenceRequestMyReceiver.child(ReceiverStudentKey).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -670,8 +678,6 @@ public class ProfileStudent extends AppCompatActivity {
                                                 FriendRequestsReferenceMySender.getParent().removeValue();
                                                 FriendRequestsReferenceAlienReceiver.getParent().removeValue();
 
-                                                counterMinusMyFriends();
-                                                counterMinusMyReceiverFriends();
 
                                                 Toast.makeText(ProfileStudent.this, "Додано в підписники",
                                                         Toast.LENGTH_LONG).show();
@@ -776,7 +782,7 @@ public class ProfileStudent extends AppCompatActivity {
 
     }
 
-    private void AcceptFriendRequst() {
+    public void AcceptFriendRequst() {
         DateFormat calForDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date currentDate = new Date();
         final String saveCurrentDate = calForDate.format(currentDate);
@@ -833,17 +839,12 @@ public class ProfileStudent extends AppCompatActivity {
                                                }
                                            });
 
-                                           // Counter friends
-
-
 
                                            btnAddToFriends.setEnabled(true);
                                            CurrentStateFriend ="friends";
                                            btnAddToFriends.setText("Видалити з друзів");
                                            btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
                                            btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
-                                           counterAddMyFriends();
-                                           counterMinusMyReceiverFriends();
 
                                            Toast.makeText(ProfileStudent.this, "Додано в друзі",
                                                    Toast.LENGTH_LONG).show();
@@ -919,9 +920,8 @@ public class ProfileStudent extends AppCompatActivity {
                                 btnAddToFriends.setBackgroundColor(disactivateColorButtonAddToFriends);
                                 btnAddToFriends.setTextColor(disactivateColorTextButtonAddToFriends);
 
-                                CheckFriendReferenceRequestMyReceiver.removeValue();
-                                CheckFriendReferenceRequestAlienSender.removeValue();
-                                counterMinusMyReceiverFriends();
+                                CheckFriendReferenceRequestMyReceiver.child(ReceiverStudentKey).removeValue();
+                                CheckFriendReferenceRequestAlienSender.child(senderUserId).removeValue();
                             }
 
                         }
@@ -976,7 +976,6 @@ public class ProfileStudent extends AppCompatActivity {
                                                     btnAddToFriends.setText("Скасувати заявку");
                                                     btnAddToFriends.setBackgroundColor(activeColorButtonAddToFriends);
                                                     btnAddToFriends.setTextColor(activeColorTextButtonAddToFriends);
-                                                    counterAddMyReceiverFriends();
                                                 }
 
                                             }
@@ -1017,317 +1016,6 @@ public class ProfileStudent extends AppCompatActivity {
                 }
             }
         });
-    }
-
-
-    // Counter Add My friends
-    static long counterMyFriends;
-    private long counterAddMyFriends(){
-
-        studentsReference.child(senderUserId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("counterFriends")) {
-                    counterMyFriends = (long) dataSnapshot.child("counterFriends").getValue();
-                    counterMyFriends++;
-                }
-                else{
-                    counterMyFriends = 1;
-                }
-
-
-                studentsReference.child(senderUserId).child("counterFriends").setValue(counterMyFriends)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                counterAddAlienFriends();
-                            }
-                        });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                if (!network.isOnline()) {
-                    //        progressBar.setVisibility(View.GONE);
-                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-        return counterMyFriends;
-    }
-
-
-    //  Counter Minus My Friends
-    private long counterMinusMyFriends(){
-
-        studentsReference.child(senderUserId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("counterFriends")) {
-                    counterMyFriends = (long) dataSnapshot.child("counterFriends").getValue();
-                    if (counterMyFriends >= 1) {
-                        counterMyFriends--;
-                    }
-                else{
-                        counterMyFriends = 0;
-                }
-                }
-
-                studentsReference.child(senderUserId).child("counterFriends").setValue(counterMyFriends)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                counterMinusAlienFriends();
-                            }
-                        });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                if (!network.isOnline()) {
-                    //        progressBar.setVisibility(View.GONE);
-                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-        return counterMyFriends;
-    }
-
-    //  Counter Add Alien Friends
-    static long counterAlienFriends;
-    private long counterAddAlienFriends() {
-        studentsReference.child(ReceiverStudentKey).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("counterFriends")) {
-                    counterAlienFriends = (long) dataSnapshot.child("counterFriends").getValue();
-                    counterAlienFriends++;
-                }
-                else{
-                    counterAlienFriends = 1;
-                }
-
-                studentsReference.child(ReceiverStudentKey).child("counterFriends").setValue(counterAlienFriends);
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                if (!network.isOnline()) {
-                    //        progressBar.setVisibility(View.GONE);
-                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-
-        });
-        return counterAlienFriends;
-    }
-
-    //  Counter Minus Alien Friends
-    private long counterMinusAlienFriends() {
-        studentsReference.child(ReceiverStudentKey).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("counterFriends")) {
-                    counterAlienFriends = (long) dataSnapshot.child("counterFriends").getValue();
-                    if (counterAlienFriends >= 1) {
-                        counterAlienFriends--;
-                    }
-                    else{
-                        counterAlienFriends = 0;
-                    }
-                }
-
-                studentsReference.child(ReceiverStudentKey).child("counterFriends").setValue(counterAlienFriends);
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                if (!network.isOnline()) {
-                    //        progressBar.setVisibility(View.GONE);
-                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-
-        });
-        return counterAlienFriends;
-    }
-
-    /////////////////////////////////// Counter Requests Receiver Friends
-
-    // Counter Add My Receiver Friends
-    static long counterMyReceiverFriends;
-    private long counterAddMyReceiverFriends(){
-
-        studentsReference.child(senderUserId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("counterReceiverFriends")) {
-                    counterMyReceiverFriends = (long) dataSnapshot.child("counterReceiverFriends").getValue();
-                    counterMyReceiverFriends++;
-                }
-                else{
-                    counterMyReceiverFriends = 1;
-                }
-
-
-                studentsReference.child(senderUserId).child("counterReceiverFriends").setValue(counterMyReceiverFriends)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                counterAddAlienReceiverFriends();
-                            }
-                        });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                if (!network.isOnline()) {
-                    //        progressBar.setVisibility(View.GONE);
-                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-        return counterMyReceiverFriends;
-    }
-
-
-    //  Counter Minus My  Receiver Friends
-    private long counterMinusMyReceiverFriends(){
-
-        // check on existing request
-
-        CheckFriendReferenceRequestAlienReceiver.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(senderUserId)){
-                    studentsReference.child(senderUserId).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.hasChild("counterReceiverFriends")) {
-                                counterMyReceiverFriends = (long) dataSnapshot.child("counterReceiverFriends").getValue();
-                                if (counterMyReceiverFriends >= 1) {
-                                    counterMyReceiverFriends--;
-                                } else {
-                                    counterMyReceiverFriends = 0;
-                                }
-
-
-                                studentsReference.child(senderUserId).child("counterReceiverFriends").setValue(counterMyReceiverFriends)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                counterMinusAlienReceiverFriends();
-                                            }
-                                        });
-                            }
-                        }
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            if (!network.isOnline()) {
-                                //        progressBar.setVisibility(View.GONE);
-                                Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                if (!network.isOnline()) {
-                    //        progressBar.setVisibility(View.GONE);
-                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        return counterMyReceiverFriends;
-    }
-
-    //  Counter Add Alien Receiver Friends
-    static long counterAlienReceiverFriends;
-    private long counterAddAlienReceiverFriends() {
-        studentsReference.child(ReceiverStudentKey).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("counterReceiverFriends")) {
-                    counterAlienReceiverFriends = (long) dataSnapshot.child("counterReceiverFriends").getValue();
-                    counterAlienReceiverFriends++;
-                }
-                else{
-                    counterAlienReceiverFriends = 1;
-                }
-
-                studentsReference.child(ReceiverStudentKey).child("counterReceiverFriends").setValue(counterAlienReceiverFriends);
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                if (!network.isOnline()) {
-                    //        progressBar.setVisibility(View.GONE);
-                    Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-
-        });
-        return counterAlienReceiverFriends;
-    }
-
-    //  Counter Minus Alien Receiver Friends
-    private long counterMinusAlienReceiverFriends() {
-
-        CheckFriendReferenceRequestMyReceiver.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(ReceiverStudentKey)) {
-                    studentsReference.child(ReceiverStudentKey).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.hasChild("counterReceiverFriends")) {
-                                counterAlienReceiverFriends = (long) dataSnapshot.child("counterReceiverFriends").getValue();
-                                if (counterAlienReceiverFriends >= 1) {
-                                    counterAlienReceiverFriends--;
-                                } else {
-                                    counterAlienReceiverFriends = 0;
-                                }
-
-                                studentsReference.child(ReceiverStudentKey).child("counterReceiverFriends").setValue(counterAlienReceiverFriends);
-                            }
-                        }
-
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            if (!network.isOnline()) {
-                                //        progressBar.setVisibility(View.GONE);
-                                Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-        return counterAlienReceiverFriends;
     }
 
     }
