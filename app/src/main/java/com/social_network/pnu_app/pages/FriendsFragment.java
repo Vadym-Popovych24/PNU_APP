@@ -3,6 +3,7 @@ package com.social_network.pnu_app.pages;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +58,8 @@ public class FriendsFragment extends Fragment {
     String senderUserId;
     long countFriends;
     NetworkStatus network = new NetworkStatus();
+
+    static Context myContex;
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -120,6 +124,12 @@ public class FriendsFragment extends Fragment {
             }
         }
     };
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        myContex = context;
+    }
     public void setTextViewForEmptyList() {
         if (countFriends != 0) {
             textViewDefaultText.setText("");
@@ -149,10 +159,6 @@ public class FriendsFragment extends Fragment {
             }
         });
 
-        students.child(senderUserId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                     progressBar.setVisibility(View.GONE);
                     FindNewFriends findNewFriends = new FindNewFriends();
                     SerieIDCard = findNewFriends.getStudentSeriesIDCard(AppDatabase.getAppDatabase(getContext()));
@@ -176,6 +182,15 @@ public class FriendsFragment extends Fragment {
                                     String lastName = dataSnapshot.child("lastName").getValue().toString();
                                     String grop = dataSnapshot.child("group").getValue().toString();
                                     final String seriesIDcard = dataSnapshot.child("seriesIDcard").getValue().toString();
+                                    boolean online;
+                                    try {
+                                         online = (boolean) dataSnapshot.child("online").getValue();
+                                    }catch (Exception e){
+                                        online = false;
+                                    }
+                                    if (online){
+                                        friendsViewHolder.setOnlineImage();
+                                    }
                                     String linkFirebaseStorageMainPhoto;
                                     try {
                                         linkFirebaseStorageMainPhoto = dataSnapshot.child("linkFirebaseStorageMainPhoto").getValue().toString();
@@ -185,8 +200,8 @@ public class FriendsFragment extends Fragment {
                                     }
                                     friendsViewHolder.setStudentName(name, lastName);
                                     friendsViewHolder.setStudentGroup(grop);
-                                    if (linkFirebaseStorageMainPhoto != "") {
-                                        friendsViewHolder.setStudentImage(getContext(), linkFirebaseStorageMainPhoto);
+                                    if (linkFirebaseStorageMainPhoto != "" && myContex != null) {
+                                        friendsViewHolder.setStudentImage(myContex, linkFirebaseStorageMainPhoto);
                                     }
                                     friendsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                                         @Override
@@ -223,21 +238,8 @@ public class FriendsFragment extends Fragment {
 
 
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                if (!network.isOnline()) {
-                    //        progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), " Please Connect to Internet",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-
             ;
 
-        });
-
-    }
 }
 
 class FriendsViewHolder extends RecyclerView.ViewHolder {
@@ -248,17 +250,24 @@ class FriendsViewHolder extends RecyclerView.ViewHolder {
 
         mView= itemView;
     }
+
+    public void setOnlineImage(){
+
+        ImageView imageOnline = mView.findViewById(R.id.img_online_friends);
+        imageOnline.setVisibility(View.VISIBLE);
+    }
+
     public void setStudentName(String studentName, String studentLastName){
-        TextView nameAndLastName = mView.findViewById(R.id.all_users_username);
+        TextView nameAndLastName = mView.findViewById(R.id.friends_username);
         nameAndLastName.setText(studentName + " " + studentLastName);
     }
     public void setStudentGroup(String studentGroup){
-        TextView group = mView.findViewById(R.id.all_users_status);
+        TextView group = mView.findViewById(R.id.friends_status);
         group.setText(studentGroup);
     }
 
     public void setStudentImage(final Context context, final String studentImage) {
-        final CircleImageView image = mView.findViewById(R.id.all_users_profile_image);
+        final CircleImageView image = mView.findViewById(R.id.friends_profile_image);
         Picasso.with(context)
                 .load(studentImage)
                 .networkPolicy(NetworkPolicy.OFFLINE)

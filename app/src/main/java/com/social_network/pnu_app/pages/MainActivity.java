@@ -7,14 +7,18 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.firebase.QueriesFirebase;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
@@ -73,14 +77,14 @@ public class MainActivity extends AppCompatActivity {
        //  queriesFirebase.addStudent(); // TODO THIS METHOD ADD USER
 
 
-       if (currentStudent != null  &&
-           checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false) {
-
+     //  if (currentStudent != null  &&
+          // checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false) {
+//
            ProfileStudent profileStudent = new ProfileStudent();
            final String senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(getApplicationContext()));
            studentsReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId);
 
-   //     if(checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false){ // TODO change on codeLine above if
+        if(checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false){ // TODO change on codeLine above if
             rlActivityMain = findViewById(R.id.rlActivityMain);
             Intent intentFromMainActivity;
             intentFromMainActivity = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
@@ -100,25 +104,6 @@ public class MainActivity extends AppCompatActivity {
         listenerOnButton();
 
 
-    }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        System.out.println("currentStudentonStart = " + currentStudent);
-        if (currentStudent != null){
-            studentsReference.child("online").setValue(false);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (currentStudent != null){
-            studentsReference.child("online").setValue(true);
-        }
     }
 
 
@@ -177,5 +162,26 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+
+    private void onlineStatus(final boolean online) {
+        studentsReference.child("online").setValue(online);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // TODO delete comment  if (currentStudent != null){
+        onlineStatus(false);
+        //  }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // TODO delete comment     if (currentStudent != null){
+        onlineStatus(true);
+        //    }
     }
 }

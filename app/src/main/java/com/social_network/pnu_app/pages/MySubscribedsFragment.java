@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,7 +57,7 @@ public class MySubscribedsFragment extends Fragment {
     String senderUserId;
     long countSubscribeds;
     NetworkStatus network = new NetworkStatus();
-    Context myContex;
+    static Context myContex;
 
     public MySubscribedsFragment() {
         // Required empty public constructor
@@ -150,6 +151,15 @@ public class MySubscribedsFragment extends Fragment {
                                 String lastName = dataSnapshot.child("lastName").getValue().toString();
                                 String grop = dataSnapshot.child("group").getValue().toString();
                                 final String seriesIDcard = dataSnapshot.child("seriesIDcard").getValue().toString();
+                                boolean online;
+                                try {
+                                    online = (boolean) dataSnapshot.child("online").getValue();
+                                }catch (Exception e){
+                                    online = false;
+                                }
+                                if (online){
+                                    mySubscribedsViewHolder.setOnlineImage();
+                                }
                                 String linkFirebaseStorageMainPhoto;
                                 try {
                                     linkFirebaseStorageMainPhoto = dataSnapshot.child("linkFirebaseStorageMainPhoto").getValue().toString();
@@ -159,8 +169,8 @@ public class MySubscribedsFragment extends Fragment {
                                 }
                                 mySubscribedsViewHolder.setStudentName(name, lastName);
                                 mySubscribedsViewHolder.setStudentGroup(grop);
-                                if (linkFirebaseStorageMainPhoto != "") {
-                                    mySubscribedsViewHolder.setStudentImage(getContext(), linkFirebaseStorageMainPhoto);
+                                if (linkFirebaseStorageMainPhoto != "" && myContex != null) {
+                                    mySubscribedsViewHolder.setStudentImage(myContex, linkFirebaseStorageMainPhoto);
                                 }
                                 mySubscribedsViewHolder.actionButton(currentFriend);
                                 mySubscribedsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
@@ -234,7 +244,6 @@ public class MySubscribedsFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 DatabaseReference SubscribersReferenceAlien = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).child("Subscribers");
-                SubscribersReferenceAlien.keepSynced(true);
 
                 SubscribersReferenceAlien.child(senderUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -290,6 +299,12 @@ class MySubscribedsViewHolder extends RecyclerView.ViewHolder {
         });
 
 
+    }
+
+    public void setOnlineImage(){
+
+        ImageView imageOnline = mView.findViewById(R.id.img_online_subscribed);
+        imageOnline.setVisibility(View.VISIBLE);
     }
 
     public void setStudentName(String studentName, String studentLastName){

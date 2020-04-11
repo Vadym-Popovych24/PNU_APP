@@ -1,5 +1,6 @@
 package com.social_network.pnu_app.pages;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
@@ -20,9 +21,14 @@ import com.firebase.ui.database.FirebaseListAdapter;
 import com.github.library.bubbleview.BubbleTextView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.MessageData;
+import com.social_network.pnu_app.localdatabase.AppDatabase;
 
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
@@ -36,6 +42,9 @@ public class Message extends AppCompatActivity {
     private EmojiconEditText emojiconEditText;
     private ImageView emojiButton, submitButton;
     private EmojIconActions emojIconActions;
+
+    String senderUserId;
+    DatabaseReference studentsReference;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -62,6 +71,11 @@ public class Message extends AppCompatActivity {
         emojiconEditText = findViewById(R.id.textField);
         emojIconActions = new EmojIconActions(getApplication(), relativeLayoutMessage, emojiconEditText, emojiButton);
         emojIconActions.ShowEmojIcon();
+
+
+        ProfileStudent profileStudent = new ProfileStudent();
+        senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(Message.this));
+        studentsReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId);
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,6 +164,27 @@ public class Message extends AppCompatActivity {
 
         };
         listOfMessage.setAdapter(adapter);
+    }
+
+    private void onlineStatus(final boolean online) {
+        studentsReference.child("online").setValue(online);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // TODO delete comment  if (currentStudent != null){
+        onlineStatus(false);
+        //  }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // TODO delete comment     if (currentStudent != null){
+        onlineStatus(true);
+        //    }
     }
 
 }

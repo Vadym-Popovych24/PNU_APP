@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,7 +67,7 @@ public class RequestsFriendsFragment extends Fragment {
     long countFriends;
     NetworkStatus network = new NetworkStatus();
 
-    Context myContex;
+   static Context myContex;
 
 
     public RequestsFriendsFragment() {
@@ -191,6 +192,16 @@ public class RequestsFriendsFragment extends Fragment {
                                         String lastName = dataSnapshot.child("lastName").getValue().toString();
                                         String grop = dataSnapshot.child("group").getValue().toString();
                                         final String seriesIDcard = dataSnapshot.child("seriesIDcard").getValue().toString();
+                                        boolean online;
+                                        try {
+                                            online = (boolean) dataSnapshot.child("online").getValue();
+                                        }catch (Exception e){
+                                            online = false;
+                                        }
+                                        if (online){
+                                            requestsFriendsViewHolder.setOnlineImage();
+                                        }
+
                                         String linkFirebaseStorageMainPhoto;
                                         try {
 
@@ -201,8 +212,8 @@ public class RequestsFriendsFragment extends Fragment {
                                         }
                                         requestsFriendsViewHolder.setStudentName(name, lastName);
                                         requestsFriendsViewHolder.setStudentGroup(grop);
-                                        if (linkFirebaseStorageMainPhoto != "") {
-                                            requestsFriendsViewHolder.setStudentImage(getContext(), linkFirebaseStorageMainPhoto);
+                                        if (linkFirebaseStorageMainPhoto != "" && myContex != null) {
+                                            requestsFriendsViewHolder.setStudentImage(myContex, linkFirebaseStorageMainPhoto);
                                         }
                                 //        String VisitedKey = getRef(i).getKey();
                                         requestsFriendsViewHolder.actionButton(currentFriend, senderUserId, getContext());
@@ -264,14 +275,14 @@ public class RequestsFriendsFragment extends Fragment {
         DatabaseReference SubscribersReferenceMy = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).child("Subscribers");
         SubscribersReferenceMy.keepSynced(true);
 
-        SubscribersReferenceMy.child(ReceiverStudentKey).setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+        SubscribersReferenceMy.child(ReceiverStudentKey).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
                 DatabaseReference SubscribedReferenceAlien = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).child("Subscribed");
                 SubscribedReferenceAlien.keepSynced(true);
 
-                SubscribedReferenceAlien.child(senderUserId).setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                SubscribedReferenceAlien.child(senderUserId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
 
@@ -417,7 +428,11 @@ class RequestsFriendsViewHolder extends RecyclerView.ViewHolder {
                });
 
                 }
+    public void setOnlineImage(){
 
+        ImageView imageOnline = mView.findViewById(R.id.img_online_requests);
+        imageOnline.setVisibility(View.VISIBLE);
+    }
 
     public void setStudentName(String studentName, String studentLastName){
         TextView nameAndLastName = mView.findViewById(R.id.request_friend_username);

@@ -99,6 +99,8 @@ public class ProfileStudent extends AppCompatActivity {
     int disactivateColorTextButtonAddToFriends;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +108,8 @@ public class ProfileStudent extends AppCompatActivity {
 
         ReceiverStudentKey = getIntent().getExtras().get("VisitedStudentKey").toString();
         senderUserId = getKeyCurrentStudend(AppDatabase.getAppDatabase(ProfileStudent.this));
+
+
 
         // SEND AND CANCEL REQUESTS
         FriendRequestsReferenceAlienReceiver = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).
@@ -161,6 +165,7 @@ public class ProfileStudent extends AppCompatActivity {
         // Notification
         studentsReference = FirebaseDatabase.getInstance().getReference("students");
         studentsReference.keepSynced(true);
+
 
 
 
@@ -790,10 +795,11 @@ public class ProfileStudent extends AppCompatActivity {
         FriendReferenceAlien.child(senderUserId).child("date").setValue(saveCurrentDate).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+                FriendReferenceAlien.child(senderUserId).child("online").setValue(false);
            FriendReferenceMy.child(ReceiverStudentKey).child("date").setValue(saveCurrentDate).addOnSuccessListener(new OnSuccessListener<Void>() {
                @Override
                public void onSuccess(Void aVoid) {
-
+                   FriendReferenceMy.child(ReceiverStudentKey).child("online").setValue(false);
 
                    CheckFriendReferenceRequestMyReceiver.child(ReceiverStudentKey).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                        @Override
@@ -1017,6 +1023,29 @@ public class ProfileStudent extends AppCompatActivity {
             }
         });
     }
+
+
+    private void onlineStatus(final boolean online) {
+        studentsReference.child("online").setValue(online);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // TODO delete comment  if (currentStudent != null){
+        onlineStatus(false);
+        //  }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // TODO delete comment     if (currentStudent != null){
+        onlineStatus(true);
+        //    }
+    }
+
 
     }
 

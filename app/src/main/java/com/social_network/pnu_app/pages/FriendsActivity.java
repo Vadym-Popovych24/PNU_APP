@@ -12,8 +12,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
 
@@ -27,23 +30,7 @@ public class FriendsActivity extends AppCompatActivity {
     DatabaseReference studentsReference;
     private FirebaseAuth mAuth;
 
-    @Override
-    protected void onPause() {
-        super.onPause();
 
-        System.out.println("currentStudentonStart = " + currentStudent);
-        if (currentStudent != null){
-            studentsReference.child("online").setValue(false);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (currentStudent != null){
-            studentsReference.child("online").setValue(true);
-        }
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,5 +100,25 @@ public class FriendsActivity extends AppCompatActivity {
                 });
     }
 
+    private void onlineStatus(final boolean online) {
+        studentsReference.child("online").setValue(online);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // TODO delete comment  if (currentStudent != null){
+        onlineStatus(false);
+        //  }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // TODO delete comment     if (currentStudent != null){
+        onlineStatus(true);
+        //    }
+    }
 
 }

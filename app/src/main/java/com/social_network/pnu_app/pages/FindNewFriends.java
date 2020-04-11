@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,8 +52,10 @@ public class FindNewFriends extends AppCompatActivity {
     NetworkStatus network = new NetworkStatus();
     Button btnAddFriendAllUsers;
 
+    private DatabaseReference students;
 
-    DatabaseReference studentsReference;
+
+    DatabaseReference studentsReferenceMy;
     private FirebaseAuth mAuth;
     private FirebaseUser currentStudent;
 
@@ -66,50 +69,31 @@ public class FindNewFriends extends AppCompatActivity {
         menuChanges(bottomNavigationView);
 
         mAuth = FirebaseAuth.getInstance();
-        currentStudent= mAuth.getCurrentUser();
+        currentStudent = mAuth.getCurrentUser();
 
         ProfileStudent profileStudent = new ProfileStudent();
 
         senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(FindNewFriends.this));
 
-        studentsReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId);
+        studentsReferenceMy = FirebaseDatabase.getInstance().getReference("students").child(senderUserId);
+
+        students = FirebaseDatabase.getInstance().getReference("students");
 
 
-        btnAddFriendAllUsers =findViewById(R.id.btnAddFriendAllUsers);
+        btnAddFriendAllUsers = findViewById(R.id.btnAddFriendAllUsers);
 
         btnBackFromlUserList = findViewById(R.id.btnBackFromUserList);
         btnBackFromlUserList.setOnClickListener(btnlistener);
-
 
 
         allUsersList = findViewById(R.id.recyclerViewAllUsers);
         allUsersList.setHasFixedSize(true);
         allUsersList.setLayoutManager(new LinearLayoutManager(this));
 
-         allDatabaseUsersReference = FirebaseDatabase.getInstance().getReference().child("students")
-                 .orderByChild("verify")
-                 .equalTo(true);
+        allDatabaseUsersReference = FirebaseDatabase.getInstance().getReference().child("students")
+                .orderByChild("verify")
+                .equalTo(true);
 
-         allDatabaseUsersReference.keepSynced(true);
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        System.out.println("currentStudentonStart = " + currentStudent);
-        if (currentStudent != null){
-            studentsReference.child("online").setValue(false);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (currentStudent != null){
-            studentsReference.child("online").setValue(true);
-        }
     }
 
 
@@ -139,7 +123,28 @@ public class FindNewFriends extends AppCompatActivity {
 
                 ) {
             @Override
-            protected void populateViewHolder(AllAuthUsersViewHolder allAuthUsersViewHolder, final AllAuthUsers allAuthUsers, final int i) {
+            protected void populateViewHolder(final AllAuthUsersViewHolder allAuthUsersViewHolder, final AllAuthUsers allAuthUsers, final int i) {
+
+                String currentFriend = getRef(i).getKey();
+                students.child(currentFriend).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        boolean online;
+                        try {
+                            online = (boolean) dataSnapshot.child("online").getValue();
+                        }catch (Exception e){
+                            online = false;
+                        }
+                        if (online){
+                            allAuthUsersViewHolder.setOnlineImage();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
                 allAuthUsersViewHolder.setStudentName(allAuthUsers.getName(), allAuthUsers.getLastName());
                 allAuthUsersViewHolder.setStudentGroup(allAuthUsers.getGroup());
@@ -301,6 +306,28 @@ public class FindNewFriends extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void onlineStatus(final boolean online) {
+        studentsReferenceMy.child("online").setValue(online);
+    }
+
+        @Override
+    protected void onPause() {
+        super.onPause();
+
+        // TODO delete comment  if (currentStudent != null){
+        onlineStatus(false);
+     //   studentsReference.child("online").setValue("onPauseFindNewFrineds");
+        //  }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // TODO delete comment     if (currentStudent != null){
+        onlineStatus(true);
+        //    }
     }
 }
 
@@ -490,7 +517,7 @@ public class FindNewFriends extends AppCompatActivity {
       myFriendsReference = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).
               child("Friends");
 
-      myFriendsReference.addValueEventListener(new ValueEventListener() {
+      myFriendsReference.addListenerForSingleValueEvent(new ValueEventListener() {
           @Override
           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
               if(dataSnapshot.hasChild(ReceiverKey)){
@@ -547,6 +574,12 @@ public class FindNewFriends extends AppCompatActivity {
 
         mView= itemView;
     }
+
+     public void setOnlineImage(){
+
+         ImageView imageOnline = mView.findViewById(R.id.img_online_all_users);
+         imageOnline.setVisibility(View.VISIBLE);
+     }
     public void setStudentName(String studentName, String studentLastName){
         TextView nameAndLastName = mView.findViewById(R.id.all_users_username);
         nameAndLastName.setText(studentName + " " + studentLastName);

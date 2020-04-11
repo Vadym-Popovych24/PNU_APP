@@ -40,4 +40,6 @@
 
     // Friends
     <color name="btnDeclineFriend">#EB5959</color>
+
+    <color name="imgOnline">#05df29</color>
 </resources>

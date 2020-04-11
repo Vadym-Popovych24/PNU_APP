@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,10 +55,17 @@ public class MySubscribersFragment extends Fragment {
     String senderUserId;
     long countSubscribers;
     NetworkStatus network = new NetworkStatus();
+    static Context myContex;
 
 
     public MySubscribersFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        myContex = context;
     }
 
 
@@ -75,7 +83,7 @@ public class MySubscribersFragment extends Fragment {
 
         mySubscribersList = myMainView.findViewById(R.id.mySubscribersRecyclerView);
         ProfileStudent profileStudent = new ProfileStudent();
-        senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(getContext()));
+        senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(myContex));
 
         mySubscribersReference = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).
                 child("Subscribers");
@@ -85,7 +93,7 @@ public class MySubscribersFragment extends Fragment {
         students.keepSynced(true);
 
         mySubscribersList.setHasFixedSize(true);
-        mySubscribersList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mySubscribersList.setLayoutManager(new LinearLayoutManager(myContex));
 
 
         // Inflate the layout for this fragment
@@ -116,9 +124,9 @@ public class MySubscribersFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                if (!network.isOnline()) {
+                if (!network.isOnline() && myContex != null) {
                     //        progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), " Please Connect to Internet",
+                    Toast.makeText(myContex, " Please Connect to Internet",
                             Toast.LENGTH_LONG).show();
                 }
             }
@@ -130,7 +138,7 @@ public class MySubscribersFragment extends Fragment {
 
                 progressBar.setVisibility(View.GONE);
                 FindNewFriends findNewFriends = new FindNewFriends();
-                SerieIDCard = findNewFriends.getStudentSeriesIDCard(AppDatabase.getAppDatabase(getContext()));
+                SerieIDCard = findNewFriends.getStudentSeriesIDCard(AppDatabase.getAppDatabase(myContex));
                 FirebaseRecyclerAdapter<MySubscribers, MySubscribersViewHolder> firebaseRecyclerAdapter
                         = new FirebaseRecyclerAdapter<MySubscribers, MySubscribersViewHolder>
                         (
@@ -144,13 +152,23 @@ public class MySubscribersFragment extends Fragment {
                     protected void populateViewHolder(final MySubscribersViewHolder mySubscribersViewHolder, final MySubscribers mySubscribers, final int i) {
                         setTextViewForEmptyList();
                         final String currentFriend = getRef(i).getKey();
-                        students.child(currentFriend).addValueEventListener(new ValueEventListener() {
+                        students.child(currentFriend).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 String name = dataSnapshot.child("name").getValue().toString();
                                 String lastName = dataSnapshot.child("lastName").getValue().toString();
                                 String grop = dataSnapshot.child("group").getValue().toString();
                                 final String seriesIDcard = dataSnapshot.child("seriesIDcard").getValue().toString();
+
+                                boolean online;
+                                try {
+                                    online = (boolean) dataSnapshot.child("online").getValue();
+                                }catch (Exception e){
+                                    online = false;
+                                }
+                                if (online){
+                                    mySubscribersViewHolder.setOnlineImage();
+                                }
                                 String linkFirebaseStorageMainPhoto;
                                 try {
                                     linkFirebaseStorageMainPhoto = dataSnapshot.child("linkFirebaseStorageMainPhoto").getValue().toString();
@@ -160,10 +178,10 @@ public class MySubscribersFragment extends Fragment {
                                 }
                                 mySubscribersViewHolder.setStudentName(name, lastName);
                                 mySubscribersViewHolder.setStudentGroup(grop);
-                                if (linkFirebaseStorageMainPhoto != "") {
-                                    mySubscribersViewHolder.setStudentImage(getContext(), linkFirebaseStorageMainPhoto);
+                                if (linkFirebaseStorageMainPhoto != "" && myContex != null) {
+                                    mySubscribersViewHolder.setStudentImage(myContex, linkFirebaseStorageMainPhoto);
                                 }
-                                mySubscribersViewHolder.actionButton(currentFriend, senderUserId, getContext());
+                                mySubscribersViewHolder.actionButton(currentFriend, senderUserId, myContex);
                                 mySubscribersViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -243,6 +261,12 @@ class MySubscribersViewHolder extends RecyclerView.ViewHolder {
         });
 
 
+    }
+
+    public void setOnlineImage(){
+
+        ImageView imageOnline = mView.findViewById(R.id.img_online_subscribers);
+        imageOnline.setVisibility(View.VISIBLE);
     }
 
     public void setStudentName(String studentName, String studentLastName){

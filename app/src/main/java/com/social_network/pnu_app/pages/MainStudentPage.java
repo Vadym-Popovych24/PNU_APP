@@ -40,6 +40,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
@@ -294,24 +295,6 @@ public class MainStudentPage extends AppCompatActivity{
         });
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        System.out.println("currentStudentonStart = " + currentStudent);
-        if (currentStudent != null){
-            studentsReference.child("online").setValue(false);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (currentStudent != null){
-            studentsReference.child("online").setValue(true);
-        }
-        System.out.println("onResumeMainStudentPage");
-    }
 
 
     QueriesFirebase qfd = new QueriesFirebase();
@@ -698,6 +681,26 @@ public class MainStudentPage extends AppCompatActivity{
     };
 
 
+    private void onlineStatus(final boolean online) {
+        studentsReference.child("online").setValue(ServerValue.TIMESTAMP);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // TODO delete comment  if (currentStudent != null){
+        onlineStatus(false);
+        //  }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // TODO delete comment     if (currentStudent != null){
+        onlineStatus(true);
+        //    }
+    }
 }
 
 

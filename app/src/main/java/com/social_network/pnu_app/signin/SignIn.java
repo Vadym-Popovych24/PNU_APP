@@ -210,7 +210,7 @@ public class SignIn extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
 
-                                           /*     Student.student = student;
+                                                Student.student = student;
                                                 Student studentSQLite = new Student(valueIDcardField, FBName, FBLastName,FBid , FBemail, FBpassword,
                                                         FBphone, KeyStudent, FBverify, FBpatronym, FBfaculty, FBgroup, FBdateOfEntry, FBformStudying, "");
                                                 studentSQLite.synchronizationSQLiteSignIn(AppDatabase.getAppDatabase(SignIn.this));
@@ -218,7 +218,7 @@ public class SignIn extends AppCompatActivity {
 
                                                 intentFromSignIn = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
                                                 startActivityForResult(intentFromSignIn,1);
-                                                progressBar.setVisibility(View.GONE);*/
+                                                progressBar.setVisibility(View.GONE);
 
                                             }
                                         });
@@ -230,7 +230,7 @@ public class SignIn extends AppCompatActivity {
                             }
                         });
 
-                        sendCodeVerification();  // TODO розкоментувати рядок
+                      //  sendCodeVerification();  // TODO розкоментувати рядок
 
                     }
                 } else {

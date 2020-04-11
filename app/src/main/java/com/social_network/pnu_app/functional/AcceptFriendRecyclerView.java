@@ -33,7 +33,7 @@ public class AcceptFriendRecyclerView  extends AppCompatActivity {
         Date currentDate = new Date();
         final String saveCurrentDate = calForDate.format(currentDate);
 
-        DatabaseReference FriendReferenceAlien = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).
+        final DatabaseReference FriendReferenceAlien = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).
                 child("Friends");
         FriendReferenceAlien.keepSynced(true);
 

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="3dp">
+    android:layout_margin="5dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/all_users_profile_image"
@@ -11,11 +12,30 @@
             android:layout_height="75dp"
             android:src="@drawable/com_facebook_profile_picture_blank_square"/>
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_online_all_users"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        app:civ_border_width="2.5dp"
+        app:civ_border_color="@color/colorAccentWhite"
+        android:visibility="gone"
+        android:layout_below="@+id/all_users_profile_image"
+        android:layout_toRightOf="@id/all_users_profile_image"
+        android:layout_toEndOf="@id/all_users_profile_image"
+        android:layout_marginTop="-16dp"
+        android:layout_marginLeft="-22dp"
+        android:layout_marginStart="-22dp"
+        android:src="@color/imgOnline"/>
+
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_margin="5dp">
+            android:layout_margin="5dp"
+            android:layout_toEndOf="@+id/all_users_profile_image"
+            android:layout_toRightOf="@+id/all_users_profile_image">
+
 
             <TextView
                 android:id="@+id/all_users_username"
@@ -33,6 +53,9 @@
                 android:textSize="13sp"
                 android:textStyle=""
                 android:textColor="@color/onlineText"/>
+
+
+
         </LinearLayout>
 
 
@@ -57,10 +80,11 @@
                     android:paddingRight="10dp"
                     android:paddingStart="10dp"
                     android:paddingLeft="10dp"
+                    android:paddingBottom="0dp"
                     android:textColor="@android:color/white"
                     android:textSize="12sp"
                  >
                 </Button>
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>
