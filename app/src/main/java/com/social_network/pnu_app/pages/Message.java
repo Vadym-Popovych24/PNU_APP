@@ -25,6 +25,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.MessageData;
@@ -166,6 +167,10 @@ public class Message extends AppCompatActivity {
         listOfMessage.setAdapter(adapter);
     }
 
+    private void lastSeen() {
+        studentsReference.child("lastSeen").setValue(ServerValue.TIMESTAMP);
+    }
+
     private void onlineStatus(final boolean online) {
         studentsReference.child("online").setValue(online);
     }
@@ -176,6 +181,7 @@ public class Message extends AppCompatActivity {
 
         // TODO delete comment  if (currentStudent != null){
         onlineStatus(false);
+        lastSeen();
         //  }
     }
 

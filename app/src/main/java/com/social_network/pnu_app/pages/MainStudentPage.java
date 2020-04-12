@@ -681,8 +681,12 @@ public class MainStudentPage extends AppCompatActivity{
     };
 
 
+    private void lastSeen() {
+        studentsReference.child("lastSeen").setValue(ServerValue.TIMESTAMP);
+    }
+
     private void onlineStatus(final boolean online) {
-        studentsReference.child("online").setValue(ServerValue.TIMESTAMP);
+        studentsReference.child("online").setValue(online);
     }
 
     @Override
@@ -691,6 +695,7 @@ public class MainStudentPage extends AppCompatActivity{
 
         // TODO delete comment  if (currentStudent != null){
         onlineStatus(false);
+        lastSeen();
         //  }
     }
 

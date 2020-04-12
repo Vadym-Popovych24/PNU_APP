@@ -5,7 +5,9 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="3dp">
+    android:layout_marginTop="5dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginStart="10dp">
 
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -42,7 +44,7 @@
             android:id="@+id/mySubscribers_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/StudentNameAndLastName"
+            android:text=""
             android:textSize="16sp"
             android:textStyle=""
             android:textColor="@color/black"/>
@@ -50,7 +52,7 @@
             android:id="@+id/mySubscribers_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/StudentGroup"
+            android:text=""
             android:textSize="13sp"
             android:textStyle=""
             android:textColor="@color/onlineText" />

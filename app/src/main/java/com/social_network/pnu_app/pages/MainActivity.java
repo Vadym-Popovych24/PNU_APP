@@ -18,6 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.firebase.QueriesFirebase;
@@ -164,6 +165,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void lastSeen() {
+        studentsReference.child("lastSeen").setValue(ServerValue.TIMESTAMP);
+    }
+
     private void onlineStatus(final boolean online) {
         studentsReference.child("online").setValue(online);
     }
@@ -172,16 +177,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        // TODO delete comment  if (currentStudent != null){
+         if (currentStudent != null){
         onlineStatus(false);
-        //  }
+        lastSeen();
+          }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // TODO delete comment     if (currentStudent != null){
+        if (currentStudent != null){
         onlineStatus(true);
-        //    }
+           }
     }
 }

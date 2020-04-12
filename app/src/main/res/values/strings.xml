@@ -38,7 +38,8 @@
     <string name="btnListSubscribers">0 Підписники</string>
     <string name="hindEditTextAddNotes">Додати запис</string>
     <string name="contentDescription">TODO</string>
-    <string name="Online">Online</string>
+    <string name="Online">В мережі</string>
+    <string name="NotOnline">Не в мережі</string>
     <string name="menuSearch">Пошук</string>
     <string name="menuMessenger">Повідомлення</string>
     <string name="menuMainStudentPage">Моя сторінка</string>
@@ -55,6 +56,7 @@
     <string name="Friends">Усі друзі</string>
     <string name="FriendsOnline">Друзі онлайн</string>
     <string name="Users">Користувачі</string>
+    <string name="FriendsProfile">Друзі користувача</string>
     <string name="SearchPeople">Пошук</string>
     <string name="SearchFriend">Пошук друзів</string>
     <string name="SearchFriendOnline">Пошук онлайн друзів</string>
@@ -62,6 +64,7 @@
     <string name="StudentNameAndLastName">Ім\'я та Прізвище</string>
     <string name="StudentGroup">Група</string>
     <string name="DefaultTextListFriend">У вас поки немає друзів</string>
+    <string name="DefaultTextListFriendsProfile">У даного користувача поки немає друзів</string>
     <!--Profile-->
     <string name="btnAddFriend">Додати в друзі  </string>
     <string name="btnRejectFriend">Відхилити</string>
@@ -83,9 +86,13 @@
     <!--MySubscribersFragment-->
 
     <string name="DefaultTextListMySubscribers">У вас поки немає підписників</string>
+    <string name="DefaultTextListSubscribersProfile">У даного користувача поки немає підписників</string>
+    <string name="DefaultTextListSubscribedsProfile">У даного користувача поки немає підписків</string>
     <string name="DefaultTextListMySubscribeds">У вас поки немає підпиcок на інших</string>
     <string name="DefaultTextListMyOnlineFriends">Немає друзів онлайн</string>
     <string name="MySubscribers">Ваші підписники</string>
+    <string name="SubscribersProfile">Підписники користувача</string>
+    <string name="SubscribedsProfile">Підписки користувача</string>
     <string name="MyOnlineFriends">В мережі друзів</string>
     <string name="MyOnlineFriends2">друзів</string>
     <string name="MyFriendOnline">Ваші друзі онлайн</string>

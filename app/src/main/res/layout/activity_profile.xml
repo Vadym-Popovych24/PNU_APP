@@ -31,7 +31,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
-        android:text="Попович Вадим"
+        android:text=""
         android:textColor="@color/valuesStudentDate"
         android:textSize="20sp"
         android:layout_toEndOf="@id/imStudentMainPhotoProfile" />
@@ -44,82 +44,84 @@
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_below="@+id/tvPIBvalueProfile"
-        android:text="@string/Online"
+        android:text=""
         android:textColor="@color/onlineText"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:layout_toEndOf="@id/imStudentMainPhotoProfile" />
 
-    <Button
-
-        android:id="@+id/btnListFriendsProfile"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="50dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginRight="0dp"
-
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:background="@android:color/white"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_below="@+id/tvOnlineProfile"
-        android:layout_marginTop="20dp"
-        android:paddingEnd="0dp"
-        android:paddingRight="0dp"
-        android:paddingStart="0dp"
-        android:paddingLeft="0dp"
-        android:text="@string/btnListFriends"
-        android:textColor="@android:color/black"
-
         android:layout_toRightOf="@+id/imStudentMainPhotoProfile"
-        android:layout_toEndOf="@+id/imStudentMainPhotoProfile" />
+        android:layout_toEndOf="@+id/imStudentMainPhotoProfile">
 
-    <Button
-        android:id="@+id/btnListPollProfile"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="90dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginRight="0dp"
+        <Button
 
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
+            android:id="@+id/btnListFriendsProfile"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginRight="0dp"
 
-        android:layout_below="@+id/tvOnlineProfile"
-        android:layout_marginTop="20dp"
-        android:background="@android:color/white"
-        android:paddingEnd="0dp"
-        android:paddingRight="0dp"
-        android:paddingStart="0dp"
-        android:paddingLeft="0dp"
-        android:text="@string/btnListPoll"
-        android:textColor="@android:color/black"
+            android:layout_marginLeft="0dp"
+            android:layout_marginStart="0dp"
+            android:background="@android:color/white"
+            android:layout_marginTop="20dp"
+            android:paddingEnd="0dp"
+            android:paddingRight="0dp"
+            android:paddingStart="0dp"
+            android:paddingLeft="0dp"
+            android:text="@string/btnListFriends"
+            android:textColor="@android:color/black"
+            android:textSize="12sp"/>
 
-        android:layout_toRightOf="@+id/btnListFriendsProfile"
-        android:layout_toEndOf="@+id/btnListFriendsProfile" />
+        <Button
+            android:id="@+id/btnListSubscribersProfile"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="85dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginRight="0dp"
 
-    <Button
-        android:id="@+id/btnListNotesProfile"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="70dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginRight="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
 
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:background="@android:color/white"
+            android:paddingEnd="0dp"
+            android:paddingRight="5dp"
+            android:paddingStart="0dp"
+            android:paddingLeft="0dp"
+            android:text="@string/btnListSubscribers"
+            android:textColor="@android:color/black"
+            android:textSize="12sp"/>
 
-        android:layout_below="@+id/tvOnlineProfile"
-        android:layout_marginTop="20dp"
-        android:background="@android:color/white"
-        android:paddingEnd="5dp"
-        android:paddingRight="5dp"
-        android:paddingStart="0dp"
-        android:paddingLeft="0dp"
-        android:text="@string/btnListWall"
-        android:textColor="@android:color/black"
+        <Button
+            android:id="@+id/btnListPollProfile"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginRight="0dp"
 
-        android:layout_toRightOf="@+id/btnListPollProfile"
-        android:layout_toEndOf="@+id/btnListPollProfile" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+
+            android:layout_marginTop="20dp"
+            android:background="@android:color/white"
+            android:paddingEnd="0dp"
+            android:paddingRight="0dp"
+            android:paddingStart="0dp"
+            android:paddingLeft="0dp"
+            android:text="@string/btnListPoll"
+            android:textColor="@android:color/black"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+
 
 <!--    <LinearLayout
         android:id="@+id/LinerLayouProfileButton"
@@ -129,10 +131,12 @@
         android:orientation="horizontal"
         android:weightSum="2"
         android:gravity="center">-->
+
+
     <Button
         android:id="@+id/btnSendMessageProfile"
         style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="37dp"
 
         android:background="@drawable/btn_write_message"
@@ -150,7 +154,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="5dp" />
+        android:layout_marginStart="10dp"
+        android:layout_marginRight="115dp"
+        android:layout_marginEnd="5dp" />
 
 
     <Button
@@ -171,8 +177,8 @@
         android:layout_below="@+id/imStudentMainPhotoProfile"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@+id/btnListFriendsProfile"
-        android:layout_toEndOf="@+id/btnListFriendsProfile" />
+        android:layout_toRightOf="@+id/tvFormStudyingProfile"
+        android:layout_toEndOf="@+id/tvFormStudyingProfile" />
 
 <!--    </LinearLayout>-->
 
@@ -205,12 +211,12 @@
         android:id="@+id/tvGroupValueProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/tvGroup"
+        android:layout_toRightOf="@+id/tvGroupProfile"
+        android:layout_toEndOf="@+id/tvGroupProfile"
         android:layout_below="@id/tvAboutStudentProfile"
         android:text=""
         android:textColor="@color/valuesStudentDate"
-        android:textSize="20sp"
-        android:layout_toEndOf="@+id/tvGroupProfile" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/tvDateOfEntryProfile"

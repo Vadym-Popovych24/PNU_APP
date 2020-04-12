@@ -2,7 +2,6 @@ package com.social_network.pnu_app.pages;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,9 +27,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
-import com.social_network.pnu_app.entity.AllAuthUsers;
+import com.social_network.pnu_app.entity.Friends;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
 import com.social_network.pnu_app.network.NetworkStatus;
 import com.squareup.picasso.Callback;
@@ -92,7 +92,10 @@ public class FindNewFriends extends AppCompatActivity {
 
         allDatabaseUsersReference = FirebaseDatabase.getInstance().getReference().child("students")
                 .orderByChild("verify")
-                .equalTo(true);
+                .equalTo(true)
+                .limitToLast(100);
+
+        allDatabaseUsersReference.keepSynced(true);
 
     }
 
@@ -113,70 +116,83 @@ public class FindNewFriends extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         SerieIDCard = getStudentSeriesIDCard(AppDatabase.getAppDatabase(FindNewFriends.this));
-        FirebaseRecyclerAdapter<AllAuthUsers, AllAuthUsersViewHolder> firebaseRecyclerAdapter
-                = new FirebaseRecyclerAdapter<AllAuthUsers, AllAuthUsersViewHolder>
-                (
-                        AllAuthUsers.class,
+        FirebaseRecyclerAdapter<Friends, AllAuthUsersViewHolder> firebaseRecyclerAdapter
+                = new FirebaseRecyclerAdapter<Friends, AllAuthUsersViewHolder>(
+                        Friends.class,
                         R.layout.all_users_display_layout,
                         AllAuthUsersViewHolder.class,
                         allDatabaseUsersReference
 
                 ) {
             @Override
-            protected void populateViewHolder(final AllAuthUsersViewHolder allAuthUsersViewHolder, final AllAuthUsers allAuthUsers, final int i) {
+            protected void populateViewHolder(final AllAuthUsersViewHolder allAuthUsersViewHolder, final Friends allAuthUsers, final int i) {
 
-                String currentFriend = getRef(i).getKey();
+                final String currentFriend = getRef(i).getKey();
                 students.child(currentFriend).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String name = dataSnapshot.child("name").getValue().toString();
+                        String lastName = dataSnapshot.child("lastName").getValue().toString();
+                        String grop = dataSnapshot.child("group").getValue().toString();
+                        final String seriesIDcard = dataSnapshot.child("seriesIDcard").getValue().toString();
                         boolean online;
                         try {
                             online = (boolean) dataSnapshot.child("online").getValue();
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             online = false;
                         }
-                        if (online){
+                        if (online) {
                             allAuthUsersViewHolder.setOnlineImage();
                         }
-                    }
+                        String linkFirebaseStorageMainPhoto;
+                        try {
+                            linkFirebaseStorageMainPhoto = dataSnapshot.child("linkFirebaseStorageMainPhoto").getValue().toString();
+                        } catch (NullPointerException nullPointerException) {
+                            linkFirebaseStorageMainPhoto = "";
+                        }
+                        allAuthUsersViewHolder.setStudentName(name, lastName);
+                        allAuthUsersViewHolder.setStudentGroup(grop);
+                        if (linkFirebaseStorageMainPhoto != "" && getApplicationContext() != null) {
+                            allAuthUsersViewHolder.setStudentImage(getApplicationContext(), linkFirebaseStorageMainPhoto);
+                        }
+                        final String VisitedKey = getRef(i).getKey();
+                        allAuthUsersViewHolder.checkFrendships(VisitedKey, getApplicationContext());
+                        allAuthUsersViewHolder.checkSendered(VisitedKey, getApplicationContext());
+                        allAuthUsersViewHolder.checkReceiver(VisitedKey, getApplicationContext());
 
+                        allAuthUsersViewHolder.checkYourSubscibers(VisitedKey, getApplicationContext());
+                        allAuthUsersViewHolder.checkOnYouAreSubscibed(VisitedKey, getApplicationContext());
+
+                        if (senderUserId.equals(VisitedKey)) {
+                            allAuthUsersViewHolder.checkMySelf(VisitedKey, getApplicationContext());
+                        }
+
+                        allAuthUsersViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                 if (!senderUserId.equals(VisitedKey)) {
+                                    String VisitedStudentKey = getRef(i).getKey();
+                                    Intent profileIntent = new Intent(FindNewFriends.this, ProfileStudent.class);
+                                    profileIntent.putExtra("VisitedStudentKey", VisitedStudentKey);
+                                    startActivity(profileIntent);
+                                } else {
+                                    Intent myProfileIntent = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
+                                    startActivity(myProfileIntent);
+
+                                }
+                            }
+                        });
+                    }
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
                 });
 
-                allAuthUsersViewHolder.setStudentName(allAuthUsers.getName(), allAuthUsers.getLastName());
-                allAuthUsersViewHolder.setStudentGroup(allAuthUsers.getGroup());
-                allAuthUsersViewHolder.setStudentImage(getApplicationContext(), (allAuthUsers.getLinkFirebaseStorageMainPhoto()));
+          //      allAuthUsersViewHolder.setStudentName(allAuthUsers.getName(), allAuthUsers.getLastName());
+         //       allAuthUsersViewHolder.setStudentGroup(allAuthUsers.getGroup());
+          //      allAuthUsersViewHolder.setStudentImage(getApplicationContext(), (allAuthUsers.getLinkFirebaseStorageMainPhoto()));
 
-                String VisitedKey = getRef(i).getKey();
-                allAuthUsersViewHolder.checkFrendships(VisitedKey, getApplicationContext());
-                allAuthUsersViewHolder.checkSendered(VisitedKey, getApplicationContext());
-                allAuthUsersViewHolder.checkReceiver(VisitedKey, getApplicationContext());
-
-                allAuthUsersViewHolder.checkYourSubscibers(VisitedKey, getApplicationContext());
-                allAuthUsersViewHolder.checkOnYouAreSubscibed(VisitedKey, getApplicationContext());
-
-                if (allAuthUsers.getSeriesIDcard().equals(SerieIDCard)){
-                    allAuthUsersViewHolder.checkMySelf(VisitedKey, getApplicationContext());
-                }
-
-                allAuthUsersViewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (!allAuthUsers.getSeriesIDcard().equals(SerieIDCard)){
-                                String VisitedStudentKey = getRef(i).getKey();
-                                Intent profileIntent = new Intent(FindNewFriends.this, ProfileStudent.class);
-                                profileIntent.putExtra("VisitedStudentKey", VisitedStudentKey);
-                                startActivity(profileIntent);
-                            } else {
-                                Intent myProfileIntent = new Intent("com.social_network.pnu_app.pages.MainStudentPage");
-                                startActivity(myProfileIntent);
-
-                           }
-                        }
-                    });
 
             }
         };
@@ -308,17 +324,21 @@ public class FindNewFriends extends AppCompatActivity {
         });
     }
 
+    private void lastSeen() {
+        studentsReferenceMy.child("lastSeen").setValue(ServerValue.TIMESTAMP);
+    }
+
     private void onlineStatus(final boolean online) {
         studentsReferenceMy.child("online").setValue(online);
     }
 
-        @Override
+    @Override
     protected void onPause() {
         super.onPause();
 
         // TODO delete comment  if (currentStudent != null){
         onlineStatus(false);
-     //   studentsReference.child("online").setValue("onPauseFindNewFrineds");
+        lastSeen();
         //  }
     }
 
@@ -367,11 +387,9 @@ public class FindNewFriends extends AppCompatActivity {
          final String senderUserId;
          senderUserId = getKeyCurrentStudend(AppDatabase.getAppDatabase(context));
 
-         if (visitedKey.equals(senderUserId)) {
              btnAddFriendAllUsers.setVisibility(View.GONE);
              btnAddFriendAllUsers.setEnabled(false);
          }
-     }
 
 
      public void checkYourSubscibers(final String ReceiverKey, final Context context){

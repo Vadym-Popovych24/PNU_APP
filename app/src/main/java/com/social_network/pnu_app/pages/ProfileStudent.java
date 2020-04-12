@@ -25,8 +25,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
+import com.social_network.pnu_app.functional.LastSeenTime;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
 import com.social_network.pnu_app.network.NetworkStatus;
 import com.squareup.picasso.Picasso;
@@ -48,10 +50,11 @@ public class ProfileStudent extends AppCompatActivity {
     TextView tvGroupValue;
     TextView tvDateOfEntryValue;
     TextView tvFormStudyingValue;
+    TextView tvOnlineProfile;
 
     Button btnAddToFriends;
     Button btnlistFriends;
-
+    Button btnListSubscribersProfile;
 
     private String CurrentStateFriend;
 
@@ -60,6 +63,7 @@ public class ProfileStudent extends AppCompatActivity {
 
     private DatabaseReference FriendReferenceAlien; //  Отримувач
     private DatabaseReference FriendReferenceMy;  //  Відправник;
+
 
     DatabaseReference CheckFriendReferenceRequestMyReceiver;  // Check
     DatabaseReference CheckFriendReferenceRequestMySender;     // Check
@@ -72,7 +76,8 @@ public class ProfileStudent extends AppCompatActivity {
     DatabaseReference studentsReference;                  // Notification
 
     String senderUserId;
-    String ReceiverStudentKey;
+
+    static String ReceiverStudentKey;
 
     String SendeRequestType;
     String ReceiverRequestType;
@@ -87,7 +92,10 @@ public class ProfileStudent extends AppCompatActivity {
     String formStudying;
     String faculty;
     String linkFirebaseStorageMainPhoto;
+    boolean online;
     long countFriends;
+    long countSubsrcribers;
+    long lastSenn;
     ValueEventListener valueEventListener;
     NetworkStatus network = new NetworkStatus();
 
@@ -140,7 +148,6 @@ public class ProfileStudent extends AppCompatActivity {
 
         FriendReferenceAlien = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).
                 child("Friends");
-        FriendReferenceAlien.keepSynced(true);
 
         FriendReferenceMy = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).
                 child("Friends");
@@ -152,7 +159,6 @@ public class ProfileStudent extends AppCompatActivity {
         SubscribersReferenceMy.keepSynced(true);
 
         SubscribersReferenceAlien = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).child("Subscribers");
-        SubscribersReferenceAlien.keepSynced(true);
 
         // Subscribed
 
@@ -180,16 +186,19 @@ public class ProfileStudent extends AppCompatActivity {
 
         btnAddToFriends = findViewById(R.id.btnAddToFriends);
         btnlistFriends = findViewById(R.id.btnListFriendsProfile);
+        btnListSubscribersProfile = findViewById(R.id.btnListSubscribersProfile);
+
 
         tvPIBvalue = findViewById(R.id.tvPIBvalueProfile);
         tvFacultyValue = findViewById(R.id.tvFacultyValueProfile);
         tvGroupValue = findViewById(R.id.tvGroupValueProfile);
         tvDateOfEntryValue = findViewById(R.id.tvDateOfEntryValueProfile);
         tvFormStudyingValue = findViewById(R.id.tvFormStudyingValueProfile);
-
+        tvOnlineProfile = findViewById(R.id.tvOnlineProfile);
 
         btnAddToFriends.setOnClickListener(btnlistener);
         btnlistFriends.setOnClickListener(btnlistener);
+        btnListSubscribersProfile.setOnClickListener(btnlistener);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_profileProfile);
         bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
@@ -236,6 +245,17 @@ public class ProfileStudent extends AppCompatActivity {
                 formStudying = dataSnapshot.child("formStudying").getValue().toString();
                 faculty = dataSnapshot.child("faculty").getValue().toString();
                 try {
+                    online = (boolean) dataSnapshot.child("online").getValue();
+                } catch (Exception e) {
+                    online = false;
+                }
+                try {
+                    lastSenn = (long) dataSnapshot.child("lastSeen").getValue();
+                } catch (Exception e) {
+                    lastSenn = 0;
+                }
+
+                try {
                     linkFirebaseStorageMainPhoto = dataSnapshot.child("linkFirebaseStorageMainPhoto").getValue().toString();
                 }
                 catch (NullPointerException nullLinkPhoto){
@@ -259,11 +279,46 @@ public class ProfileStudent extends AppCompatActivity {
                         }
                     }
                 });
+
+
+                SubscribersReferenceAlien.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        countSubsrcribers = dataSnapshot.getChildrenCount();
+
+                        btnListSubscribersProfile.setText(countSubsrcribers + " " + "Підписники");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        if (!network.isOnline()) {
+                            //   progressBar.setVisibility(View.GONE);
+                            Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
                 tvPIBvalue.setText(lastName + " " + name);
                 tvFacultyValue.setText(" " + faculty);
                 tvGroupValue.setText(" " + group);
                 tvDateOfEntryValue.setText(" " + dateOfEntry);
                 tvFormStudyingValue.setText(" " + formStudying);
+
+                if (online) {
+                    tvOnlineProfile.setText(getString(R.string.Online));
+                }
+                else{
+                    if (lastSenn != 0) {
+                        LastSeenTime getTime = new LastSeenTime();
+                        long lastSeenTime = Long.parseLong(String.valueOf(lastSenn));
+                        String lastSeenDisplayTime = getTime.getTimeAgo(lastSeenTime);
+                        tvOnlineProfile.setText(lastSeenDisplayTime);
+                    }
+                    else {
+                        tvOnlineProfile.setText(getString(R.string.NotOnline));
+                    }
+                }
 
                 if (!linkFirebaseStorageMainPhoto.isEmpty()){
                 Picasso.with(ProfileStudent.this)
@@ -551,9 +606,16 @@ public class ProfileStudent extends AppCompatActivity {
                     }
                     break;
                 case R.id.btnListFriendsProfile:
-                    Intent intentlistMyFriends;
-                    intentlistMyFriends = new Intent( "com.social_network.pnu_app.pages.FriendsActivity");
-                    startActivity(intentlistMyFriends);
+                    Intent intentFriendsProfileActivity = new Intent(ProfileStudent.this, FriendsProfileActivity.class);
+                    intentFriendsProfileActivity.putExtra("VisitedStudentKey", ReceiverStudentKey);
+                    startActivity(intentFriendsProfileActivity);
+
+                    break;
+
+                case R.id.btnListSubscribersProfile:
+                    Intent intentSubscribersProfileActivity = new Intent(ProfileStudent.this, SubscribersProfileActivity.class);
+                    intentSubscribersProfileActivity.putExtra("VisitedStudentKey", ReceiverStudentKey);
+                    startActivity(intentSubscribersProfileActivity);
                     break;
             }
         }
@@ -1025,6 +1087,10 @@ public class ProfileStudent extends AppCompatActivity {
     }
 
 
+    private void lastSeen() {
+        studentsReference.child("lastSeen").setValue(ServerValue.TIMESTAMP);
+    }
+
     private void onlineStatus(final boolean online) {
         studentsReference.child("online").setValue(online);
     }
@@ -1035,6 +1101,7 @@ public class ProfileStudent extends AppCompatActivity {
 
         // TODO delete comment  if (currentStudent != null){
         onlineStatus(false);
+        lastSeen();
         //  }
     }
 

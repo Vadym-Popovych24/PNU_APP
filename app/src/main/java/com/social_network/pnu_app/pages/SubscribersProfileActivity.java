@@ -2,42 +2,57 @@ package com.social_network.pnu_app.pages;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
 
-public class Search extends AppCompatActivity {
+public class SubscribersProfileActivity extends AppCompatActivity {
+
+    private ViewPager viewPagerSubscribersProfile;
+    private TabLayout tabLayoutSubscribersProfile;
+    private TabSubscribersProfileAdapter subscribersProfileAdapter;
 
     String senderUserId;
     DatabaseReference studentsReference;
 
+    String ReceiverStudentKey;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_subsribers_profile);
+
+        ReceiverStudentKey = getIntent().getExtras().get("VisitedStudentKey").toString();
+
+        viewPagerSubscribersProfile = findViewById(R.id.subscribersProfile_tabs_pages);
+        subscribersProfileAdapter = new TabSubscribersProfileAdapter(getSupportFragmentManager());
+        viewPagerSubscribersProfile.setAdapter(subscribersProfileAdapter);
+        tabLayoutSubscribersProfile = findViewById(R.id.tabs_subscribersProfile);
+        tabLayoutSubscribersProfile.setupWithViewPager(viewPagerSubscribersProfile);
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation_subscribersProfile);
+        bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
+        menuChanges(bottomNavigationView);
 
         ProfileStudent profileStudent = new ProfileStudent();
-
-        senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(Search.this));
+        senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(SubscribersProfileActivity.this));
         studentsReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId);
 
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation_search);
-        bottomNavigationView.setSelectedItemId(R.id.action_search);
-
-
-        menuChanges(bottomNavigationView);
     }
+
+
+
     public void menuChanges(BottomNavigationView bottomNavigationView){
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
@@ -103,4 +118,6 @@ public class Search extends AppCompatActivity {
         onlineStatus(true);
         //    }
     }
+
+
 }
