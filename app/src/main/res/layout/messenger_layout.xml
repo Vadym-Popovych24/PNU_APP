@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginStart="10dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_messenger"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
+        android:src="@drawable/com_facebook_profile_picture_blank_square"
+        />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_online_messenger"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        app:civ_border_width="2.5dp"
+        app:civ_border_color="@color/colorAccentWhite"
+        android:visibility="gone"
+        android:layout_below="@+id/image_messenger"
+        android:layout_toRightOf="@id/image_messenger"
+        android:layout_toEndOf="@id/image_messenger"
+        android:layout_marginTop="-16dp"
+        android:layout_marginLeft="-22dp"
+        android:layout_marginStart="-22dp"
+        android:src="@color/imgOnline"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_seenMessage"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        app:civ_border_width="2.5dp"
+        app:civ_border_color="@color/colorAccentWhite"
+        android:visibility="gone"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="15dp"
+        android:src="@color/imgSeenMessage" />
+
+    <LinearLayout
+        android:id="@+id/LLNameMessenger"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/image_messenger"
+        android:layout_toRightOf="@+id/image_messenger">
+
+        <TextView
+            android:id="@+id/MessengerUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="16sp"
+            android:textStyle=""
+            android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/tvLastMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="13sp"
+            android:layout_marginTop="5dp"
+            android:textStyle=""
+            android:textColor="@color/onlineText"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/lineAboveMessenger"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+
+        android:layout_below="@+id/image_messenger"
+        android:layout_toRightOf="@id/image_messenger"
+        android:layout_toEndOf="@id/image_messenger"
+        android:background="@color/linesMessenger"
+         />
+</RelativeLayout>

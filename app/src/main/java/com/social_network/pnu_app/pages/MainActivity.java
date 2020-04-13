@@ -81,9 +81,6 @@ public class MainActivity extends AppCompatActivity {
      //  if (currentStudent != null  &&
           // checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false) {
 //
-           ProfileStudent profileStudent = new ProfileStudent();
-           final String senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(getApplicationContext()));
-           studentsReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId);
 
         if(checkNullCurrentStudent(AppDatabase.getAppDatabase(MainActivity.this)) == false){ // TODO change on codeLine above if
             rlActivityMain = findViewById(R.id.rlActivityMain);
@@ -165,29 +162,5 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void lastSeen() {
-        studentsReference.child("lastSeen").setValue(ServerValue.TIMESTAMP);
-    }
 
-    private void onlineStatus(final boolean online) {
-        studentsReference.child("online").setValue(online);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-         if (currentStudent != null){
-        onlineStatus(false);
-        lastSeen();
-          }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (currentStudent != null){
-        onlineStatus(true);
-           }
-    }
 }

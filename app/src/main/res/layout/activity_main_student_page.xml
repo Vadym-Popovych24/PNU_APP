@@ -280,18 +280,18 @@
     <View
         android:id="@+id/lineAboveEtWall"
         android:layout_width="fill_parent"
-        android:layout_height="5dp"
+        android:layout_height="2dp"
         android:layout_marginTop="15dp"
         android:layout_below="@+id/tvFacultyValue"
-        android:background="@color/lines" />
+        android:background="@color/linesMessenger" />
 
     <View
         android:id="@+id/lineBelowEtWall"
         android:layout_width="fill_parent"
-        android:layout_height="5dp"
+        android:layout_height="2dp"
         android:layout_marginTop="10dp"
         android:layout_below="@+id/btnSendWall"
-        android:background="@color/lines" />
+        android:background="@color/linesMessenger" />
 
     <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
         android:id="@+id/editTextWall"

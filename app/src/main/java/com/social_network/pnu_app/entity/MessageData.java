@@ -1,43 +1,63 @@
 package com.social_network.pnu_app.entity;
 
 import java.util.Date;
+import java.util.Map;
 
 public class MessageData {
-    public String userName;
-    public String textMessage;
-    private long messageTime;
 
-    public MessageData(){}
+    String message;
+    boolean seen;
+    long time;
+    String type;
+    String key;
 
-    public MessageData(String userName, String textMessage){
-        this.userName = userName;
-        this.textMessage = textMessage;
+    public MessageData(String message, boolean seen, String type, String key){
+        this.message = message;
+        this.seen=seen;
+        this.time = new Date().getTime();
+        this.type = type;
+        this.key=key;
 
-        this.messageTime = new Date().getTime();
     }
 
+   public MessageData(){}
 
-    public String getUserName() {
-        return userName;
+
+    public String getMessage() {
+        return message;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public String getTextMessage() {
-        return textMessage;
+    public boolean isSeen() {
+        return seen;
     }
 
-    public void setTextMessage(String textMessage) {
-        this.textMessage = textMessage;
+    public void setSeen(boolean seen) {
+        this.seen = seen;
     }
 
-    public long getMessageTime() {
-        return messageTime;
+    public long getTime() {
+        return time;
     }
 
-    public void setMessageTime(long messageTime) {
-        this.messageTime = messageTime;
+    public void setTime(long time) {
+        this.time = time;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getKey() { return key; }
+
+    public void setKey(String key) { this.key = key; }
+
+
 }

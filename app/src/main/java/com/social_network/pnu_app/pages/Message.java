@@ -1,6 +1,5 @@
 package com.social_network.pnu_app.pages;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
@@ -16,20 +15,18 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.github.library.bubbleview.BubbleTextView;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.MessageData;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
+
+import java.util.Map;
 
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
@@ -46,6 +43,10 @@ public class Message extends AppCompatActivity {
 
     String senderUserId;
     DatabaseReference studentsReference;
+    DatabaseReference messageMyReference;
+    DatabaseReference messageAlienReference;
+
+    static String ReceiverStudentKey;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -73,18 +74,35 @@ public class Message extends AppCompatActivity {
         emojIconActions = new EmojIconActions(getApplication(), relativeLayoutMessage, emojiconEditText, emojiButton);
         emojIconActions.ShowEmojIcon();
 
+        ReceiverStudentKey = getIntent().getExtras().get("VisitedStudentKey").toString();
 
         ProfileStudent profileStudent = new ProfileStudent();
         senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(Message.this));
         studentsReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId);
 
+        messageMyReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId)
+                .child("Messages").child(ReceiverStudentKey);
+
+        messageAlienReference= FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey)
+                .child("Messages").child(senderUserId);
+
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseDatabase.getInstance().getReference("message").push().setValue(new MessageData(
-                        FirebaseAuth.getInstance().getCurrentUser().toString(),
-                        emojiconEditText.getText().toString()
+
+                messageMyReference.push().setValue(new MessageData(
+                        emojiconEditText.getText().toString(),
+                        false,
+                        "text",
+                        ReceiverStudentKey
                 ));
+                messageAlienReference.push().setValue(new MessageData(
+                        emojiconEditText.getText().toString(),
+                        false,
+                        "text",
+                        senderUserId
+                ));
+
                 emojiconEditText.setText("");
             }
         });
@@ -101,7 +119,10 @@ public class Message extends AppCompatActivity {
 
     private void displayAllMessages() {
         ListView listOfMessage = findViewById(R.id.list_of_messages);
-        adapter = new FirebaseListAdapter<MessageData>(this, MessageData.class, R.layout.list_item, FirebaseDatabase.getInstance().getReference("message")) {
+        adapter = new FirebaseListAdapter<MessageData>(
+                this, MessageData.class,
+                R.layout.list_item,
+                messageMyReference){
             //   @SuppressLint("WrongConstant")
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
             @Override
@@ -149,8 +170,8 @@ public class Message extends AppCompatActivity {
                 } else {*/
 
                     mess_user.setBackgroundResource(R.drawable.rectangle_rounded_all_rights);
-                    mess_user.setText(model.getUserName() + "\n" + DateFormat.format("dd-MM-yyyy HH:mm:ss", model.getMessageTime()));
-                    mess_text.setText(model.getTextMessage());
+                    mess_user.setText(model.getKey() + "\n" + DateFormat.format("dd-MM-yyyy HH:mm:ss", model.getTime()));
+                    mess_text.setText(model.getMessage());
 
                     RelativeLayout.LayoutParams paramsEmail = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
                     paramsEmail.setMarginStart(0);

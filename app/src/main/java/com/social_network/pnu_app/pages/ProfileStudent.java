@@ -117,8 +117,6 @@ public class ProfileStudent extends AppCompatActivity {
         ReceiverStudentKey = getIntent().getExtras().get("VisitedStudentKey").toString();
         senderUserId = getKeyCurrentStudend(AppDatabase.getAppDatabase(ProfileStudent.this));
 
-
-
         // SEND AND CANCEL REQUESTS
         FriendRequestsReferenceAlienReceiver = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).
                 child("FriendRequestReceiver").child(senderUserId).child("requestType");
@@ -1088,11 +1086,11 @@ public class ProfileStudent extends AppCompatActivity {
 
 
     private void lastSeen() {
-        studentsReference.child("lastSeen").setValue(ServerValue.TIMESTAMP);
+        studentsReference.child(senderUserId).child("lastSeen").setValue(ServerValue.TIMESTAMP);
     }
 
     private void onlineStatus(final boolean online) {
-        studentsReference.child("online").setValue(online);
+        studentsReference.child(senderUserId).child("online").setValue(online);
     }
 
     @Override
