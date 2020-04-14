@@ -25,6 +25,7 @@
     <color name="StartWallBackground">#858585</color>
     <color name="lines">#F1F1F1</color>
     <color name="linesMessenger">#DDDDDD</color>
+    <color name="editTextMessage">#F7F2F2</color>
 
     // Message colors
 

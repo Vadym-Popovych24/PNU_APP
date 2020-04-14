@@ -4,7 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,10 +17,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.github.library.bubbleview.BubbleTextView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
@@ -29,6 +34,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.MessageData;
+import com.social_network.pnu_app.functional.LastSeenTime;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
@@ -40,22 +46,28 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Messenger extends AppCompatActivity {
 
+    private RecyclerView myMessengersList;
 
-
-    ImageView imageMessenger;
-    ImageView imgOnlineMessenger;
-    ImageView imgSeenMessage;
-    TextView tvMessengerUsername;
-    TextView tvLastMessage;
+    private TextView textViewDefaultText;
+    private ProgressBar progressBar;
 
     String senderUserId;
-    DatabaseReference myMessageReference;
+    DatabaseReference myMessengersReference;
     DatabaseReference studentsReference;
     Query lastMessageQuery;
 
     HashMap<Object, Object> objectLastMessage = new HashMap();
     String lastMessage;
+    long time;
+    String timeLastMessage;
     String key;
+
+    long countMessengers;
+    String currentMessengers;
+
+     String name;
+     String lastName;
+
     private FirebaseListAdapter<MessageData> adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,73 +76,125 @@ public class Messenger extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation_messenger);
         bottomNavigationView.setSelectedItemId(R.id.action_message);
 
+        textViewDefaultText = findViewById(R.id.defaultTextListMessengers);
+        progressBar = findViewById(R.id.progressBarMessengers);
+        progressBar.setVisibility(View.VISIBLE);
+        myMessengersList = findViewById(R.id.recyclerViewMessengers);
+
+        myMessengersList.setHasFixedSize(true);
+        myMessengersList.setLayoutManager(new LinearLayoutManager(this));
+
         menuChanges(bottomNavigationView);
 
         ProfileStudent profileStudent = new ProfileStudent();
         senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(Messenger.this));
         studentsReference = FirebaseDatabase.getInstance().getReference("students");
-        myMessageReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId).child("Messages");
+        myMessengersReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId)
+                .child("Messages");
 
 
 
-        displayAllMessengers();
+    }
+
+    public void setTextViewForEmptyList() {
+        if (countMessengers != 0) {
+            textViewDefaultText.setText("");
+        } else {
+            progressBar.setVisibility(View.GONE);
+            textViewDefaultText.setText(R.string.DefaultTextListMessengers);
+        }
     }
 
 
-    private void displayAllMessengers() {
-
-        ListView listOfMessage = findViewById(R.id.list_of_messengers);
-        adapter = new FirebaseListAdapter<MessageData>(
-                this,
-                MessageData.class,
-                R.layout.messenger_layout,
-                myMessageReference) {
-            //   @SuppressLint("WrongConstant")
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    @Override
+    public void onStart() {
+        super.onStart();
+        final int limitLenghtMessage = 23;
+        progressBar.setVisibility(View.GONE);
+        myMessengersReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            protected void populateView(final View viewLayout, MessageData model, int position) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                countMessengers = dataSnapshot.getChildrenCount();
+                setTextViewForEmptyList();
+            }
 
-                imageMessenger = viewLayout.findViewById(R.id.image_messenger);
-                imgOnlineMessenger = viewLayout.findViewById(R.id.img_online_messenger);
-                imgSeenMessage = viewLayout.findViewById(R.id.img_seenMessage);
-                tvMessengerUsername = viewLayout.findViewById(R.id.MessengerUsername);
-                tvLastMessage = viewLayout.findViewById(R.id.tvLastMessage);
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                final String currentMessengers = getRef(position).getKey();
-                studentsReference.child(currentMessengers).addListenerForSingleValueEvent(new ValueEventListener() {
+            }
+        });
+
+        FirebaseRecyclerAdapter<MessageData, MessengersViewHolder> firebaseRecyclerAdapter
+                = new FirebaseRecyclerAdapter<MessageData, MessengersViewHolder>
+                (
+                        MessageData.class,
+                        R.layout.messenger_layout,
+                        MessengersViewHolder.class,
+                        myMessengersReference
+
+                ) {
+            @Override
+            protected void populateViewHolder(final MessengersViewHolder messengersViewHolder, final MessageData messageData, final int i) {
+                currentMessengers = getRef(i).getKey();
+                progressBar.setVisibility(View.GONE);
+                lastMessageQuery = FirebaseDatabase.getInstance().getReference("students")
+                        .child(senderUserId)
+                        .child("Messages")
+                        .child(currentMessengers)
+                        .limitToLast(1);
+                lastMessageQuery.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        final String name = dataSnapshot.child("name").getValue().toString();
-                        final String lastName = dataSnapshot.child("lastName").getValue().toString();
-                        lastMessageQuery = FirebaseDatabase.getInstance().getReference("students")
-                                .child(senderUserId)
-                                .child("Messages")
-                                .child(currentMessengers).limitToLast(1);
-                        lastMessageQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    objectLastMessage = (HashMap<Object, Object>) snapshot.getValue();
-                                    lastMessage = (String) objectLastMessage.get("message");
-                                    key = (String) objectLastMessage.get("key");
-                                    if (key.equals(senderUserId)) {
-                                        tvLastMessage.setText("Ви: " + lastMessage);
-                                    }
-                                    else{
-                                        tvLastMessage.setText(lastMessage);
-                                    }
+                        System.out.println("objectLastMessage = " + dataSnapshot);
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            objectLastMessage = (HashMap<Object, Object>) snapshot.getValue();
+
+                            time = (long) objectLastMessage.get("time");
+                            LastSeenTime objTimeLastMessage = new LastSeenTime();
+                            timeLastMessage= objTimeLastMessage.getTimeMessenger(time);
+
+                            lastMessage = (String) objectLastMessage.get("message");
+                            if (lastMessage != null) {
+                                lastMessage = lastMessage.codePointCount(0, lastMessage.length()) > limitLenghtMessage ?
+                                        lastMessage.substring(0, lastMessage.offsetByCodePoints(0, limitLenghtMessage)).concat("...") :
+                                        lastMessage;
+                            }
+                            else {
+                                lastMessage = "";
+                            }
+
+                            key = (String) objectLastMessage.get("key");
+                            messengersViewHolder.setLastMessage(lastMessage, key, senderUserId);
+                            messengersViewHolder.setTimeLastMessage(timeLastMessage);
+
+                            System.out.println("objectLastMessage = " + objectLastMessage);
                                 }
 
-
-
-                                System.out.println("lastMessage = " + lastMessage);
-                            }
-
+                        messengersViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
                             @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                            public void onClick(View v) {
+                                String VisitedStudentKey = getRef(i).getKey();
+                                Intent intentToMessage = new Intent(Messenger.this, Message.class);
+                                intentToMessage.putExtra("VisitedStudentKey", VisitedStudentKey);
+                                startActivity(intentToMessage);
+                                messengersViewHolder.mView.getId();// .setTop(0);
+                                System.out.println("getID = " + messengersViewHolder.mView.getWindowId());
                             }
                         });
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+                System.out.println("currentMessengers = " + currentMessengers);
+                studentsReference.child(currentMessengers).addValueEventListener(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        name = dataSnapshot.child("name").getValue().toString();
+                       lastName = dataSnapshot.child("lastName").getValue().toString();
 
                         boolean online;
                         try {
@@ -139,8 +203,9 @@ public class Messenger extends AppCompatActivity {
                             online = false;
                         }
                         if (online){
-                            imgOnlineMessenger.setVisibility(View.VISIBLE);
+                           messengersViewHolder.setOnlineImage();
                         }
+
                         String linkFirebaseStorageMainPhoto;
                         try {
                             linkFirebaseStorageMainPhoto = dataSnapshot.child("linkFirebaseStorageMainPhoto").getValue().toString();
@@ -150,60 +215,15 @@ public class Messenger extends AppCompatActivity {
                         }
 
 
-                        tvMessengerUsername.setText(name + " " + lastName);
+                        messengersViewHolder.setStudentName(name, lastName);
 
 
-                        final String finalLinkFirebaseStorageMainPhoto = linkFirebaseStorageMainPhoto;
-                        Picasso.with(getApplicationContext())
-                                .load(linkFirebaseStorageMainPhoto)
-                                .networkPolicy(NetworkPolicy.OFFLINE)
-                                .placeholder(R.drawable.com_facebook_profile_picture_blank_square)
-                                .error(R.drawable.com_facebook_close)
-                                .centerCrop()
-                                .fit()
-                                //.resize(1920,2560)
-                                .into(imageMessenger, new Callback() {
-                                    @Override
-                                    public void onSuccess() {
 
-                                    }
+                        if (linkFirebaseStorageMainPhoto != "" && getApplicationContext() != null) {
+                            messengersViewHolder.setStudentImage(getApplicationContext(), linkFirebaseStorageMainPhoto);
+                        }
 
-                                    @Override
-                                    public void onError() {
-                                        if (finalLinkFirebaseStorageMainPhoto != null) {
-                                            if (!finalLinkFirebaseStorageMainPhoto.isEmpty()) {
-                                                Picasso.with(getApplicationContext())
-                                                        .load(finalLinkFirebaseStorageMainPhoto)
-                                                        .placeholder(R.drawable.logo_pnu)
-                                                        .error(R.drawable.com_facebook_close)
-                                                        .centerCrop()
-                                                        .fit()
-                                                        //.resize(1920,2560)
-                                                        .into(imageMessenger);
-                                            }
-                                        } else {
-                                            Picasso.with(getApplicationContext())
-                                                    .load(R.drawable.com_facebook_profile_picture_blank_square)
-                                                    .placeholder(R.drawable.logo_pnu)
-                                                    .error(R.drawable.com_facebook_close)
-                                                    .centerCrop()
-                                                    .fit()
-                                                    //.resize(1920,2560)
-                                                    .into(imageMessenger);
-                                        }
 
-                                    }
-                                });
-
-                        viewLayout.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intentToMessage = new Intent(Messenger.this, Message.class);
-                                intentToMessage.putExtra("VisitedStudentKey", currentMessengers);
-                                startActivity(intentToMessage);
-
-                            }
-                        });
                     }
 
                     @Override
@@ -212,12 +232,10 @@ public class Messenger extends AppCompatActivity {
                     }
                 });
 
-
-
             }
 
         };
-        listOfMessage.setAdapter(adapter);
+                  myMessengersList.setAdapter(firebaseRecyclerAdapter);
     }
 
 
@@ -285,5 +303,92 @@ public class Messenger extends AppCompatActivity {
         // TODO delete comment     if (currentStudent != null){
         onlineStatus(true);
         //    }
+    }
+}
+
+class MessengersViewHolder extends RecyclerView.ViewHolder {
+    View mView;
+
+    public MessengersViewHolder(View itemView){
+        super(itemView);
+
+        mView= itemView;
+    }
+
+
+    public void setOnlineImage(){
+        ImageView imageOnline = mView.findViewById(R.id.img_online_messenger);
+        imageOnline.setVisibility(View.VISIBLE);
+    }
+
+    public void setStudentName(String studentName, String studentLastName){
+        TextView nameAndLastName = mView.findViewById(R.id.MessengerUsername);
+        nameAndLastName.setText(studentName + " " + studentLastName);
+    }
+
+    public void setLastMessage(String lastMessage, String keyMessage, String myKey){
+        TextView tvLastMessage = mView.findViewById(R.id.tvLastMessage);
+       if (keyMessage.equals(myKey)) {
+            tvLastMessage.setText("Ви: " + lastMessage);
+        }
+        else{
+            tvLastMessage.setText(lastMessage);
+        }
+
+
+    }
+    public void setTimeLastMessage(String time){
+        TextView timeLastMessage = mView.findViewById(R.id.tvMessengerTime);
+        timeLastMessage.setText(time);
+    }
+    public void setSeenMessage(){
+        ImageView imageOnline = mView.findViewById(R.id.img_seenMessage);
+        imageOnline.setVisibility(View.VISIBLE);
+    }
+
+    public void setStudentImage(final Context context, final String studentImage) {
+        final CircleImageView image = mView.findViewById(R.id.image_messenger);
+
+        Picasso.with(context)
+                .load(studentImage)
+                .networkPolicy(NetworkPolicy.OFFLINE)
+                .placeholder(R.drawable.com_facebook_profile_picture_blank_square)
+                .error(R.drawable.com_facebook_close)
+                .centerCrop()
+                .fit()
+                //.resize(1920,2560)
+                .into(image, new Callback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+                        if (studentImage != null) {
+                            if (!studentImage.isEmpty()) {
+                                Picasso.with(context)
+                                        .load(studentImage)
+                                        .placeholder(R.drawable.logo_pnu)
+                                        .error(R.drawable.com_facebook_close)
+                                        .centerCrop()
+                                        .fit()
+                                        //.resize(1920,2560)
+                                        .into(image);
+                            }
+                        } else {
+                            Picasso.with(context)
+                                    .load(R.drawable.com_facebook_profile_picture_blank_square)
+                                    .placeholder(R.drawable.logo_pnu)
+                                    .error(R.drawable.com_facebook_close)
+                                    .centerCrop()
+                                    .fit()
+                                    //.resize(1920,2560)
+                                    .into(image);
+                        }
+
+                    }
+                });
+
     }
 }

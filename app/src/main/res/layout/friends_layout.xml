@@ -64,8 +64,8 @@
         android:gravity="end">
 
         <Button
-            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/btnSendMessageLayout"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"

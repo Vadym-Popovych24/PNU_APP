@@ -8,60 +8,77 @@
     android:id="@+id/rlMessenger"
     android:background="@color/backgroundStudentMainPage">
 
-    <ImageView
-        android:id="@+id/emoji_button"
-        android:padding="4dp"
-        android:layout_alignParentBottom="true"
-        android:src="@drawable/ic_smileemodji"
-        android:layout_width="48dp"
-        android:layout_height="35dp"
-        android:background="@color/colorAccentWhite"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        />
+
+        <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:text="@string/menuMessenger"
+        android:textSize="26sp"
+        android:layout_margin="5dp"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="sans-serif-medium"/>
 
 
-    <ImageView
-        android:id="@+id/submit_button_menu"
-        android:padding="0dp"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentBottom="true"
-        android:clickable="true"
-        android:src="@android:drawable/ic_menu_send"
-        android:layout_width="50dp"
-        android:layout_height="35dp"
-        android:layout_alignParentRight="true" />
-
-    <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
-        android:id="@+id/textField"
-        android:layout_width="313dp"
-        android:layout_height="35dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="0dp"
-        android:layout_toLeftOf="@+id/submit_button_menu"
-        android:background="@color/colorAccentWhite"
-
-        android:layout_toRightOf="@+id/emoji_button"
-        android:hint="Message"
-        android:textColorHint="@color/textColorHint"
-        app:emojiconSize="20sp" />
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/textField"
+        android:layout_below="@+id/tvMessage"
+        android:layout_above="@+id/editTextMessage"
         android:id="@+id/list_of_messages"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="13dp"
-        android:layout_marginBottom="14dp"
-        android:layout_marginLeft="10dp"
-
-        android:layout_marginTop="36dp"
         android:layout_alignParentLeft="true"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10dp"
         android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll">
-    </ListView>
+        android:transcriptMode="alwaysScroll"/>
+
+
+    <ImageView
+        android:id="@+id/emoji_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="4dp"
+        android:src="@drawable/ic_smileemodji"
+        android:background="@color/editTextMessage"
+        android:contentDescription="@string/contentDescription"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"/>
+
+
+    <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
+        android:id="@+id/editTextMessage"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:paddingLeft="15dp"
+        android:paddingStart="15dp"
+        android:paddingRight="15dp"
+        android:paddingEnd="15dp"
+        android:background="@color/editTextMessage"
+        android:hint="@string/hintMessage"
+        android:textColorHint="@color/textColorHint"
+        app:emojiconSize="20sp"
+        android:focusable="false"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/emoji_button"
+        android:layout_toEndOf="@+id/emoji_button" />
+
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/submit_button_menu"
+            android:padding="0dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@android:drawable/ic_menu_send"
+            android:background="@color/editTextMessage"
+            android:contentDescription="@string/contentDescription"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true" />
 
 
 </RelativeLayout>

@@ -64,6 +64,7 @@
     <string name="StudentNameAndLastName">Ім\'я та Прізвище</string>
     <string name="StudentGroup">Група</string>
     <string name="DefaultTextListFriend">У вас поки немає друзів</string>
+    <string name="DefaultTextListMessengers">У вас поки немає повідомлень</string>
     <string name="DefaultTextListFriendsProfile">У даного користувача поки немає друзів</string>
     <!--Profile-->
     <string name="btnAddFriend">Додати в друзі  </string>
@@ -103,4 +104,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--Messages-->
+    <string name="hintMessage">Повідомлення</string>
 </resources>

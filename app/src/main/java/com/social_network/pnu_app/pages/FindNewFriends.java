@@ -116,6 +116,7 @@ public class FindNewFriends extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         SerieIDCard = getStudentSeriesIDCard(AppDatabase.getAppDatabase(FindNewFriends.this));
+
         FirebaseRecyclerAdapter<Friends, AllAuthUsersViewHolder> firebaseRecyclerAdapter
                 = new FirebaseRecyclerAdapter<Friends, AllAuthUsersViewHolder>(
                         Friends.class,

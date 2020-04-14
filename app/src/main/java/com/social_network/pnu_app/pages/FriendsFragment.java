@@ -30,6 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.Friends;
+import com.social_network.pnu_app.functional.AcceptFriendRecyclerView;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
 import com.social_network.pnu_app.network.NetworkStatus;
 import com.squareup.picasso.Callback;
@@ -37,6 +38,8 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+
 
 
 /**
@@ -162,6 +165,7 @@ public class FriendsFragment extends Fragment {
                     progressBar.setVisibility(View.GONE);
                     FindNewFriends findNewFriends = new FindNewFriends();
                     SerieIDCard = findNewFriends.getStudentSeriesIDCard(AppDatabase.getAppDatabase(getContext()));
+
                     FirebaseRecyclerAdapter<Friends, FriendsViewHolder> firebaseRecyclerAdapter
                             = new FirebaseRecyclerAdapter<Friends, FriendsViewHolder>
                             (
@@ -174,7 +178,7 @@ public class FriendsFragment extends Fragment {
                         @Override
                         protected void populateViewHolder(final FriendsViewHolder friendsViewHolder, final Friends friends, final int i) {
                             setTextViewForEmptyList();
-                            String currentFriend = getRef(i).getKey();
+                            final String currentFriend = getRef(i).getKey();
                             students.child(currentFriend).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -203,6 +207,16 @@ public class FriendsFragment extends Fragment {
                                     if (linkFirebaseStorageMainPhoto != "" && myContex != null) {
                                         friendsViewHolder.setStudentImage(myContex, linkFirebaseStorageMainPhoto);
                                     }
+
+
+                                    friendsViewHolder.mView.findViewById(R.id.btnSendMessageLayout).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent intentSendMessageFriends= new Intent("com.social_network.pnu_app.pages.Message");
+                                            intentSendMessageFriends.putExtra("VisitedStudentKey", currentFriend);
+                                            startActivity(intentSendMessageFriends);
+                                        }
+                                    });
                                     friendsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
@@ -238,7 +252,7 @@ public class FriendsFragment extends Fragment {
 
 
             }
-            ;
+
 
 }
 

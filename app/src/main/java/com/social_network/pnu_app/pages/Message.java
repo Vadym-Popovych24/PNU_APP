@@ -1,11 +1,9 @@
 package com.social_network.pnu_app.pages;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -20,13 +18,11 @@ import com.github.library.bubbleview.BubbleTextView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.MessageData;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
 
-import java.util.Map;
 
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
@@ -34,7 +30,6 @@ import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
 public class Message extends AppCompatActivity {
 
-    private static int SIGN_IN_CODE = 1;
     private RelativeLayout relativeLayoutMessage;
     private FirebaseListAdapter<MessageData> adapter;
     private EmojiconEditText emojiconEditText;
@@ -48,18 +43,6 @@ public class Message extends AppCompatActivity {
 
     static String ReceiverStudentKey;
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SIGN_IN_CODE) {
-            Snackbar.make(relativeLayoutMessage, "Ви авторизовані", Snackbar.LENGTH_LONG).show();
-        //    displayAllMessages();
-        } else {
-            Snackbar.make(relativeLayoutMessage, "Ви не авторизовані", Snackbar.LENGTH_LONG).show();
-            finish();
-        }
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +53,7 @@ public class Message extends AppCompatActivity {
 
         submitButton = findViewById(R.id.submit_button_menu);
         emojiButton = findViewById(R.id.emoji_button);
-        emojiconEditText = findViewById(R.id.textField);
+        emojiconEditText = findViewById(R.id.editTextMessage);
         emojIconActions = new EmojIconActions(getApplication(), relativeLayoutMessage, emojiconEditText, emojiButton);
         emojIconActions.ShowEmojIcon();
 
@@ -94,7 +77,7 @@ public class Message extends AppCompatActivity {
                         emojiconEditText.getText().toString(),
                         false,
                         "text",
-                        ReceiverStudentKey
+                        senderUserId
                 ));
                 messageAlienReference.push().setValue(new MessageData(
                         emojiconEditText.getText().toString(),
@@ -107,17 +90,11 @@ public class Message extends AppCompatActivity {
             }
         });
 
-        // Користувач не зареєстрований
-    /*    if (FirebaseAuth.getInstance().getCurrentUser() == null)
-            startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(), SIGN_IN_CODE);
-        else {*/
-            Snackbar.make(relativeLayoutMessage, "Ви автризовані", Snackbar.LENGTH_LONG).show();
-            displayAllMessages();
-            //    mess_current_user.setText("current_user(displayName) = " + FirebaseAuth.getInstance().getCurrentUser().getUid() );
-      //  }
     }
 
-    private void displayAllMessages() {
+    @Override
+    public void onStart() {
+        super.onStart();
         ListView listOfMessage = findViewById(R.id.list_of_messages);
         adapter = new FirebaseListAdapter<MessageData>(
                 this, MessageData.class,

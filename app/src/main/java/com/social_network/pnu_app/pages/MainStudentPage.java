@@ -109,8 +109,8 @@ public class MainStudentPage extends AppCompatActivity{
 
     public static Uri finalLocalFile;
     Bitmap thumb_bitmap = null;
-    long countMyFriends;
-    long countMySubscribers;
+    static long countMyFriends;
+    static long countMySubscribers;
 
     NetworkStatus network = new NetworkStatus();
 

@@ -3,6 +3,7 @@ package com.social_network.pnu_app.pages;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -58,7 +59,6 @@ public class FriendsActivity extends AppCompatActivity {
 
 
     }
-
 
 
     public void menuChanges(BottomNavigationView bottomNavigationView){

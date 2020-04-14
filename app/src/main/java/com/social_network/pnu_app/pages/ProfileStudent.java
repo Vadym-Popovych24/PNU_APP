@@ -55,6 +55,7 @@ public class ProfileStudent extends AppCompatActivity {
     Button btnAddToFriends;
     Button btnlistFriends;
     Button btnListSubscribersProfile;
+    Button btnSendMessage;
 
     private String CurrentStateFriend;
 
@@ -185,6 +186,7 @@ public class ProfileStudent extends AppCompatActivity {
         btnAddToFriends = findViewById(R.id.btnAddToFriends);
         btnlistFriends = findViewById(R.id.btnListFriendsProfile);
         btnListSubscribersProfile = findViewById(R.id.btnListSubscribersProfile);
+        btnSendMessage = findViewById(R.id.btnSendMessageProfile);
 
 
         tvPIBvalue = findViewById(R.id.tvPIBvalueProfile);
@@ -197,6 +199,7 @@ public class ProfileStudent extends AppCompatActivity {
         btnAddToFriends.setOnClickListener(btnlistener);
         btnlistFriends.setOnClickListener(btnlistener);
         btnListSubscribersProfile.setOnClickListener(btnlistener);
+        btnSendMessage.setOnClickListener(btnlistener);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_profileProfile);
         bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
@@ -614,6 +617,12 @@ public class ProfileStudent extends AppCompatActivity {
                     Intent intentSubscribersProfileActivity = new Intent(ProfileStudent.this, SubscribersProfileActivity.class);
                     intentSubscribersProfileActivity.putExtra("VisitedStudentKey", ReceiverStudentKey);
                     startActivity(intentSubscribersProfileActivity);
+                    break;
+
+                case R.id.btnSendMessageProfile:
+                    Intent intentSendMessageProfileActivity = new Intent(ProfileStudent.this, Message.class);
+                    intentSendMessageProfileActivity.putExtra("VisitedStudentKey", ReceiverStudentKey);
+                    startActivity(intentSendMessageProfileActivity);
                     break;
             }
         }
