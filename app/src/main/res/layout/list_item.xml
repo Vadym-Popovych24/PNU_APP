@@ -9,14 +9,16 @@
     android:background="@color/backgroundStudentMainPage"
     android:id="@+id/RelativeLayout">
 
-    <TextView
+<!--    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/message_user"
-        android:textStyle="normal|bold"
+        android:text="name name name"
+        android:textColor="@color/black"
+        android:textStyle="normal"
         android:layout_margin="5dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/rectangle_rounded_all"/>
+        android:background="@drawable/rectangle_rounded_all"/>-->
     <!--  app:bubbleColor="@color/colorEmail"
             android:layout_alignParentTop="true"
       app:arrowWidth="0dp"-->
@@ -47,24 +49,42 @@
          android:textSize="12sp"
          android:layout_marginTop="40dp"/>-->
 
-    <com.github.library.bubbleview.BubbleTextView
+
+    <TextView
+        android:id="@+id/message_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/message_text"
-        android:textColor="@color/colorPrimaryDarkText"
-        android:layout_below="@+id/message_user"
-        android:textSize="18sp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:layout_centerHorizontal="true"
-        android:padding="10dp"
-        app:angle="8dp"
-        app:arrowWidth="10dp"
-        app:arrowHeight="10dp"
-        app:arrowPosition="8dp"
-        app:arrowLocation="left"
-        app:bubbleColor="#D75BCE56"
-        app:arrowCenter="false"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:text=""
+        android:minWidth="110dp"
+        android:maxWidth="280dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="15dp"
+        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
+        android:paddingRight="10dp"
+        android:paddingEnd="10dp" />
+
+
+
+    <TextView
+        android:id="@+id/message_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/onlineText"
+        android:text="21/12/2020 12:25"
+        android:textSize="12sp"
+        android:layout_below="@+id/message_text"
+        android:layout_toRightOf="@+id/message_text"
+        android:layout_toEndOf="@+id/message_text"
+        android:layout_marginTop="-18dp"
+        android:layout_marginLeft="-108dp"
+        android:layout_marginStart="-108dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         />
+
 
     <!--<com.github.library.bubbleview.BubbleTextView
          android:layout_width="wrap_content"

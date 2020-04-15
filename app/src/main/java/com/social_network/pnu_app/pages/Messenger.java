@@ -52,7 +52,7 @@ public class Messenger extends AppCompatActivity {
     private ProgressBar progressBar;
 
     String senderUserId;
-    DatabaseReference myMessengersReference;
+    Query myMessengersReference;
     DatabaseReference studentsReference;
     Query lastMessageQuery;
 
@@ -114,10 +114,12 @@ public class Messenger extends AppCompatActivity {
         myMessengersReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                countMessengers = dataSnapshot.getChildrenCount();
-                setTextViewForEmptyList();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    System.out.println("snapshot = " + snapshot);
+                    countMessengers = dataSnapshot.getChildrenCount();
+                    setTextViewForEmptyList();
+                }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 

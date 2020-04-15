@@ -65,6 +65,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"/>
 
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_messenger"
         android:layout_width="match_parent"

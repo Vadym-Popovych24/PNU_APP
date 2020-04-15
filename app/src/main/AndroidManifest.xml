@@ -84,13 +84,15 @@
         </activity>
         <activity
             android:name=".pages.Message"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="com.social_network.pnu_app.pages.Message" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".pages.Settings"
             android:theme="@style/AppTheme.NoActionBar">
@@ -109,6 +111,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".pages.Messenger"
             android:theme="@style/AppTheme.NoActionBar">
@@ -118,6 +121,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".pages.Search"
             android:theme="@style/AppTheme.NoActionBar">

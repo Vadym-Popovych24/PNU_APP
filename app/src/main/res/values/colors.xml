@@ -39,6 +39,8 @@
     <color name="colorEmailCurrent">#F3E576</color>
     <color name="colorBackGround">#D5CFC1</color>
     <color name="textColorHint">#818181</color>
+    <color name="messageMy">#A3E1FD</color>
+    <color name="messageAlien">#E6E6E6</color>
 
     // Friends
     <color name="btnDeclineFriend">#EB5959</color>

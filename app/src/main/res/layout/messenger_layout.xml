@@ -53,7 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_toEndOf="@+id/image_messenger"
         android:layout_toRightOf="@+id/image_messenger">
 
@@ -68,9 +68,8 @@
             android:id="@+id/tvLastMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
             android:textSize="15sp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:textStyle=""
             android:textColor="@color/onlineText"/>
     </LinearLayout>
@@ -90,8 +89,8 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="22dp"
             android:layout_marginEnd="22dp"
-            android:layout_marginTop="27dp"
-            android:textSize="16sp"
+            android:layout_marginTop="30dp"
+            android:textSize="14sp"
             android:textStyle=""
             android:textColor="@color/onlineText"/>
 
