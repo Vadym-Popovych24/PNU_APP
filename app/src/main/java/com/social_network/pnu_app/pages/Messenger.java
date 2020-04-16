@@ -60,9 +60,11 @@ public class Messenger extends AppCompatActivity {
     String lastMessage;
     long time;
     String timeLastMessage;
+    boolean seen;
     String key;
 
     long countMessengers;
+    int countUnseensMessege;
     String currentMessengers;
 
      String name;
@@ -109,16 +111,13 @@ public class Messenger extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        final int limitLenghtMessage = 23;
+        final int limitLenghtMessage = 21;
         progressBar.setVisibility(View.GONE);
         myMessengersReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    System.out.println("snapshot = " + snapshot);
                     countMessengers = dataSnapshot.getChildrenCount();
                     setTextViewForEmptyList();
-                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -139,6 +138,22 @@ public class Messenger extends AppCompatActivity {
             protected void populateViewHolder(final MessengersViewHolder messengersViewHolder, final MessageData messageData, final int i) {
                 currentMessengers = getRef(i).getKey();
                 progressBar.setVisibility(View.GONE);
+                Query unseens = FirebaseDatabase.getInstance().getReference("students")
+                        .child(senderUserId).child("Messages")
+                        .child(currentMessengers).orderByChild("seen").equalTo(false);
+
+                unseens.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        countUnseensMessege = (int)dataSnapshot.getChildrenCount();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
                 lastMessageQuery = FirebaseDatabase.getInstance().getReference("students")
                         .child(senderUserId)
                         .child("Messages")
@@ -147,9 +162,13 @@ public class Messenger extends AppCompatActivity {
                 lastMessageQuery.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        System.out.println("objectLastMessage = " + dataSnapshot);
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             objectLastMessage = (HashMap<Object, Object>) snapshot.getValue();
+
+                            try {
+                                seen = (boolean) objectLastMessage.get("seen"); }
+                            catch (Exception e){
+                                seen = false; }
 
                             time = (long) objectLastMessage.get("time");
                             LastSeenTime objTimeLastMessage = new LastSeenTime();
@@ -160,16 +179,25 @@ public class Messenger extends AppCompatActivity {
                                 lastMessage = lastMessage.codePointCount(0, lastMessage.length()) > limitLenghtMessage ?
                                         lastMessage.substring(0, lastMessage.offsetByCodePoints(0, limitLenghtMessage)).concat("...") :
                                         lastMessage;
+
+                                lastMessage = lastMessage.replaceAll("\n", " ");
                             }
                             else {
                                 lastMessage = "";
                             }
 
+
+
+                            if (!seen){
+                                messengersViewHolder.setUnseenMessage(countUnseensMessege);
+                            }
+                            else {
+                                messengersViewHolder.offSeenMessage();
+                            }
                             key = (String) objectLastMessage.get("key");
                             messengersViewHolder.setLastMessage(lastMessage, key, senderUserId);
                             messengersViewHolder.setTimeLastMessage(timeLastMessage);
 
-                            System.out.println("objectLastMessage = " + objectLastMessage);
                                 }
 
                         messengersViewHolder.mView.setOnClickListener(new View.OnClickListener() {
@@ -181,7 +209,6 @@ public class Messenger extends AppCompatActivity {
                                 intentToMessage.putExtra("VisitedStudentKey", VisitedStudentKey);
                                 startActivity(intentToMessage);
                                 messengersViewHolder.mView.getId();// .setTop(0);
-                                System.out.println("getID = " + messengersViewHolder.mView.getWindowId());
                             }
                         });
                     }
@@ -190,7 +217,6 @@ public class Messenger extends AppCompatActivity {
 
                     }
                 });
-                System.out.println("currentMessengers = " + currentMessengers);
                 studentsReference.child(currentMessengers).addValueEventListener(new ValueEventListener() {
 
                     @Override
@@ -343,9 +369,16 @@ class MessengersViewHolder extends RecyclerView.ViewHolder {
         TextView timeLastMessage = mView.findViewById(R.id.tvMessengerTime);
         timeLastMessage.setText(time);
     }
-    public void setSeenMessage(){
-        ImageView imageOnline = mView.findViewById(R.id.img_seenMessage);
-        imageOnline.setVisibility(View.VISIBLE);
+
+    public void offSeenMessage(){
+        TextView tvUnseenMessage = mView.findViewById(R.id.tvUnseenMessage);
+        tvUnseenMessage.setVisibility(View.GONE);
+    }
+
+    public void setUnseenMessage(int countUnseenMessage){
+        TextView tvUnseenMessage = mView.findViewById(R.id.tvUnseenMessage);
+        tvUnseenMessage.setVisibility(View.VISIBLE);
+        tvUnseenMessage.setText(String.valueOf(countUnseenMessage));
     }
 
     public void setStudentImage(final Context context, final String studentImage) {

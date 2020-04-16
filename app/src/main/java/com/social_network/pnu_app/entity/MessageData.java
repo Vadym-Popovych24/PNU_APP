@@ -6,6 +6,8 @@ import java.util.Map;
 public class MessageData {
 
     String message;
+
+
     boolean seen;
     long time;
     String type;
@@ -31,9 +33,8 @@ public class MessageData {
         this.message = message;
     }
 
-    public boolean isSeen() {
-        return seen;
-    }
+
+    public boolean isSeen() { return seen; }
 
     public void setSeen(boolean seen) {
         this.seen = seen;

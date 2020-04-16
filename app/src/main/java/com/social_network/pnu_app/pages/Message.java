@@ -7,9 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -17,9 +19,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.github.library.bubbleview.BubbleTextView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,8 +37,11 @@ import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.MessageData;
 import com.social_network.pnu_app.functional.LastSeenTime;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
+import com.social_network.pnu_app.network.NetworkStatus;
 import com.squareup.picasso.Picasso;
 
+
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
@@ -48,6 +57,7 @@ public class Message extends AppCompatActivity {
     RelativeLayout relativeLayoutTop;
     Button btnBackFromMessage;
 
+    NetworkStatus network = new NetworkStatus();
     private RelativeLayout relativeLayoutMessage;
     private FirebaseListAdapter<MessageData> adapter;
     private EmojiconEditText emojiconEditText;
@@ -109,25 +119,39 @@ public class Message extends AppCompatActivity {
                 .child("Messages").child(senderUserId);
 
         submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+                                            @Override
+                                            public void onClick(View view) {
+                                       /*         if (!network.isOnline()) {
+                                                    //        progressBar.setVisibility(View.GONE);
+                                                    Toast.makeText(Message.this, "Немає підключення до інтернету!",
+                                                            Toast.LENGTH_LONG).show();
+                                                } else {*/
+                                                    String editText = String.valueOf(emojiconEditText.getText());
+                                                    if (!editText.equals("")) {
+                                                        messageMyReference.push().setValue(new MessageData(
+                                                                emojiconEditText.getText().toString(),
+                                                                true,
+                                                                "text",
+                                                                senderUserId
+                                                        ));
+                                                        messageAlienReference.push().setValue(new MessageData(
+                                                                emojiconEditText.getText().toString(),
+                                                                false,
+                                                                "text",
+                                                                senderUserId
+                                                        ));
 
-                messageMyReference.push().setValue(new MessageData(
-                        emojiconEditText.getText().toString(),
-                        false,
-                        "text",
-                        senderUserId
-                ));
-                messageAlienReference.push().setValue(new MessageData(
-                        emojiconEditText.getText().toString(),
-                        false,
-                        "text",
-                        senderUserId
-                ));
+                                                        emojiconEditText.setText("");
+                                                    } else {
+                                                        Toast.makeText(Message.this, "Введіть повідомлення!",
+                                                                Toast.LENGTH_SHORT).show();
+                                                    }
 
-                emojiconEditText.setText("");
-            }
-        });
+                                          //      }
+                                            }
+                                        }
+        );
+
         relativeLayoutTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -242,6 +266,26 @@ public class Message extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
             @Override
             protected void populateView(View v, MessageData model, int position) {
+
+                messageMyReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        //       if (dataSnapshot.exists()) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String key  = snapshot.getKey();
+                            boolean seen = (boolean) snapshot.child("seen").getValue();
+                            if(!seen) {
+                                messageMyReference.child(key).child("seen").setValue(true);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
                 TextView message_text;
                 message_text = v.findViewById(R.id.message_text);
                 TextView message_time = v.findViewById(R.id.message_time);
