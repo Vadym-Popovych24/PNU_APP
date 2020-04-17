@@ -79,10 +79,6 @@ public class LastSeenTime {
         int currentDayOFWeek = calendarMessage.get(Calendar.DAY_OF_WEEK);
         String dayOFWeek ="";
 
-        System.out.println("dayMessage = " + dayMessage);
-        System.out.println("currentDay = " + currentDay);
-        System.out.println("currentDayOFWeek = " + currentDayOFWeek);
-
         if (dayMessage == currentDay && monthMessage == currentMonth && currentYear == yearMesage) {
             return df.format(time);
         } else if ((currentDay - dayMessage) == 1 && monthMessage == currentMonth && currentYear == yearMesage ) {

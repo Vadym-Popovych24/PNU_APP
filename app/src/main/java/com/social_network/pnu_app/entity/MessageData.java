@@ -13,12 +13,15 @@ public class MessageData {
     String type;
     String key;
 
-    public MessageData(String message, boolean seen, String type, String key){
+    String id;
+
+    public MessageData(String message, boolean seen, String type, String key, String id){
         this.message = message;
-        this.seen=seen;
+        this.seen = seen;
         this.time = new Date().getTime();
         this.type = type;
-        this.key=key;
+        this.key = key;
+        this.id = id;
 
     }
 
@@ -60,5 +63,8 @@ public class MessageData {
 
     public void setKey(String key) { this.key = key; }
 
+    public String getId() { return id; }
+
+    public void setId(String id) { this.id = id; }
 
 }

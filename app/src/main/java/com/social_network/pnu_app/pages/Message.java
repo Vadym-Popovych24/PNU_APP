@@ -31,6 +31,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
@@ -41,6 +42,7 @@ import com.social_network.pnu_app.network.NetworkStatus;
 import com.squareup.picasso.Picasso;
 
 
+import java.util.Date;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -69,6 +71,7 @@ public class Message extends AppCompatActivity {
     DatabaseReference studentReceiver;
     DatabaseReference messageMyReference;
     DatabaseReference messageAlienReference;
+    Query messageAlien;
     LastSeenTime objTimeLastMessage = new LastSeenTime();
 
     String name;
@@ -77,9 +80,14 @@ public class Message extends AppCompatActivity {
     long lastSenn;
     boolean online;
     long time;
+    String id;
     String timeLastMessage;
 
+    boolean seenAlienMessage;
+
     static String ReceiverStudentKey;
+
+
 
 
     @Override
@@ -118,6 +126,7 @@ public class Message extends AppCompatActivity {
         messageAlienReference= FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey)
                 .child("Messages").child(senderUserId);
 
+
         submitButton.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
@@ -127,19 +136,33 @@ public class Message extends AppCompatActivity {
                                                             Toast.LENGTH_LONG).show();
                                                 } else {*/
                                                     String editText = String.valueOf(emojiconEditText.getText());
+                                                long idTime= new Date().getTime();
+                                                    id = String.valueOf(idTime);
                                                     if (!editText.equals("")) {
-                                                        messageMyReference.push().setValue(new MessageData(
+                                                        messageMyReference .push().setValue(new MessageData(
                                                                 emojiconEditText.getText().toString(),
                                                                 true,
                                                                 "text",
-                                                                senderUserId
-                                                        ));
+                                                                senderUserId,
+                                                                id
+                                                        )).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+
+                                                            }
+                                                        });
                                                         messageAlienReference.push().setValue(new MessageData(
                                                                 emojiconEditText.getText().toString(),
                                                                 false,
                                                                 "text",
-                                                                senderUserId
-                                                        ));
+                                                                senderUserId,
+                                                                id
+                                                        )).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+
+                                                            }
+                                                        });
 
                                                         emojiconEditText.setText("");
                                                     } else {
@@ -288,9 +311,58 @@ public class Message extends AppCompatActivity {
 
                 TextView message_text;
                 message_text = v.findViewById(R.id.message_text);
-                TextView message_time = v.findViewById(R.id.message_time);
+                TextView message_time;
+                message_time = v.findViewById(R.id.message_time);
+                final TextView tvConfirmSendMessage;
+                tvConfirmSendMessage = v.findViewById(R.id.tvConfirmSendMessage);
+
+                final TextView tvConfirmReceivedMessage;
+                tvConfirmReceivedMessage = v.findViewById(R.id.tvConfirmReceivedMessage);
+
 
                 if (model.getKey().equals(senderUserId)) {
+
+                    messageAlien = FirebaseDatabase.getInstance().getReference("students")
+                            .child(ReceiverStudentKey)
+                            .child("Messages")
+                            .child(senderUserId)
+                            .orderByChild("id")
+                            .equalTo(model.getId());
+
+                    messageAlien.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                                try {
+                                     seenAlienMessage = (boolean) snapshot.child("seen").getValue();
+                                }catch (Exception e){
+                                    seenAlienMessage = false;
+                                }
+                                if (seenAlienMessage){
+                                    tvConfirmSendMessage.setVisibility(View.GONE);
+                                    tvConfirmReceivedMessage.setVisibility(View.VISIBLE);
+                                }
+                                else{
+                                    tvConfirmReceivedMessage.setVisibility(View.GONE);
+                                    tvConfirmSendMessage.setVisibility(View.VISIBLE);
+                                }
+                                System.out.println("snapshot.child(\"seen\").getValue() = " + snapshot.child("seen").getValue());
+
+                              //  tvConfirmSendMessage.setVisibility(View.VISIBLE);
+
+
+                            }
+                            System.out.println("dataSnapshot111.getValue() = " + dataSnapshot.getValue());
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
 
                     message_text.setBackgroundResource(R.drawable.rectangle_rounded_all);
                     //  mess_user.setText(model.getKey() + "\n" + DateFormat.format("dd-MM-yyyy HH:mm:ss", model.getTime()));
@@ -306,8 +378,10 @@ public class Message extends AppCompatActivity {
                     message_time.setText(timeLastMessage);
 
 
-                } else {
 
+                } else {
+                    tvConfirmSendMessage.setVisibility(View.GONE);
+                    tvConfirmReceivedMessage.setVisibility(View.GONE);
                     message_text.setBackgroundResource(R.drawable.rectangle_rounded_all_rights);
                   //  mess_user.setText(model.getKey() + "\n" + DateFormat.format("dd-MM-yyyy HH:mm:ss", model.getTime()));
 
