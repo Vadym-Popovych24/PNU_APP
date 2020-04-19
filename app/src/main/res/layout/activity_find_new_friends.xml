@@ -100,7 +100,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:itemBackground="@color/colorAccentWhite"
+        app:itemBackground="@color/menuColor"
         app:itemIconTint="@drawable/bottom_navigation_item_background_colors"
         app:itemTextColor="@drawable/bottom_navigation_item_background_colors"
         app:menu="@menu/menu_bottom_navigation" />

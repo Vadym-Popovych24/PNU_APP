@@ -49,4 +49,7 @@
     <color name="imgOnline">#05df29</color>
     <color name="imgSeenMessage">#5F72D5</color>
     <color name="SeenMessage">#0390A3</color>
+
+    // Menu
+    <color name="menuColor">#F8F8F8</color>
 </resources>

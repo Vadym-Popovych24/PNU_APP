@@ -137,8 +137,11 @@ public class Message extends AppCompatActivity {
                                                 } else {*/
                                                     String editText = String.valueOf(emojiconEditText.getText());
                                                 long idTime= new Date().getTime();
+                                                long minusIdTime = -1 * idTime;
                                                     id = String.valueOf(idTime);
                                                     if (!editText.equals("")) {
+                                                        messageMyReference.setPriority(minusIdTime);
+
                                                         messageMyReference .push().setValue(new MessageData(
                                                                 emojiconEditText.getText().toString(),
                                                                 true,
@@ -151,6 +154,7 @@ public class Message extends AppCompatActivity {
 
                                                             }
                                                         });
+                                                        messageAlienReference.setPriority(minusIdTime);
                                                         messageAlienReference.push().setValue(new MessageData(
                                                                 emojiconEditText.getText().toString(),
                                                                 false,

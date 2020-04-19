@@ -17,10 +17,10 @@ class TabsFriendsAdapter extends FragmentPagerAdapter {
                 FriendsFragment friendsFragment = new FriendsFragment();
                 return friendsFragment;
 
-            case 1:
+          /*  case 1:
                 OnlineFriendsFragment onlineFriendsFragment= new OnlineFriendsFragment();
                 return onlineFriendsFragment;
-
+*/
             default:
                 return null;
         }
@@ -28,7 +28,7 @@ class TabsFriendsAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 1;
     }
 
     public CharSequence getPageTitle(int position){
@@ -36,8 +36,8 @@ class TabsFriendsAdapter extends FragmentPagerAdapter {
             case 0:
                 return "Друзі";
 
-            case 1:
-                return "Друзі онлайн";
+   /*         case 1:
+                return "Друзі онлайн";*/
 
              default:
                  return null;

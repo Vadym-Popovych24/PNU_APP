@@ -15,6 +15,13 @@ public class MessageData {
 
     String id;
 
+    long Atime;
+
+    public MessageData(long Atime){
+        this.Atime = Atime;
+
+    }
+
     public MessageData(String message, boolean seen, String type, String key, String id){
         this.message = message;
         this.seen = seen;

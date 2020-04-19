@@ -94,7 +94,7 @@ public class Messenger extends AppCompatActivity {
         senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(Messenger.this));
         studentsReference = FirebaseDatabase.getInstance().getReference("students");
         myMessengersReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId)
-                .child("Messages");
+                .child("Messages").orderByPriority(); // Todo by time
 
 
 
