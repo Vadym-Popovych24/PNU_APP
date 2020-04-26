@@ -107,4 +107,23 @@
 
     <!--Messages-->
     <string name="hintMessage">Повідомлення</string>
+
+    <!--Polls-->
+    <string name="Polls">Опитування</string>
+    <string name="YourPolls">Ваші опитування</string>
+    <string name="NewPolls">Нові опитування</string>
+    <string name="FinishedPolls">Пройдені опитування</string>
+    <string name="btnCreateNewPoll">Створити опитування</string>
+    <string name="tvCreatedNamePoll">Назва опитування</string>
+    <string name="tvHintCreatedNamePoll">Назва опитування (унікальне ім\'я)</string>
+    <string name="tvCreatedDescriptionPoll">Опис опитування</string>
+    <string name="tvHintCreatedDescriptionPoll">Опис опитування (не обов\'язково)</string>
+    <string name="btnAddQuestion">Додати запитання</string>
+    <string name="btnDeleteQuestion">Видалити запитання</string>
+    <string name="btnCreateQuestion">Створити запитання</string>
+    <string name="hintQuestion">Питання</string>
+    <string name="hintVariant">Варіант </string>
+    <string name="btnAddVariant">Додати варіант</string>
+    <string name="btnAddVariantPlus">+</string>
+    <string name="btnFinishCreatePoll">Завершити</string>
 </resources>

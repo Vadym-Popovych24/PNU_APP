@@ -54,7 +54,6 @@
         android:layout_below="@+id/tvMessenger"
         android:layout_marginTop="10dp"
         android:stackFromBottom="false"
-        android:stackFromTop="true"
         android:focusable="auto"
         android:layout_above="@+id/bottom_navigation_messenger">
 

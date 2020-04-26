@@ -108,7 +108,7 @@
         android:layout_margin="10dp"
         android:divider="@android:color/transparent"
         android:dividerHeight="10dp"
-        android:stackFromBottom="false"
+        android:stackFromBottom="true"
         android:transcriptMode="alwaysScroll"/>
 
     <View

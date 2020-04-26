@@ -82,6 +82,7 @@ public class MainStudentPage extends AppCompatActivity{
     Button btnLoadPhotoStudent;
     Button btnlistFriends;
     Button btnlistSubscribers;
+    Button btnlistPolls;
     private FirebaseAnalytics mFirebaseAnalytics;
 
     public static HashMap<Object, Object> studentData = new HashMap();
@@ -142,6 +143,7 @@ public class MainStudentPage extends AppCompatActivity{
         btnLoadPhotoStudent = findViewById(R.id.btnLoadPhotoStudent);
         btnlistFriends = findViewById(R.id.btnListFriends);
         btnlistSubscribers = findViewById(R.id.btnListSubscribers);
+        btnlistPolls = findViewById(R.id.btnListPoll);
 
         mAuth = FirebaseAuth.getInstance();
         currentStudent= mAuth.getCurrentUser();
@@ -156,6 +158,7 @@ public class MainStudentPage extends AppCompatActivity{
         btnLoadPhotoStudent.setOnClickListener(btnlistener);
         btnlistFriends.setOnClickListener(btnlistener);
         btnlistSubscribers.setOnClickListener(btnlistener);
+        btnlistPolls.setOnClickListener(btnlistener);
 
         ProfileStudent profileStudent = new ProfileStudent();
 
@@ -227,8 +230,8 @@ public class MainStudentPage extends AppCompatActivity{
                     //.resize(1920,2560)
                     .into(imSendPhotoWall);
 
-            Toast.makeText(MainStudentPage.this, "Succes get photo from FirebaseStorage onCreate " + finalLocalFile,
-                    Toast.LENGTH_LONG).show();
+          /*  Toast.makeText(MainStudentPage.this, "Succes get photo from FirebaseStorage onCreate " + finalLocalFile,
+                    Toast.LENGTH_LONG).show();*/
 
             Picasso.with(getBaseContext())
                     .load(linkStorageFromFireBase)
@@ -266,8 +269,8 @@ public class MainStudentPage extends AppCompatActivity{
                         //.resize(1920,2560)
                         .into(imSendPhotoWall);
 
-                Toast.makeText(MainStudentPage.this, "Succes get photo from FirebaseStorage loadPhotoFromInternet " + finalLocalFile,
-                        Toast.LENGTH_LONG).show();
+         /*       Toast.makeText(MainStudentPage.this, "Succes get photo from FirebaseStorage loadPhotoFromInternet " + finalLocalFile,
+                        Toast.LENGTH_LONG).show();*/
 
                 Picasso.with(getBaseContext())
                         .load(linkStorageFromFireBase)
@@ -362,14 +365,16 @@ public class MainStudentPage extends AppCompatActivity{
 
                 });
 
-
-                int currentStudent = Integer.parseInt(db.studentDao().getCurrentStudent());
-                SeriesIDCard = db.studentDao().getSeriesBYId(currentStudent);
-                Bundle bundle = new Bundle();
-                //  bundle.putString(FirebaseAnalytics.Param.ITEM_ID,  studentData.get("id"));
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, (String) db.studentDao().getFirstNameById(currentStudent));
-                // bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
-                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                int currentStudent;
+                if (db.studentDao().getCurrentStudent() != null) {
+                    currentStudent = Integer.parseInt(db.studentDao().getCurrentStudent());
+                    SeriesIDCard = db.studentDao().getSeriesBYId(currentStudent);
+                    Bundle bundle = new Bundle();
+                    //  bundle.putString(FirebaseAnalytics.Param.ITEM_ID,  studentData.get("id"));
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, (String) db.studentDao().getFirstNameById(currentStudent));
+                    // bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                }
                 studentData = Student.student;
 
                 // Local DB
@@ -647,6 +652,7 @@ public class MainStudentPage extends AppCompatActivity{
         });*/
 
     }
+
     View.OnClickListener btnlistener = new View.OnClickListener() {
 
         @Override
@@ -675,6 +681,12 @@ public class MainStudentPage extends AppCompatActivity{
                     Intent intentlistMySubscribers;
                     intentlistMySubscribers = new Intent( "com.social_network.pnu_app.pages.MySubscribersActivity");
                     startActivity(intentlistMySubscribers);
+                    break;
+
+                case R.id.btnListPoll:
+                    Intent intentlistPolls;
+                    intentlistPolls = new Intent( "com.social_network.pnu_app.pages.PollsActivity");
+                    startActivity(intentlistPolls);
                     break;
             }
         }
