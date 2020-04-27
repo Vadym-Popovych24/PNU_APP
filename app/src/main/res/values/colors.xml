@@ -52,4 +52,8 @@
 
     // Menu
     <color name="menuColor">#F8F8F8</color>
+
+
+    // Post
+    <color name="likePost">#8D938D</color>
 </resources>

@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.PostProcessor;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
@@ -52,6 +53,7 @@ import com.google.firebase.storage.UploadTask;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.Student;
 import com.social_network.pnu_app.firebase.QueriesFirebase;
+import com.social_network.pnu_app.functional.Posts;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
 import com.social_network.pnu_app.network.NetworkStatus;
 import com.squareup.picasso.Picasso;
@@ -83,6 +85,9 @@ public class MainStudentPage extends AppCompatActivity{
     Button btnlistFriends;
     Button btnlistSubscribers;
     Button btnlistPolls;
+
+    ImageView btnAddPostl;
+    EmojiconEditText editTextPost;
     private FirebaseAnalytics mFirebaseAnalytics;
 
     public static HashMap<Object, Object> studentData = new HashMap();
@@ -145,10 +150,13 @@ public class MainStudentPage extends AppCompatActivity{
         btnlistSubscribers = findViewById(R.id.btnListSubscribers);
         btnlistPolls = findViewById(R.id.btnListPoll);
 
+
         mAuth = FirebaseAuth.getInstance();
         currentStudent= mAuth.getCurrentUser();
 
-
+        btnAddPostl = findViewById(R.id.btnSendWall);
+        btnAddPostl.setOnClickListener(btnlistener);
+        editTextPost = findViewById(R.id.editTextWall);
 
         tvPIBvalue = findViewById(R.id.tvPIBvalue);
         tvFacultyValue = findViewById(R.id.tvFacultyValue);
@@ -658,9 +666,10 @@ public class MainStudentPage extends AppCompatActivity{
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
+
                 case R.id.btnLoadPhotoStudent:
 
-                NetworkStatus network = new NetworkStatus();
+
                 if (!network.isOnline()) {
                     // progressBar.setVisibility(View.GONE);
                     Toast.makeText(MainStudentPage.this, " Please Connect to Internet",
@@ -687,6 +696,29 @@ public class MainStudentPage extends AppCompatActivity{
                     Intent intentlistPolls;
                     intentlistPolls = new Intent( "com.social_network.pnu_app.pages.PollsActivity");
                     startActivity(intentlistPolls);
+                    break;
+
+                case R.id.btnSendWall:
+                    if (!network.isOnline()) {
+                        // progressBar.setVisibility(View.GONE);
+                        Toast.makeText(MainStudentPage.this, " Please Connect to Internet",
+                                Toast.LENGTH_LONG).show();
+                    }
+                    else {
+
+                        String post = editTextPost.getText().toString();
+                        System.out.println("post = " + post);
+                        if (!post.equals("")){
+                            Posts posts = new Posts();
+                            posts.addPostToDatabase(post, senderUserId);
+                            editTextPost.setText("");
+                        }
+                        else{
+                            Toast.makeText(MainStudentPage.this, "Введіть запис!",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
                     break;
             }
         }

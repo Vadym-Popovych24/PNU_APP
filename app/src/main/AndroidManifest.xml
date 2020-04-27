@@ -186,7 +186,8 @@
         </activity>
         <activity
             android:name=".pages.MainStudentPage"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="com.social_network.pnu_app.pages.MainStudentPage" />
 

@@ -126,4 +126,7 @@
     <string name="btnAddVariant">Додати варіант</string>
     <string name="btnAddVariantPlus">+</string>
     <string name="btnFinishCreatePoll">Завершити</string>
+
+    <!--Posts-->
+    <string name="hintComment">Коментар</string>
 </resources>

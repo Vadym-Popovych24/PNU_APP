@@ -9,11 +9,11 @@
     android:layout_marginStart="10dp">
 
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/request_friend_profile_image"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:src="@drawable/com_facebook_profile_picture_blank_square"/>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/request_friend_profile_image"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:src="@drawable/com_facebook_profile_picture_blank_square"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/img_online_requests"
@@ -32,35 +32,35 @@
 
 
 
-        <LinearLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="5dp"
+        android:layout_toEndOf="@+id/request_friend_profile_image"
+        android:layout_toRightOf="@+id/request_friend_profile_image">
+
+        <TextView
+            android:id="@+id/request_friend_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="5dp"
-            android:layout_toEndOf="@+id/request_friend_profile_image"
-            android:layout_toRightOf="@+id/request_friend_profile_image">
+            android:text=""
+            android:textSize="16sp"
+            android:textStyle=""
+            android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/request_friend_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="13sp"
+            android:textStyle=""
+            android:textColor="@color/onlineText" />
 
-            <TextView
-                android:id="@+id/request_friend_username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="16sp"
-                android:textStyle=""
-                android:textColor="@color/black"/>
-            <TextView
-                android:id="@+id/request_friend_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="13sp"
-                android:textStyle=""
-                android:textColor="@color/onlineText" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <Button
                 style="?android:attr/buttonBarButtonStyle"
@@ -98,10 +98,10 @@
                 android:textSize="12sp">
             </Button>
 
-            </LinearLayout>
-
-
         </LinearLayout>
+
+
+    </LinearLayout>
 
 
 
