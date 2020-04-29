@@ -20,43 +20,51 @@
         android:roundIcon="@mipmap/logopnu"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".pages.FinishedPollsActivity"
-                  android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".pages.ActivityListLikesPost"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="com.social_network.pnu_app.pages.ActivityListLikesPost"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".pages.FinishedPollsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="com.social_network.pnu_app.pages.FinishedPollsActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".pages.NewPollsActivity"
-                  android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".pages.NewPollsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="com.social_network.pnu_app.pages.NewPollsActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".pages.YourPollsActivity"
-                  android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".pages.YourPollsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="com.social_network.pnu_app.pages.YourPollsActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".pages.BuildPollsActivity"
-                  android:theme="@style/AppTheme.NoActionBar"
-                  android:windowSoftInputMode="stateAlwaysHidden">
+        <activity
+            android:name=".pages.BuildPollsActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="com.social_network.pnu_app.pages.BuildPollsActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".pages.PollsActivity"
             android:theme="@style/AppTheme.NoActionBar">

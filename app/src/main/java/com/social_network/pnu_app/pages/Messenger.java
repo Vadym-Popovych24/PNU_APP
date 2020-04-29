@@ -94,7 +94,7 @@ public class Messenger extends AppCompatActivity {
         senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(Messenger.this));
         studentsReference = FirebaseDatabase.getInstance().getReference("students");
         myMessengersReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId)
-                .child("Messages").orderByPriority(); // Todo by time
+                .child("Messages").orderByPriority();
 
 
 
@@ -187,7 +187,7 @@ public class Messenger extends AppCompatActivity {
                             else {
                                 lastMessage = "";
                             }
-
+                            myMessengersList.scrollToPosition(0);
 
 
                             if (!seen){

@@ -55,5 +55,7 @@
 
 
     // Post
-    <color name="likePost">#8D938D</color>
+
+    <color name="likePress">#FF0000</color>
+    <color name="iconPostColor">#B8B8B8</color>
 </resources>

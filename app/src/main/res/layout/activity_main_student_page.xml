@@ -285,7 +285,7 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="40dp"
         android:layout_height="38dp"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="17dp"
         android:id="@+id/imSendPhotoWall"
         android:padding="0dp"
         android:layout_marginLeft="10dp"
@@ -315,19 +315,29 @@
         android:contentDescription="@string/contentDescription"
         android:layout_alignParentEnd="true" />
 
-
+<!--
     <View
         android:id="@+id/lineBelowEtWall"
         android:layout_width="fill_parent"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:layout_marginTop="10dp"
-        android:layout_below="@+id/btnSendWall"
-        android:background="@color/linesMessenger" />
+        android:visibility="gone"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@+id/editTextWall"
+        android:background="@color/linesMessenger" />-->
+
+            <View
+                android:id="@+id/lineAbowePosts"
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/btnWallNotes"
+                android:background="@color/linesMessenger" />
 
     <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
         android:id="@+id/editTextWall"
         android:layout_width="320dp"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/edittext"
         android:hint="@string/hindEditTextAddNotes"
         android:layout_toLeftOf="@+id/btnSendWall"
@@ -353,68 +363,65 @@
         android:focusedByDefault="false"
         tools:targetApi="o" />
 
-    <RelativeLayout
-        android:id="@+id/LinearLoyoutAboweWall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/lineBelowEtWall">
+
+
 
 
         <Button
             android:id="@+id/btnWallNotes"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="70dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
 
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
-
+            android:layout_below="@+id/editTextWall"
             android:background="@android:color/white"
             android:text="@string/btnWallNotes"
             android:textColor="@android:color/black" />
 
-        <ImageView
-            android:id="@+id/btnWallSearch"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="50dp"
-            android:layout_height="40dp"
-            android:paddingRight="10dp"
-            android:paddingEnd="10dp"
-            android:paddingLeft="0dp"
-            android:paddingStart="0dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:src="@android:drawable/ic_menu_search"
-            android:background="@drawable/ic_menu_person"
 
-            android:textColor="@android:color/black"
-
-            android:contentDescription="@string/todo" />
 
         <TextView
             android:id="@+id/tvTextWall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="100dp"
-            android:layout_below="@+id/btnWallNotes"
+            android:layout_below="@+id/lineAbowePosts"
             android:layout_marginBottom="55dp"
             android:gravity="center"
             android:text="@string/emptyWall"
             android:background="@color/lines"
             android:textSize="20sp" />
 
+    <ImageView
+        android:id="@+id/btnWallSearch"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:paddingRight="10dp"
+        android:paddingEnd="10dp"
+        android:paddingLeft="0dp"
+        android:paddingStart="0dp"
+        android:layout_below="@+id/editTextWall"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:src="@android:drawable/ic_menu_search"
+        android:background="@drawable/ic_menu_person"
+
+        android:textColor="@android:color/black"
+
+        android:contentDescription="@string/todo" />
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewMainStudentPage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/btnWallNotes"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="55dp"
-            android:stackFromBottom="false"
-            android:focusable="auto"
-            >
+            android:layout_below="@+id/lineAbowePosts"
+            android:stackFromBottom="false">
 
         </androidx.recyclerview.widget.RecyclerView>
 
@@ -422,7 +429,7 @@
 
 
     </RelativeLayout>
-</RelativeLayout>
+
 
 </ScrollView>
 

@@ -129,4 +129,5 @@
 
     <!--Posts-->
     <string name="hintComment">Коментар</string>
+    <string name="hintCommentAnswer">Відповісти</string>
 </resources>

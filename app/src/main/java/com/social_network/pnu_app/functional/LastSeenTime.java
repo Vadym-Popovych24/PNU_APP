@@ -108,4 +108,68 @@ public class LastSeenTime {
             return dy.format(time);
         }
     }
+
+    public String getTimePost(long time) {
+        if (time < 1000000000000L) {
+            // if timestamp given in seconds, convert to millis
+            time *= 1000;
+        }
+
+        long now = System.currentTimeMillis();
+      /*  if (time > now || time <= 0) {
+            return null;
+        }*/
+
+        // TODO: localize
+        final long diff = now - time;
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat dd = new SimpleDateFormat("dd/MM");
+        SimpleDateFormat dy = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar calendarMessage = Calendar.getInstance();
+        Calendar calendarCurrent = Calendar.getInstance();
+        calendarMessage.setTimeInMillis(time);
+        calendarCurrent.setTimeInMillis(now);
+
+        int yearMesage = calendarMessage.get(Calendar.YEAR);
+        int currentYear = calendarCurrent.get(Calendar.YEAR);
+
+        int currentMonth = calendarCurrent.get(Calendar.MONTH);
+        int monthMessage = calendarMessage.get(Calendar.MONTH);
+
+        int dayMessage = calendarMessage.get(Calendar.DATE);
+        int currentDay = calendarCurrent.get(Calendar.DATE);
+
+
+        int currentDayOFWeek = calendarMessage.get(Calendar.DAY_OF_WEEK);
+        String dayOFWeek ="";
+
+        if (dayMessage == currentDay && monthMessage == currentMonth && currentYear == yearMesage) {
+            return "сьогодні о " + df.format(time);
+        } else if ((currentDay - dayMessage) == 1 && monthMessage == currentMonth && currentYear == yearMesage ) {
+            return "вчора о " + df.format(time);
+        }
+        else if ((currentDay - dayMessage) < 7 && (currentDay - dayMessage) > 1
+                && monthMessage == currentMonth && currentYear == yearMesage) {
+            if (currentDayOFWeek == 2) {
+                dayOFWeek = "Пн " + df.format(time);
+            } else if (currentDayOFWeek == 3) {
+                dayOFWeek =  "Вт " + df.format(time);
+            } else if (currentDayOFWeek == 4) {
+                dayOFWeek =  "Ср " + df.format(time);
+            } else if (currentDayOFWeek == 5) {
+                dayOFWeek =  "Чт " + df.format(time);
+            } else if (currentDayOFWeek == 6) {
+                dayOFWeek =  "Пт " + df.format(time);
+            } else if (currentDayOFWeek == 7) {
+                dayOFWeek =  "Сб " + df.format(time);
+            } else if (currentDayOFWeek == 1) {
+                dayOFWeek =  "Нд " + df.format(time);
+            }
+            return dayOFWeek;
+        } else if (yearMesage == currentYear) {
+            return dd.format(time) + " " + df.format(time);
+        } else {
+            return dy.format(time) + " " + df.format(time);
+        }
+    }
 }

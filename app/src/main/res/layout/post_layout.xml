@@ -7,7 +7,8 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
     android:layout_marginLeft="10dp"
-    android:layout_marginStart="10dp">
+    android:layout_marginStart="10dp"
+    android:background="@color/backgroundStudentMainPage">
 
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -73,9 +74,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="30dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
             android:text=""
-            android:textSize="15sp"
+            android:textSize="17sp"
             android:textColor="@color/black"/>
 
     </LinearLayout>
@@ -88,56 +91,93 @@
         android:orientation="horizontal"
         android:layout_below="@+id/lineAbovePost">
 
-        <Button
+        <ImageView
             android:id="@+id/btnLikeMyPost"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="50dp"
-            android:layout_height="40dp"
-            android:paddingRight="10dp"
-            android:paddingEnd="10dp"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:paddingRight="10dp"
+        android:paddingEnd="10dp"
+        android:paddingLeft="0dp"
+        android:paddingStart="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/btn_like_post"
+
+        android:textColor="@android:color/black"
+
+        android:contentDescription="@string/todo"
+        tools:targetApi="m" />
+
+        <TextView
+            android:id="@+id/tvCountLikePost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="0dp"
+            android:paddingEnd="0dp"
             android:paddingLeft="0dp"
             android:paddingStart="0dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginLeft="25dp"
-            android:drawableTop="@drawable/btn_like_post"
-            android:drawableTint="@color/likePost"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:text=""
+            android:textSize="16sp"
 
-            android:textColor="@android:color/black"
+            android:textColor="@color/onlineText"
 
             android:contentDescription="@string/todo"
             tools:targetApi="m" />
 
-        <Button
+
+        <ImageView
             android:id="@+id/btnCommentMyPost"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="50dp"
-            android:layout_height="40dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:paddingRight="10dp"
             android:paddingEnd="10dp"
             android:paddingLeft="0dp"
             android:paddingStart="0dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginLeft="25dp"
-            android:drawableTop="@drawable/btn_comment_post"
-            android:drawableTint="@color/likePost"
+            android:layout_marginStart="40dp"
+            android:layout_marginLeft="40dp"
+            android:background="@drawable/btn_comment_post"
+            android:drawableTint="@color/iconPostColor"
 
             android:textColor="@android:color/black"
 
             android:contentDescription="@string/todo"
             tools:targetApi="m" />
-        <Button
+
+        <TextView
+            android:id="@+id/tvCountComentPost"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:minWidth="20dp"
+            android:paddingRight="0dp"
+            android:paddingEnd="0dp"
+            android:paddingLeft="0dp"
+            android:paddingStart="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:text=""
+            android:textSize="16sp"
+
+            android:textColor="@color/onlineText"
+
+            android:contentDescription="@string/todo"
+            tools:targetApi="m" />
+
+        <ImageView
             android:id="@+id/btnShareMyPost"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="50dp"
-            android:layout_height="40dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:paddingRight="10dp"
             android:paddingEnd="10dp"
             android:paddingLeft="0dp"
             android:paddingStart="0dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginLeft="25dp"
-            android:drawableTop="@drawable/btn_share_post"
-            android:drawableTint="@color/likePost"
+            android:layout_marginStart="40dp"
+            android:layout_marginLeft="40dp"
+            android:background="@drawable/btn_share_post"
 
             android:textColor="@android:color/black"
 
@@ -151,15 +191,16 @@
     <LinearLayout
         android:id="@+id/LLCommentPostMy"
         android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/lineBelowPost"
-        android:layout_marginTop="5dp">
+        android:layout_below="@id/lineAboveEtPost"
+        android:layout_marginTop="0dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/post_profile_image_coment"
-            android:layout_width="30dp"
+            android:layout_width="35dp"
             android:layout_height="45dp"
+            android:layout_marginTop="3dp"
             android:src="@drawable/com_facebook_profile_picture_blank_square"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -175,31 +216,42 @@
             android:src="@color/imgOnline"/>
 
         <ImageView
-            android:id="@+id/emoji_button"
-            android:layout_width="40dp"
+            android:id="@+id/emoji_button_comment"
+            android:layout_width="45dp"
             android:layout_height="50dp"
             android:padding="4dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
             android:src="@drawable/ic_smileemodji"
             android:contentDescription="@string/contentDescription"
-            />
+            android:layout_toRightOf="@+id/post_profile_image_coment"
+            android:layout_toEndOf="@+id/post_profile_image_coment" />
+
 
 
         <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
-            android:id="@+id/editTextMessage"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:paddingLeft="15dp"
-            android:paddingStart="15dp"
+            android:id="@+id/editTextCommentPost"
+            android:layout_width="wrap_content"
+            android:maxWidth="220dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
             android:paddingRight="15dp"
             android:paddingEnd="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
             android:hint="@string/hintComment"
+            android:background="@color/backgroundStudentMainPage"
             android:textColorHint="@color/textColorHint"
+            android:textSize="16sp"
             app:emojiconSize="20sp"
             />
 
+</LinearLayout>
 
         <ImageView
-            android:id="@+id/submit_button_menu"
+            android:id="@+id/sendComentOnPost"
             android:layout_width="50dp"
             android:layout_height="47dp"
             android:padding="4dp"
@@ -209,10 +261,15 @@
             android:src="@android:drawable/ic_menu_send"
             android:background="@color/backgroundStudentMainPage"
             android:contentDescription="@string/contentDescription"
-             />
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/lineAboveEtPost"
+            />
 
 
-    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/LLbtnSettingsPost"
@@ -227,14 +284,14 @@
         <Button
             android:id="@+id/btnSettingPost"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="50dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:paddingRight="10dp"
             android:paddingEnd="10dp"
             android:paddingLeft="0dp"
             android:paddingStart="0dp"
             android:drawableTop="@drawable/btn_setting_post"
-            android:drawableTint="@color/likePost"
+            android:drawableTint="@color/iconPostColor"
 
             android:textColor="@android:color/black"
 
@@ -246,26 +303,53 @@
 
     <View
         android:id="@+id/lineAbovePost"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="1dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
+        android:layout_margin="10dp"
         android:layout_below="@+id/LLPostContent"
-        android:background="@color/linesMessenger" />
+        android:background="@color/lines" />
 
     <View
         android:id="@+id/lineBelowPost"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="1dp"
-        android:layout_marginTop="5dp"
+        android:layout_margin="10dp"
         android:layout_below="@+id/LLbtnsPost"
-        android:background="@color/linesMessenger" />
+        android:background="@color/lines" />
+
+    <View
+        android:id="@+id/lineAboveEtPost"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_below="@+id/recyclerViewComentPost"
+        android:layout_marginTop="9dp"
+        android:visibility="gone"
+        android:layout_marginBottom="10dp"
+        android:background="@color/lines" />
+
     <View
         android:id="@+id/lineBelowEtWall"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
         android:layout_below="@+id/LLCommentPostMy"
         android:background="@color/linesMessenger" />
 
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewComentPost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:layout_marginStart="-45dp"
+        android:layout_marginLeft="-45dp"
+        android:layout_toRightOf="@+id/post_profile_image"
+        android:layout_toEndOf="@+id/post_profile_image"
+        android:layout_below="@+id/lineBelowPost"
+        android:stackFromBottom="false">
+
+    </androidx.recyclerview.widget.RecyclerView>
 </RelativeLayout>
