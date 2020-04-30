@@ -3,6 +3,8 @@ package com.social_network.pnu_app.pages;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,6 +31,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.functional.LastSeenTime;
+import com.social_network.pnu_app.functional.PostHolder;
 import com.social_network.pnu_app.localdatabase.AppDatabase;
 import com.social_network.pnu_app.network.NetworkStatus;
 import com.squareup.picasso.Picasso;
@@ -39,7 +42,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
+import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
 
 public class ProfileStudent extends AppCompatActivity {
@@ -51,11 +54,15 @@ public class ProfileStudent extends AppCompatActivity {
     TextView tvDateOfEntryValue;
     TextView tvFormStudyingValue;
     TextView tvOnlineProfile;
+    TextView tvTextWallProfile;
+    RecyclerView recyclerViewPostProfile;
 
     Button btnAddToFriends;
     Button btnlistFriends;
     Button btnListSubscribersProfile;
     Button btnSendMessage;
+    ImageView btnSendWallProfile;
+    EmojiconEditText editTextWallProfile;
 
     private String CurrentStateFriend;
 
@@ -117,6 +124,7 @@ public class ProfileStudent extends AppCompatActivity {
 
         ReceiverStudentKey = getIntent().getExtras().get("VisitedStudentKey").toString();
         senderUserId = getKeyCurrentStudend(AppDatabase.getAppDatabase(ProfileStudent.this));
+
 
         // SEND AND CANCEL REQUESTS
         FriendRequestsReferenceAlienReceiver = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).
@@ -201,9 +209,17 @@ public class ProfileStudent extends AppCompatActivity {
         btnListSubscribersProfile.setOnClickListener(btnlistener);
         btnSendMessage.setOnClickListener(btnlistener);
 
+        btnSendWallProfile = findViewById(R.id.btnSendWallProfile);
+        btnSendWallProfile.setOnClickListener(btnlistener);
+
+        recyclerViewPostProfile = findViewById(R.id.recyclerViewPostProfile);
+        recyclerViewPostProfile.setLayoutManager(new LinearLayoutManager(this));
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_profileProfile);
         bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
 
+        editTextWallProfile = findViewById(R.id.editTextWallProfile);
+        tvTextWallProfile = findViewById(R.id.tvTextWallProfile);
 
         CurrentStateFriend = "notFriend";
 
@@ -212,7 +228,8 @@ public class ProfileStudent extends AppCompatActivity {
         imStudentMainPhoto = findViewById(R.id.imStudentMainPhotoProfile);
         imSendPhotoWall = findViewById(R.id.imSendPhotoWallProfile);
 
-
+        PostHolder posts = new PostHolder();
+        posts.holderPost(senderUserId ,tvTextWallProfile, recyclerViewPostProfile, ReceiverStudentKey);
         BuildStudentPage();
 
 
@@ -321,6 +338,42 @@ public class ProfileStudent extends AppCompatActivity {
                     }
                 }
 
+                FirebaseDatabase.getInstance().getReference("students").child(senderUserId)
+                        .child("linkFirebaseStorageMainPhoto").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            dataSnapshot.getValue().toString();
+
+                            if (!dataSnapshot.getValue().toString().isEmpty()) {
+
+                                Picasso.with(ProfileStudent.this)
+                                        .load(dataSnapshot.getValue().toString())
+                                        .placeholder(R.drawable.logo_pnu)
+                                        .error(R.drawable.com_facebook_close)
+                                        .centerCrop()
+                                        .fit()
+                                        // .resize(1920,2560)
+                                        .into(imSendPhotoWall);
+                            } else {
+                                Picasso.with(ProfileStudent.this)
+                                        .load(R.drawable.com_facebook_profile_picture_blank_square)
+                                        .placeholder(R.drawable.logo_pnu)
+                                        .error(R.drawable.com_facebook_close)
+                                        .centerCrop()
+                                        .fit()
+                                        // .resize(1920,2560)
+                                        .into(imSendPhotoWall);
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
                 if (!linkFirebaseStorageMainPhoto.isEmpty()){
                 Picasso.with(ProfileStudent.this)
                         .load(linkFirebaseStorageMainPhoto)
@@ -331,14 +384,6 @@ public class ProfileStudent extends AppCompatActivity {
                         // .resize(1920,2560)
                         .into(imStudentMainPhoto);
 
-                Picasso.with(ProfileStudent.this)
-                        .load(linkFirebaseStorageMainPhoto)
-                        .placeholder(R.drawable.logo_pnu)
-                        .error(R.drawable.com_facebook_close)
-                        .centerCrop()
-                        .fit()
-                        // .resize(1920,2560)
-                        .into(imSendPhotoWall);
                 }
                 else {
                     Picasso.with(ProfileStudent.this)
@@ -350,14 +395,7 @@ public class ProfileStudent extends AppCompatActivity {
                             // .resize(1920,2560)
                             .into(imStudentMainPhoto);
 
-                    Picasso.with(ProfileStudent.this)
-                            .load(R.drawable.com_facebook_profile_picture_blank_square)
-                            .placeholder(R.drawable.logo_pnu)
-                            .error(R.drawable.com_facebook_close)
-                            .centerCrop()
-                            .fit()
-                            // .resize(1920,2560)
-                            .into(imSendPhotoWall);
+
                 }
 
                // CHECK ON MY RECEIVED
@@ -623,6 +661,27 @@ public class ProfileStudent extends AppCompatActivity {
                     Intent intentSendMessageProfileActivity = new Intent(ProfileStudent.this, Message.class);
                     intentSendMessageProfileActivity.putExtra("VisitedStudentKey", ReceiverStudentKey);
                     startActivity(intentSendMessageProfileActivity);
+                    break;
+
+                case R.id.btnSendWallProfile:
+                    if (!network.isOnline()) {
+                        // progressBar.setVisibility(View.GONE);
+                        Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+
+                        String post = editTextWallProfile.getText().toString();
+                        System.out.println("post = " + post);
+                        if (!post.equals("")) {
+                            PostHolder posts = new PostHolder();
+                            posts.addPostToDatabase(post, senderUserId, null,null, "", ReceiverStudentKey);
+                            editTextWallProfile.setText("");
+                        } else {
+                            Toast.makeText(ProfileStudent.this, "Введіть запис!",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
                     break;
             }
         }

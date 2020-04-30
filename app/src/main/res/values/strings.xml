@@ -69,7 +69,7 @@
     <!--Profile-->
     <string name="btnAddFriend">Додати в друзі  </string>
     <string name="btnRejectFriend">Відхилити</string>
-    <string name="emptyWallProfile">Тут поки немає записів</string>
+    <string name="emptyWallProfile">Даний користувач поки немає записів</string>
     <string name="btnSendMessageProfile">Написати</string>
 
     <!--OnlineFriendsFragment-->
@@ -130,4 +130,6 @@
     <!--Posts-->
     <string name="hintComment">Коментар</string>
     <string name="hintCommentAnswer">Відповісти</string>
+    <string name="likesPost">Оцінили</string>
+    <string name="DefaultTextListLikesPost">Цей пост поки немає лайків</string>
 </resources>

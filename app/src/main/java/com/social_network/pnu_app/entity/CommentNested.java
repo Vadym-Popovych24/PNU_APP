@@ -1,30 +1,18 @@
 package com.social_network.pnu_app.entity;
 
-public class Post {
+public class CommentNested {
 
     String keySender;
     String type;
     String text;
     long time;
 
-
-
-    String linkFirebaseStoragePostPhoto;
-
-    public Post(){}
-    public Post(String keySender, String type, String text, long time){
+    CommentNested(){}
+    public CommentNested(String keySender, String type, String text, long time){
         this.keySender = keySender;
         this.type = type;
         this.text = text;
         this.time = time;
-    }
-
-    public Post(String keySender, String type, String text, long time, String linkFirebaseStoragePostPhoto){
-        this.keySender = keySender;
-        this.type = type;
-        this.text = text;
-        this.time = time;
-        this.linkFirebaseStoragePostPhoto = linkFirebaseStoragePostPhoto;
     }
 
     public String getKeySender() {
@@ -57,13 +45,5 @@ public class Post {
 
     public void setTime(long time) {
         this.time = time;
-    }
-
-    public String getLinkFirebaseStoragePostPhoto() {
-        return linkFirebaseStoragePostPhoto;
-    }
-
-    public void setLinkFirebaseStoragePostPhoto(String linkFirebaseStoragePostPhoto) {
-        this.linkFirebaseStoragePostPhoto = linkFirebaseStoragePostPhoto;
     }
 }

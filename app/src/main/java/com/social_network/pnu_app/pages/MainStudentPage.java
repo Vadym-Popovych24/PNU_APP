@@ -124,6 +124,8 @@ public class MainStudentPage extends AppCompatActivity {
     String faculty;
     String linkFirebaseStorageMainPhoto;
 
+    String btnNamePress;
+
     static String linkStorageFromFireBase;
 
     DatabaseReference referenceMyFriends;
@@ -132,6 +134,7 @@ public class MainStudentPage extends AppCompatActivity {
     DatabaseReference studentsReference;
     Query myPostsReference;
 
+    ImageView btnSendWallPhoto;
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentStudent;
@@ -166,6 +169,8 @@ public class MainStudentPage extends AppCompatActivity {
         btnlistSubscribers.setOnClickListener(btnlistener);
         btnlistPolls.setOnClickListener(btnlistener);
 
+        btnSendWallPhoto = findViewById(R.id.btnSendWallPhoto);
+        btnSendWallPhoto.setOnClickListener(btnlistener);
 
         btnWallNotes = findViewById(R.id.btnWallNotes);
         tvTextWall = findViewById(R.id.tvTextWall);
@@ -200,7 +205,7 @@ public class MainStudentPage extends AppCompatActivity {
         loadPhoto();
 
         PostHolder posts = new PostHolder();
-        posts.holderPost(senderUserId ,tvTextWall, recyclerViewPost);
+        posts.holderPost(senderUserId ,tvTextWall, recyclerViewPost, senderUserId);
 
     }
 
@@ -214,6 +219,11 @@ public class MainStudentPage extends AppCompatActivity {
         reference.child(keyStudent).updateChildren(linkFirebaseStorageMainPhoto.toMapUpdatelinkFirebaseStorageMainPhoto());
     }
 
+    public String getStudentSeriesIDCard(final AppDatabase db){
+        int currentStudent = Integer.parseInt(db.studentDao().getCurrentStudent());
+        String SeriesIDCard = db.studentDao().getSeriesBYId(currentStudent);
+        return SeriesIDCard;
+    }
 
     public void loadPhoto() {
         File localFile = null;
@@ -227,6 +237,7 @@ public class MainStudentPage extends AppCompatActivity {
         finalLocalFile = Uri.fromFile(localFile);
 
 
+        SeriesIDCard = getStudentSeriesIDCard(AppDatabase.getAppDatabase(MainStudentPage.this));
         pathToFirebaseStorage = dirImages + SeriesIDCard + "/";
         castomPathToFirebaseStorage = pathToFirebaseStorage.replace("/", "%2F");
         nameFileFirebase += new Date().getTime();
@@ -269,7 +280,6 @@ public class MainStudentPage extends AppCompatActivity {
 
         String keyStudent = db.studentDao().getKeyStudent();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("students");
-        reference.keepSynced(true);
         reference.child(keyStudent).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -615,25 +625,44 @@ public class MainStudentPage extends AppCompatActivity {
                         Toast.makeText(MainStudentPage.this, "onActivityResult " + finalLocalFile,
                                 Toast.LENGTH_LONG).show();*/
 
-                        Picasso.with(getBaseContext())
-                                .load(data.getData())
-                                .placeholder(R.drawable.logo_pnu)
-                                .error(R.drawable.com_facebook_close)
-                                .centerInside()
-                                .fit()
-                                //  .resize(100,100)
-                                .into(imSendPhotoWall);
+                        if (btnNamePress.equals("btnLoadPhotoStudent")) {
 
-                        Picasso.with(getBaseContext())
-                                .load(data.getData())
-                                .placeholder(R.drawable.logo_pnu)
-                                .error(R.drawable.com_facebook_close)
-                                .centerInside()
-                                .fit()
-                                //     .resize(1920,2560)
-                                .into(imStudentMainPhoto);
+                            Picasso.with(getBaseContext())
+                                    .load(data.getData())
+                                    .placeholder(R.drawable.logo_pnu)
+                                    .error(R.drawable.com_facebook_close)
+                                    .centerInside()
+                                    .fit()
+                                    //  .resize(100,100)
+                                    .into(imSendPhotoWall);
 
-                        uploadFileInFireBaseStorage(thumb_byte);
+                            Picasso.with(getBaseContext())
+                                    .load(data.getData())
+                                    .placeholder(R.drawable.logo_pnu)
+                                    .error(R.drawable.com_facebook_close)
+                                    .centerInside()
+                                    .fit()
+                                    //     .resize(1920,2560)
+                                    .into(imStudentMainPhoto);
+
+                            uploadFileInFireBaseStorage(thumb_byte);
+                        }
+                        else if (btnNamePress.equals("btnSendWallPhoto")){
+
+
+                            String post = editTextPost.getText().toString();
+                            System.out.println("post = " + post);
+                          //  if (!post.equals("")) {
+                                PostHolder posts = new PostHolder();
+                                posts.addPostToDatabase(post, senderUserId, data.getData(),thumb_byte, pathToFirebaseStorage, senderUserId);
+                                editTextPost.setText("");
+                        /*    } else {
+                                Toast.makeText(MainStudentPage.this, "Введіть запис!",
+                                        Toast.LENGTH_SHORT).show();
+                            }*/
+
+                            }
+
                     }/* else if (mImageUri != null) {
                         mImageUri = Uri.fromFile(mTempPhoto).toString();
                         Toast.makeText(MainStudentPage.this, "onActivityResult 2" + finalLocalFile,
@@ -694,7 +723,7 @@ public class MainStudentPage extends AppCompatActivity {
             switch (v.getId()) {
 
                 case R.id.btnLoadPhotoStudent:
-
+                    btnNamePress = "btnLoadPhotoStudent";
 
                     if (!network.isOnline()) {
                         // progressBar.setVisibility(View.GONE);
@@ -735,7 +764,7 @@ public class MainStudentPage extends AppCompatActivity {
                         System.out.println("post = " + post);
                         if (!post.equals("")) {
                             PostHolder posts = new PostHolder();
-                            posts.addPostToDatabase(post, senderUserId);
+                            posts.addPostToDatabase(post, senderUserId, null,null, "", senderUserId);
                             editTextPost.setText("");
                         } else {
                             Toast.makeText(MainStudentPage.this, "Введіть запис!",
@@ -743,6 +772,20 @@ public class MainStudentPage extends AppCompatActivity {
                         }
 
                     }
+                    break;
+
+                case R.id.btnSendWallPhoto:
+                    btnNamePress = "btnSendWallPhoto";
+
+
+                    if (!network.isOnline()) {
+                        // progressBar.setVisibility(View.GONE);
+                        Toast.makeText(MainStudentPage.this, " Please Connect to Internet",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        addPhoto();
+                    }
+
                     break;
             }
         }

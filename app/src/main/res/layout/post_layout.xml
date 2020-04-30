@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
-    android:layout_marginLeft="10dp"
-    android:layout_marginStart="10dp"
+    android:layout_marginLeft="0dp"
+    android:layout_marginStart="0dp"
     android:background="@color/backgroundStudentMainPage">
 
 
@@ -15,6 +15,8 @@
         android:id="@+id/post_profile_image"
         android:layout_width="55dp"
         android:layout_height="55dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:src="@drawable/com_facebook_profile_picture_blank_square"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -39,7 +41,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_margin="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
         android:layout_toEndOf="@+id/post_profile_image"
         android:layout_toRightOf="@+id/post_profile_image">
 
@@ -51,6 +54,7 @@
             android:textSize="16sp"
             android:textStyle=""
             android:textColor="@color/black"/>
+
         <TextView
             android:id="@+id/post_time"
             android:layout_width="match_parent"
@@ -66,15 +70,15 @@
         android:id="@+id/LLPostContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/post_profile_image">
+        android:orientation="vertical"
+        android:layout_below="@+id/post_profile_image"
+        android:layout_margin="0dp">
 
         <TextView
             android:id="@+id/tvPostContent"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="30dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="5dp"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
             android:text=""
@@ -83,13 +87,30 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/LLPhotoPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/LLPostContent">
+
+        <ImageView
+            android:id="@+id/ImagePost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/LLbtnsPost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@+id/lineAbovePost">
+        android:layout_below="@+id/lineAbovePost"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp">
 
         <ImageView
             android:id="@+id/btnLikeMyPost"
@@ -112,6 +133,9 @@
         <TextView
             android:id="@+id/tvCountLikePost"
             android:layout_width="wrap_content"
+            android:minWidth="30dp"
+            android:minHeight="25dp"
+            android:visibility="visible"
             android:layout_height="wrap_content"
             android:paddingRight="0dp"
             android:paddingEnd="0dp"
@@ -151,7 +175,9 @@
             android:id="@+id/tvCountComentPost"
             android:layout_width="wrap_content"
             android:layout_height="24dp"
-            android:minWidth="20dp"
+            android:minWidth="30dp"
+            android:minHeight="25dp"
+            android:visibility="visible"
             android:paddingRight="0dp"
             android:paddingEnd="0dp"
             android:paddingLeft="0dp"
@@ -194,6 +220,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/lineAboveEtPost"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="0dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -306,7 +334,7 @@
         android:layout_width="wrap_content"
         android:layout_height="1dp"
         android:layout_margin="10dp"
-        android:layout_below="@+id/LLPostContent"
+        android:layout_below="@+id/LLPhotoPost"
         android:background="@color/lines" />
 
     <View

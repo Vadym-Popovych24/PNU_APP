@@ -256,10 +256,10 @@ public class FindNewFriends extends AppCompatActivity {
                 });
     }
 
-    public void SendRequestOnAFriendship(final String ReceiverStudentKey) {
+    public void SendRequestOnAFriendship(final String ReceiverStudentKey, final Context context) {
 
 
-      senderUserId = getKeyCurrentStudend(AppDatabase.getAppDatabase(FindNewFriends.this));
+      senderUserId = getKeyCurrentStudend(AppDatabase.getAppDatabase(context));
        final DatabaseReference FriendRequestsReferenceAlienReceiver = FirebaseDatabase.getInstance().getReference("studentsCollection").child(ReceiverStudentKey).
                 child("FriendRequestReceiver").child(senderUserId).child("requestType");
 
@@ -293,7 +293,7 @@ public class FindNewFriends extends AppCompatActivity {
                                             public void onFailure(@NonNull Exception e) {
                                                 if (!network.isOnline()) {
                                                     //        progressBar.setVisibility(View.GONE);
-                                                    Toast.makeText(FindNewFriends.this, " Please Connect to Internet",
+                                                    Toast.makeText(context, " Please Connect to Internet",
                                                             Toast.LENGTH_LONG).show();
                                                 }
                                             }
@@ -306,7 +306,7 @@ public class FindNewFriends extends AppCompatActivity {
                         public void onFailure(@NonNull Exception e) {
                             if (!network.isOnline()) {
                                 //        progressBar.setVisibility(View.GONE);
-                                Toast.makeText(FindNewFriends.this, " Please Connect to Internet",
+                                Toast.makeText(context, " Please Connect to Internet",
                                         Toast.LENGTH_LONG).show();
                             }
                         }
@@ -318,7 +318,7 @@ public class FindNewFriends extends AppCompatActivity {
             public void onFailure(@NonNull Exception e) {
                 if (!network.isOnline()) {
                     //        progressBar.setVisibility(View.GONE);
-                    Toast.makeText(FindNewFriends.this, " Please Connect to Internet",
+                    Toast.makeText(context, " Please Connect to Internet",
                             Toast.LENGTH_LONG).show();
                 }
             }
@@ -565,7 +565,7 @@ public class FindNewFriends extends AppCompatActivity {
                   btnAddFriendAllUsers = mView.findViewById(R.id.btnAddFriendAllUsers);
                   btnAddFriendAllUsers.setEnabled(false);
                   FindNewFriends findNewFriends = new FindNewFriends();
-                  findNewFriends.SendRequestOnAFriendship(ReceiverKey);
+                  findNewFriends.SendRequestOnAFriendship(ReceiverKey, mView.getContext());
 
                   changeStateBtn();
               }

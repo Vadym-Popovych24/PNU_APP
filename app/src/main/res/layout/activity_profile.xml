@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,8 +11,16 @@
     android:orientation="vertical"
     android:background="@color/backgroundStudentMainPage">
 
+
+<ScrollView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:scrollbarFadeDuration="@integer/google_play_services_version">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
     <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_alignParentTop="true"
         android:id="@+id/imStudentMainPhotoProfile"
         android:layout_margin="10dp"
         android:layout_width="100dp"
@@ -177,214 +186,270 @@
         android:layout_below="@+id/imStudentMainPhotoProfile"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@+id/tvFormStudyingProfile"
-        android:layout_toEndOf="@+id/tvFormStudyingProfile" />
+        android:layout_toRightOf="@+id/tvAboutStudentProfile"
+        android:layout_toEndOf="@+id/tvAboutStudentProfile" />
 
 <!--    </LinearLayout>-->
 
 
-    <TextView
-        android:id="@+id/tvAboutStudentProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnSendMessageProfile"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="10dp"
-        android:text="@string/studentInfo"
+        <TextView
+            android:id="@+id/tvAboutStudentProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btnAddToFriends"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/studentInfo"
 
-        android:textSize="22sp" />
+            android:textSize="22sp" />
 
-    <TextView
-        android:id="@+id/tvGroupProfile"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvAboutStudentProfile"
-        android:text="@string/group"
-        android:textColor="@color/black"
-        android:textSize="20sp" />
+        <TextView
+            android:id="@+id/tvGroupProfile"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvAboutStudentProfile"
+            android:text="@string/group"
+            android:textColor="@color/onlineText"
+            android:textSize="14sp" />
 
-    <TextView
-        android:id="@+id/tvGroupValueProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/tvGroupProfile"
-        android:layout_toEndOf="@+id/tvGroupProfile"
-        android:layout_below="@id/tvAboutStudentProfile"
-        android:text=""
-        android:textColor="@color/valuesStudentDate"
-        android:textSize="20sp" />
+        <TextView
+            android:id="@+id/tvGroupValueProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginLeft="40dp"
+            android:layout_below="@id/tvGroupProfile"
+            android:text=" ІПЗ-41"
+            android:textColor="@color/black"
+            android:textSize="17sp"
+            />
+        <View
+            android:id="@+id/lineGroupProfile"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="0dp"
+            android:layout_below="@+id/tvGroupValueProfile"
+            android:background="@color/lines" />
 
-    <TextView
-        android:id="@+id/tvDateOfEntryProfile"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvGroupProfile"
-        android:text="@string/dateOfEntry"
-        android:textColor="@color/black"
-        android:textSize="20sp" />
+        <TextView
+            android:id="@+id/tvDateOfEntryProfile"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvGroupValueProfile"
+            android:text="@string/dateOfEntry"
+            android:textColor="@color/onlineText"
+            android:textSize="14sp" />
 
-    <TextView
-        android:id="@+id/tvDateOfEntryValueProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/tvDateOfEntryProfile"
-        android:layout_below="@+id/tvGroupValueProfile"
-        android:text=""
-        android:textColor="@color/valuesStudentDate"
-        android:textSize="20sp"
-        android:layout_toEndOf="@id/tvDateOfEntryProfile" />
-
-
-
-    <TextView
-        android:id="@+id/tvFormStudyingProfile"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvDateOfEntryProfile"
-        android:text="@string/formOfStudying"
-        android:textColor="@color/black"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/tvFormStudyingValueProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/tvFormStudyingProfile"
-        android:layout_below="@+id/tvDateOfEntryProfile"
-        android:text=""
-        android:textColor="@color/valuesStudentDate"
-        android:textSize="20sp"
-        android:layout_toEndOf="@id/tvFormStudyingProfile" />
-
-    <TextView
-        android:id="@+id/tvFacultyProfile"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvFormStudyingProfile"
-        android:text="@string/faculty"
-        android:textColor="@color/black"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/tvFacultyValueProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvFormStudyingProfile"
-        android:layout_toRightOf="@id/tvFacultyProfile"
-        android:textColor="@color/valuesStudentDate"
-        android:text=""
-        android:textSize="20sp"
-        android:layout_toEndOf="@id/tvFacultyProfile" />
+        <TextView
+            android:id="@+id/tvDateOfEntryValueProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginLeft="40dp"
+            android:layout_below="@+id/tvDateOfEntryProfile"
+            android:text="2016-08-21"
+            android:textColor="@color/black"
+            android:textSize="17sp" />
+        <View
+            android:id="@+id/lineDateOfEntry"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="0dp"
+            android:layout_below="@+id/tvDateOfEntryValueProfile"
+            android:background="@color/lines" />
 
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="40dp"
-        android:layout_height="38dp"
-        android:layout_marginTop="13dp"
-        android:id="@+id/imSendPhotoWallProfile"
-        android:padding="0dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:src="@drawable/logo_pnu"
-        android:background="@drawable/image_profile"
-        android:layout_below="@+id/lineAboveEtWallProfile"
-        android:contentDescription="@string/contentDescription"
+        <TextView
+            android:id="@+id/tvFormStudyingProfile"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvDateOfEntryValueProfile"
+            android:text="@string/formOfStudying"
+            android:textColor="@color/onlineText"
+            android:textSize="14sp" />
 
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true" />
+        <TextView
+            android:id="@+id/tvFormStudyingValueProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_below="@+id/tvFormStudyingProfile"
+            android:text="денна"
+            android:textColor="@color/black"
+            android:textSize="17sp" />
+
+        <View
+            android:id="@+id/lineFormStudyingOfEntryProfile"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="0dp"
+            android:layout_below="@+id/tvFormStudyingValueProfile"
+            android:background="@color/lines" />
+
+        <TextView
+            android:id="@+id/tvFacultyProfile"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvFormStudyingValueProfile"
+            android:text="@string/faculty"
+            android:textColor="@color/onlineText"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvFacultyValueProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_below="@+id/tvFacultyProfile"
+            android:textColor="@color/black"
+            android:text="математики та інформатики"
+            android:textSize="17sp" />
+
+        <View
+            android:id="@+id/lineFacultyProfile"
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/tvFacultyValueProfile"
+            android:background="@color/linesMessenger" />
 
 
-    <ImageView
-        android:layout_marginTop="10dp"
-        android:id="@+id/btnSendWallProfile"
-        android:padding="0dp"
-        android:src="@android:drawable/ic_menu_send"
-        android:layout_width="50dp"
-        android:layout_height="40dp"
-        android:background="@android:color/white"
-        android:layout_below="@+id/lineAboveEtWallProfile"
-        android:layout_marginRight="7dp"
-        android:layout_marginEnd="7dp"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="40dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="17dp"
+            android:id="@+id/imSendPhotoWallProfile"
+            android:padding="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/logo_pnu"
+            android:background="@drawable/image_profile"
+            android:layout_below="@+id/lineFacultyProfile"
+            android:contentDescription="@string/contentDescription"
 
-        android:layout_alignParentRight="true"
-        android:contentDescription="@string/contentDescription"
-        android:layout_alignParentEnd="true" />
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true" />
 
-    <View
-        android:id="@+id/lineAboveEtWallProfile"
-        android:layout_width="fill_parent"
-        android:layout_height="5dp"
-        android:layout_marginTop="15dp"
-        android:layout_below="@+id/tvFacultyValueProfile"
-        android:background="@color/lines" />
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="17dp"
+            android:id="@+id/btnSendWallPhotoProfile"
+            android:padding="0dp"
+            android:src="@drawable/btn_send_photo_wall"
+            android:background="@android:color/white"
+            android:layout_below="@+id/lineFacultyProfile"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_toRightOf="@+id/imSendPhotoWallProfile"
+            android:layout_toEndOf="@+id/imSendPhotoWallProfile"
+            android:contentDescription="@string/contentDescription"
+            />
 
-    <View
-        android:id="@+id/lineBelowEtWallProfile"
-        android:layout_width="fill_parent"
-        android:layout_height="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/btnSendWallProfile"
-        android:background="@color/lines" />
 
-    <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
-        android:id="@+id/editTextWallProfile"
-        android:layout_width="320dp"
-        android:layout_height="40dp"
-        android:background="@drawable/edittext"
-        android:hint="@string/hindEditTextAddNotes"
-        android:layout_toLeftOf="@+id/btnSendWallProfile"
-        android:layout_toStartOf="@+id/btnSendWallProfile"
+        <ImageView
+            android:layout_marginTop="14dp"
+            android:id="@+id/btnSendWallProfile"
+            android:padding="0dp"
+            android:src="@android:drawable/ic_menu_send"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:background="@android:color/white"
+            android:layout_below="@+id/lineFacultyProfile"
+            android:layout_marginRight="3dp"
+            android:layout_marginEnd="3dp"
 
-        android:drawableLeft="@drawable/emoji_recent"
-        android:drawablePadding="20dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="12dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@string/contentDescription"
+            android:layout_alignParentEnd="true" />
 
-        android:layout_toRightOf="@+id/imSendPhotoWallProfile"
+        <!--
+            <View
+                android:id="@+id/lineBelowEtWall"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"
+                android:layout_marginBottom="5dp"
+                android:layout_below="@+id/editTextWall"
+                android:background="@color/linesMessenger" />-->
 
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/lineAboveEtWallProfile"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        android:drawableStart="@drawable/emoji_recent"
-        android:paddingStart="8dp"
-        android:paddingEnd="12dp"
-        android:layout_toEndOf="@+id/imSendPhotoWallProfile"
-        android:focusable="false"/>
+        <View
+            android:id="@+id/lineAbowePostsProfile"
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/btnWallNotesProfile"
+            android:background="@color/linesMessenger" />
 
-    <RelativeLayout
-        android:id="@+id/LinearLoyoutAboweWallProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/lineBelowEtWallProfile"
-        android:layout_above="@+id/bottom_navigation_profileProfile">
+        <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
+            android:id="@+id/editTextWallProfile"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext"
+            android:hint="@string/hindEditTextAddNotes"
+            android:layout_toLeftOf="@+id/btnSendWallProfile"
+            android:layout_toStartOf="@+id/btnSendWallProfile"
+            android:layout_marginRight="7dp"
+            android:layout_marginEnd="-7dp"
+            android:drawableLeft="@drawable/emoji_recent"
+            android:drawablePadding="20dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="12dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/lineFacultyProfile"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:drawableStart="@drawable/emoji_recent"
+            android:paddingStart="8dp"
+            android:paddingEnd="12dp"
+            android:layout_toEndOf="@+id/btnSendWallPhotoProfile"
+            android:layout_toRightOf="@+id/btnSendWallPhotoProfile"
+            android:focusedByDefault="false"
+            tools:targetApi="o" />
 
 
         <Button
             android:id="@+id/btnWallNotesProfile"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="70dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
 
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
-
+            android:layout_below="@+id/editTextWallProfile"
             android:background="@android:color/white"
             android:text="@string/btnWallNotes"
             android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/tvTextWallProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="100dp"
+            android:layout_below="@+id/lineAbowePostsProfile"
+            android:layout_marginBottom="55dp"
+            android:gravity="center"
+            android:text="@string/emptyWallProfile"
+            android:background="@color/lines"
+            android:textSize="20sp" />
 
         <ImageView
             android:id="@+id/btnWallSearchProfile"
@@ -395,6 +460,7 @@
             android:paddingEnd="10dp"
             android:paddingLeft="0dp"
             android:paddingStart="0dp"
+            android:layout_below="@+id/editTextWallProfile"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:src="@android:drawable/ic_menu_search"
@@ -404,19 +470,22 @@
 
             android:contentDescription="@string/todo" />
 
-        <TextView
-            android:id="@+id/tvTextWallProfile"
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewPostProfile"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/btnWallNotesProfile"
-            android:gravity="center"
-            android:text="@string/emptyWallProfile"
-            android:background="@color/lines"
-            android:textSize="20sp" />
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="55dp"
+            android:layout_below="@+id/lineAbowePostsProfile"
+            android:stackFromBottom="false">
+
+        </androidx.recyclerview.widget.RecyclerView>
 
     </RelativeLayout>
 
 
+</ScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_profileProfile"
@@ -429,6 +498,8 @@
         app:menu="@menu/menu_bottom_navigation" />
 
 </RelativeLayout>
+
+
 
     <!--    android:drawableLeft="@drawable/edittext_wall_drawable_left"
         android:drawableStart="@drawable/edittext_wall_drawable_left"

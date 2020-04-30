@@ -33,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.social_network.pnu_app.R;
 
 import com.social_network.pnu_app.entity.Comment;
+import com.social_network.pnu_app.entity.CommentNested;
 import com.social_network.pnu_app.entity.Post;
 
 import com.social_network.pnu_app.network.NetworkStatus;
@@ -61,9 +62,9 @@ public class CommentNestedHolder extends AppCompatActivity {
 
 
 
-    public void addCommentNestedToDatabase(String keyPost, String post, String senderUserId, String keyComment) {
+    public void addCommentNestedToDatabase(String keyPost, String post, String ReceiverStudentKey, String keyComment, String senderUserId) {
         idTime = new Date().getTime();
-        referenceMyPostCommentNested = FirebaseDatabase.getInstance().getReference("students").child(senderUserId)
+        referenceMyPostCommentNested = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey)
                 .child("Posts").child(keyPost).child("Comments").child(keyComment).child("Comments").push();
 
         referenceMyPostCommentNested.setValue(new Comment(senderUserId, "text", post, idTime), idTime).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -80,9 +81,9 @@ public class CommentNestedHolder extends AppCompatActivity {
 
     }
 
-    public void deleteCommentNestedToDatabase(String keyPost,String keyComment, String senderUserId, String commentNestedKey) {
+    public void deleteCommentNestedToDatabase(String keyPost,String keyComment, String ReceiverStudentKey, String commentNestedKey) {
 
-        referenceMyPostCommentNested = FirebaseDatabase.getInstance().getReference("students").child(senderUserId)
+        referenceMyPostCommentNested = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey)
                 .child("Posts").child(keyPost).child("Comments").child(keyComment).child("Comments").child(commentNestedKey);
 
         referenceMyPostCommentNested.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -100,29 +101,44 @@ public class CommentNestedHolder extends AppCompatActivity {
     }
 
 
-    public void holderNestedComment(final String senderUserId, final RecyclerView recyclerViewComment, final String keyPost, final String keyComment) {
-        Query myCommetnsNestedReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId)
+    public void holderNestedComment(final String ReceiverStudentKey, final RecyclerView recyclerViewComment, final String keyPost, final String keyComment, final String senderUserId) {
+        Query myCommetnsNestedReference = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey)
                 .child("Posts").child(keyPost).child("Comments").child(keyComment).child("Comments");
         final DatabaseReference allStudentsReference = FirebaseDatabase.getInstance().getReference("students");
 
 
-        FirebaseRecyclerAdapter<Comment, CommentNestedViewHolder> firebaseRecyclerAdapter
-                = new FirebaseRecyclerAdapter<Comment, CommentNestedViewHolder>
+        FirebaseRecyclerAdapter<CommentNested, CommentNestedViewHolder> firebaseRecyclerAdapter
+                = new FirebaseRecyclerAdapter<CommentNested, CommentNestedViewHolder>
                 (
-                        Comment.class,
+                        CommentNested.class,
                         R.layout.comment_layout,
                         CommentNestedViewHolder.class,
                         myCommetnsNestedReference
 
                 ) {
             @Override
-            protected void populateViewHolder(final CommentNestedViewHolder commentNestedViewHolder, final Comment comment, int i) {
+            protected void populateViewHolder(final CommentNestedViewHolder commentNestedViewHolder, final CommentNested commentNested, int i) {
 
                 recyclerViewComment.scrollToPosition(i);
                 /////
                 final String currentKeyComment = getRef(i).getKey();
-                commentNestedViewHolder.actionButton(senderUserId, keyComment, comment.getKeySender(),keyPost , currentKeyComment);
-                allStudentsReference.child(comment.getKeySender()).addValueEventListener(new ValueEventListener() {
+                commentNestedViewHolder.actionButton(ReceiverStudentKey, keyComment, commentNested.getKeySender(),keyPost , currentKeyComment, senderUserId);
+
+                FirebaseDatabase.getInstance().getReference("students").child(senderUserId)
+                        .child("linkFirebaseStorageMainPhoto").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            dataSnapshot.getValue().toString();
+                            commentNestedViewHolder.setStudentComentImage(commentNestedViewHolder.mView.getContext(), dataSnapshot.getValue().toString());
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+                allStudentsReference.child(commentNested.getKeySender()).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         namePost = dataSnapshot.child("name").getValue().toString();
@@ -144,8 +160,8 @@ public class CommentNestedHolder extends AppCompatActivity {
 
 
                         final DatabaseReference referenceMyPostLikes =FirebaseDatabase.getInstance().getReference("students")
-                                .child(senderUserId).child("Posts").child(keyPost).child("Comments").child(keyComment).
-                                        child("Comments").child(currentKeyComment).child("likes").child(comment.getKeySender());
+                                .child(ReceiverStudentKey).child("Posts").child(keyPost).child("Comments").child(keyComment).
+                                        child("Comments").child(currentKeyComment).child("likes").child(commentNested.getKeySender());
 
                         referenceMyPostLikes.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -171,7 +187,7 @@ public class CommentNestedHolder extends AppCompatActivity {
                         });
 
                         FirebaseDatabase.getInstance().getReference("students")
-                                .child(senderUserId).child("Posts").child(keyPost).child("Comments").child(keyComment).child("Comments")
+                                .child(ReceiverStudentKey).child("Posts").child(keyPost).child("Comments").child(keyComment).child("Comments")
                                 .child(currentKeyComment).child("likes")
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
@@ -181,7 +197,7 @@ public class CommentNestedHolder extends AppCompatActivity {
                                             commentNestedViewHolder.setCountLike(String.valueOf(dataSnapshot.getChildrenCount()));
                                         }
                                         else{
-
+                                            commentNestedViewHolder.setCountLikeEmpty();
                                         }
                                     }
 
@@ -193,16 +209,15 @@ public class CommentNestedHolder extends AppCompatActivity {
 
                         if (linkFirebaseStorageMainPhoto != "" && commentNestedViewHolder.mView.getContext() != null) {
                             commentNestedViewHolder.setStudentImage(commentNestedViewHolder.mView.getContext(), linkFirebaseStorageMainPhoto);
-                            commentNestedViewHolder.setStudentComentImage(commentNestedViewHolder.mView.getContext(), linkFirebaseStorageMainPhoto);
                         }
 
-                        time = comment.getTime();
+                        time = commentNested.getTime();
                         LastSeenTime objTimePost = new LastSeenTime();
                         timePost= objTimePost.getTimePost(time);
 
                         commentNestedViewHolder.setTimePost(timePost);
 
-                        commentNestedViewHolder.setTextPost(comment.getText());
+                        commentNestedViewHolder.setTextPost(commentNested.getText());
 
 
                     }
@@ -219,7 +234,7 @@ public class CommentNestedHolder extends AppCompatActivity {
         recyclerViewComment.setAdapter(firebaseRecyclerAdapter);
     }
 
-    public void alertDialogSettingsCommentNested(final String keyPost, final String keyComment, Context contex, final String senderUserId, final String commentNestedKey){
+    public void alertDialogSettingsCommentNested(final String keyPost, final String keyComment, Context contex, final String ReceiverStudentKey, final String commentNestedKey){
         String mass[] = new String[] {"Видалити коментар"};
         final AlertDialog.Builder a_builder = new AlertDialog.Builder(contex);
 
@@ -228,7 +243,7 @@ public class CommentNestedHolder extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0){
                             // Delete comment
-                            deleteCommentNestedToDatabase(keyPost,keyComment, senderUserId, commentNestedKey);
+                            deleteCommentNestedToDatabase(keyPost,keyComment, ReceiverStudentKey, commentNestedKey);
                         }
 
                     }
@@ -293,11 +308,14 @@ class CommentNestedViewHolder extends RecyclerView.ViewHolder {
         tvCountLikePost = mView.findViewById(R.id.tvCountLikeComment);
         tvCountLikePost.setText(countLike);
     }
+    public void setCountLikeEmpty(){
+        tvCountLikePost = mView.findViewById(R.id.tvCountLikeComment);
+        tvCountLikePost.setText("");
+    }
 
-
-    public void actionButton(final String senderUserId, final String keyComment, final String ketSetterComment, final String keyPost, final String commentNestedKey) {
+    public void actionButton(final String ReceiverStudentKey, final String keyComment, final String ketSetterComment, final String keyPost, final String commentNestedKey, final String senderUserId) {
         final DatabaseReference referenceMyCommentNestedLikes =FirebaseDatabase.getInstance().getReference("students")
-                .child(senderUserId).child("Posts").child(keyPost).child("Comments").child(keyComment).child("Comments").child(commentNestedKey).child("likes");
+                .child(ReceiverStudentKey).child("Posts").child(keyPost).child("Comments").child(keyComment).child("Comments").child(commentNestedKey).child("likes");
 
         btnSettingComment = mView.findViewById(R.id.btnSettingComment);
         btnLikeMyComment = mView.findViewById(R.id.btnLikeMyComment);
@@ -321,7 +339,7 @@ class CommentNestedViewHolder extends RecyclerView.ViewHolder {
 
                 btnSettingComment.setEnabled(false);
                 CommentNestedHolder commentNestedHolder = new CommentNestedHolder();
-                commentNestedHolder.alertDialogSettingsCommentNested(keyPost, keyComment, mView.getContext(), senderUserId, commentNestedKey);
+                commentNestedHolder.alertDialogSettingsCommentNested(keyPost, keyComment, mView.getContext(), ReceiverStudentKey, commentNestedKey);
                 btnSettingComment.setEnabled(true);
             }
         });
@@ -348,7 +366,7 @@ class CommentNestedViewHolder extends RecyclerView.ViewHolder {
                                     }
                                 });
                             } else {
-                                referenceMyCommentNestedLikes.child(ketSetterComment).setValue(System.currentTimeMillis())
+                                referenceMyCommentNestedLikes.child(ketSetterComment).child("date").setValue(System.currentTimeMillis())
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
@@ -391,7 +409,7 @@ class CommentNestedViewHolder extends RecyclerView.ViewHolder {
                     System.out.println("comment = " + commentComment);
                     if (!commentComment.equals("")) {
                         CommentNestedHolder commentNestedHolder= new CommentNestedHolder();
-                        commentNestedHolder.addCommentNestedToDatabase(keyPost, commentComment, senderUserId, keyComment);
+                        commentNestedHolder.addCommentNestedToDatabase(keyPost, commentComment, ReceiverStudentKey, keyComment, senderUserId);
                         editTextCommentComment.setText("");
                     } else {
                         Toast.makeText(mView.getContext(), "Введіть запис!",
