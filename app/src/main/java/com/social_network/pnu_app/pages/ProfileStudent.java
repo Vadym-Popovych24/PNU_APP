@@ -3,12 +3,22 @@ package com.social_network.pnu_app.pages;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -36,13 +46,20 @@ import com.social_network.pnu_app.localdatabase.AppDatabase;
 import com.social_network.pnu_app.network.NetworkStatus;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
+import id.zelory.compressor.Compressor;
 
 
 public class ProfileStudent extends AppCompatActivity {
@@ -62,6 +79,7 @@ public class ProfileStudent extends AppCompatActivity {
     Button btnListSubscribersProfile;
     Button btnSendMessage;
     ImageView btnSendWallProfile;
+    ImageView btnSendWallPhotoProfile;
     EmojiconEditText editTextWallProfile;
 
     private String CurrentStateFriend;
@@ -113,9 +131,21 @@ public class ProfileStudent extends AppCompatActivity {
 
     int disactivateColorButtonAddToFriends;
     int disactivateColorTextButtonAddToFriends;
+    private static final int REQUEST_CODE_PERMISSION_RECEIVE_CAMERA = 102;
+    private static final int REQUEST_CODE_TAKE_PHOTO = 103;
 
+    public static Uri finalLocalFile;
+    Bitmap thumb_bitmap = null;
 
+    private File mTempPhoto;
+    private String mImageUri = "";
+    public static String SeriesIDCard;
+    public String dirImages = "images/";
+    static long countMyPosts;
 
+    public String pathToFirebaseStorage;
+    Query AlienPostsReference;
+    Button btnWallNotesProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,8 +210,6 @@ public class ProfileStudent extends AppCompatActivity {
         studentsReference.keepSynced(true);
 
 
-
-
         // Colors
         activeColorButtonAddToFriends = getResources().getColor(R.color.lines);
         activeColorTextButtonAddToFriends = getResources().getColor(R.color.btn_sign_in);
@@ -204,6 +232,7 @@ public class ProfileStudent extends AppCompatActivity {
         tvFormStudyingValue = findViewById(R.id.tvFormStudyingValueProfile);
         tvOnlineProfile = findViewById(R.id.tvOnlineProfile);
 
+
         btnAddToFriends.setOnClickListener(btnlistener);
         btnlistFriends.setOnClickListener(btnlistener);
         btnListSubscribersProfile.setOnClickListener(btnlistener);
@@ -212,17 +241,28 @@ public class ProfileStudent extends AppCompatActivity {
         btnSendWallProfile = findViewById(R.id.btnSendWallProfile);
         btnSendWallProfile.setOnClickListener(btnlistener);
 
+        btnSendWallPhotoProfile = findViewById(R.id.btnSendWallPhotoProfile);
+        btnSendWallPhotoProfile.setOnClickListener(btnlistener);
+
+        btnWallNotesProfile = findViewById(R.id.btnWallNotesProfile);
+
         recyclerViewPostProfile = findViewById(R.id.recyclerViewPostProfile);
         recyclerViewPostProfile.setLayoutManager(new LinearLayoutManager(this));
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_profileProfile);
         bottomNavigationView.setSelectedItemId((R.id.action_main_student_page));
 
+        AlienPostsReference = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey).child("Posts")
+                .orderByPriority();
+
         editTextWallProfile = findViewById(R.id.editTextWallProfile);
         tvTextWallProfile = findViewById(R.id.tvTextWallProfile);
 
+        SeriesIDCard = getStudentSeriesIDCard(AppDatabase.getAppDatabase(ProfileStudent.this));
         CurrentStateFriend = "notFriend";
 
+
+        pathToFirebaseStorage = dirImages + SeriesIDCard + "/";
         menuChanges(bottomNavigationView);
 
         imStudentMainPhoto = findViewById(R.id.imStudentMainPhotoProfile);
@@ -238,6 +278,12 @@ public class ProfileStudent extends AppCompatActivity {
       public String getKeyCurrentStudend(final AppDatabase db) {
         String keyStudent = db.studentDao().getKeyStudent();
         return keyStudent;
+    }
+
+    public String getStudentSeriesIDCard(final AppDatabase db){
+        int currentStudent = Integer.parseInt(db.studentDao().getCurrentStudent());
+        String SeriesIDCard = db.studentDao().getSeriesBYId(currentStudent);
+        return SeriesIDCard;
     }
 
 
@@ -315,6 +361,27 @@ public class ProfileStudent extends AppCompatActivity {
                                     Toast.LENGTH_LONG).show();
                         }
                     }
+                });
+
+
+                AlienPostsReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        countMyPosts = dataSnapshot.getChildrenCount();
+                        btnWallNotesProfile.setText("Записи " + countMyPosts);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        NetworkStatus network = new NetworkStatus();
+                        if (!network.isOnline()) {
+                            // progressBar.setVisibility(View.GONE);
+                            Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+
                 });
 
                 tvPIBvalue.setText(lastName + " " + name);
@@ -606,6 +673,176 @@ public class ProfileStudent extends AppCompatActivity {
                 });
     }
 
+    public void addPhoto() {
+        //Проверяем разрешение на работу с камеройMainStudentPage
+        boolean isCameraPermissionGranted = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        //Проверяем разрешение на работу с внешнем хранилещем телефона
+        boolean isWritePermissionGranted = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        //Если разрешения != true
+        if (!isCameraPermissionGranted || !isWritePermissionGranted) {
+
+            String[] permissions;//Разрешения которые хотим запросить у пользователя
+
+            if (!isCameraPermissionGranted && !isWritePermissionGranted) {
+                permissions = new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            } else if (!isCameraPermissionGranted) {
+                permissions = new String[]{android.Manifest.permission.CAMERA};
+            } else {
+                permissions = new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            }
+            //Запрашиваем разрешения у пользователя
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSION_RECEIVE_CAMERA);
+        } else {
+            //Если все разрешения получены
+            try {
+                mTempPhoto = createTempImageFile(getExternalCacheDir());
+                mImageUri = mTempPhoto.getAbsolutePath();
+
+                //Создаём лист с интентами для работы с изображениями
+                List<Intent> intentList = new ArrayList<>();
+                Intent chooserIntent = null;
+
+
+                Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                takePhotoIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempPhoto));
+
+                intentList = addIntentsToList(this, intentList, pickIntent);
+                intentList = addIntentsToList(this, intentList, takePhotoIntent);
+
+                if (!intentList.isEmpty()) {
+                    chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1), "Choose your image source");
+                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
+                }
+
+                /*После того как пользователь закончит работу с приложеним(которое работает с изображениями)
+                 будет вызван метод onActivityResult
+                */
+                startActivityForResult(chooserIntent, REQUEST_CODE_TAKE_PHOTO);
+            } catch (IOException e) {
+                Log.e("ERROR", e.getMessage(), e);
+            }
+        }
+    }
+
+
+    //Абсолютний шлях файлу із Uri
+    private String getRealPathFromURI(Uri uri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
+        @SuppressWarnings("deprecation")
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        int columnIndex = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(columnIndex);
+    }
+    /*
+      File storageDir -  шлях до кешу
+     */
+    public static File createTempImageFile(File storageDir) throws IOException {
+
+        // Генерируем имя файла
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());//получаем время
+        String imageFileName = "photo_" + timeStamp;//состовляем имя файла
+
+        //Создаём файл
+        return File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+    }
+
+    /*
+    Метод для добавления интента в список інтентів
+    */
+    public static List<Intent> addIntentsToList(Context context, List<Intent> list, Intent intent) {
+        List<ResolveInfo> resInfo = context.getPackageManager().queryIntentActivities(intent, 0);
+        for (ResolveInfo resolveInfo : resInfo) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            Intent targetedIntent = new Intent(intent);
+            targetedIntent.setPackage(packageName);
+            list.add(targetedIntent);
+        }
+        return list;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_TAKE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    if (data != null && data.getData() != null) {
+                        mImageUri = getRealPathFromURI(data.getData());
+
+                        finalLocalFile = Uri.parse(getRealPathFromURI(data.getData()));
+                        Uri resultUri = finalLocalFile;
+                        File thumb_filePathUri = new File(resultUri.getPath());
+
+                        try {
+                            thumb_bitmap = new Compressor(this)
+                                    .setMaxWidth(500)
+                                    .setMaxHeight(500)
+                                    .setQuality(75)
+                                    .compressToBitmap(thumb_filePathUri);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 75, byteArrayOutputStream);
+                        final byte[] thumb_byte = byteArrayOutputStream.toByteArray();
+
+                        /*
+                        Toast.makeText(MainStudentPage.this, "onActivityResult " + finalLocalFile,
+                                Toast.LENGTH_LONG).show();*/
+
+
+                            String post = editTextWallProfile.getText().toString();
+                            System.out.println("post = " + post);
+                            //  if (!post.equals("")) {
+                            PostHolder posts = new PostHolder();
+                            posts.addPostToDatabase(post, senderUserId, data.getData(),thumb_byte, pathToFirebaseStorage, ReceiverStudentKey);
+                        editTextWallProfile.setText("");
+                        /*    } else {
+                                Toast.makeText(MainStudentPage.this, "Введіть запис!",
+                                        Toast.LENGTH_SHORT).show();
+                            }*/
+
+
+
+                    }/* else if (mImageUri != null) {
+                        mImageUri = Uri.fromFile(mTempPhoto).toString();
+                        Toast.makeText(MainStudentPage.this, "onActivityResult 2" + finalLocalFile,
+                                Toast.LENGTH_LONG).show();
+                        uploadFileInFireBaseStorage(Uri.fromFile((mTempPhoto)));
+                        Picasso.with(this)
+                                .load(mImageUri)
+                                .placeholder(R.drawable.logo_pnu)
+                                .error(R.drawable.com_facebook_tooltip_black_xout)
+                                .centerInside()
+                                .fit()
+                           //     .resize(100,100)
+                                .into(imSendPhotoWall);
+
+                        Picasso.with(getBaseContext())
+                                .load(data.getData())
+                                .error(R.drawable.com_facebook_tooltip_black_xout)
+                                .placeholder(R.drawable.logo_pnu)
+                                .centerInside()
+                                .fit()
+                             //   .resize(100,100)
+                                .into(imStudentMainPhoto);
+
+
+                    }*/
+                }
+                break;
+        }
+    }
 
     View.OnClickListener btnlistener = new View.OnClickListener() {
 
@@ -664,12 +901,12 @@ public class ProfileStudent extends AppCompatActivity {
                     break;
 
                 case R.id.btnSendWallProfile:
-                    if (!network.isOnline()) {
+                 /*   if (!network.isOnline()) {
                         // progressBar.setVisibility(View.GONE);
                         Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
                                 Toast.LENGTH_LONG).show();
                     } else {
-
+*/
                         String post = editTextWallProfile.getText().toString();
                         System.out.println("post = " + post);
                         if (!post.equals("")) {
@@ -680,7 +917,16 @@ public class ProfileStudent extends AppCompatActivity {
                             Toast.makeText(ProfileStudent.this, "Введіть запис!",
                                     Toast.LENGTH_SHORT).show();
                         }
+                        // }
+                    break;
+                case R.id.btnSendWallPhotoProfile:
 
+                    if (!network.isOnline()) {
+                        // progressBar.setVisibility(View.GONE);
+                        Toast.makeText(ProfileStudent.this, " Please Connect to Internet",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        addPhoto();
                     }
                     break;
             }

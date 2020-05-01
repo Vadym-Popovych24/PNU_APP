@@ -124,7 +124,7 @@ public class MainStudentPage extends AppCompatActivity {
     String faculty;
     String linkFirebaseStorageMainPhoto;
 
-    String btnNamePress;
+   static String btnNamePress;
 
     static String linkStorageFromFireBase;
 
@@ -182,7 +182,8 @@ public class MainStudentPage extends AppCompatActivity {
         senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(MainStudentPage.this));
 
         studentsReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId);
-        myPostsReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId).child("Posts").orderByPriority();
+        myPostsReference = FirebaseDatabase.getInstance().getReference("students").child(senderUserId).child("Posts")
+                .orderByPriority();
 
         referenceMyFriends = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).
                 child("Friends");
@@ -549,7 +550,7 @@ public class MainStudentPage extends AppCompatActivity {
         }
     }
 
-    //Получаем абсолютный путь файла из Uri
+    //Абсолютний шлях файлу із Uri
     private String getRealPathFromURI(Uri uri) {
         String[] projection = {MediaStore.Images.Media.DATA};
         @SuppressWarnings("deprecation")
@@ -561,10 +562,8 @@ public class MainStudentPage extends AppCompatActivity {
     }
 
     /*
-      File storageDir -  абсолютный путь к каталогу конкретного приложения на
-      основном общем /внешнем устройстве хранения, где приложение может размещать
-      файлы кеша, которыми он владеет.
-     */
+     File storageDir -  шлях до кешу
+    */
     public static File createTempImageFile(File storageDir) throws IOException {
 
         // Генерируем имя файла
@@ -580,7 +579,7 @@ public class MainStudentPage extends AppCompatActivity {
     }
 
     /*
-    Метод для добавления интента в лист интентов
+    Метод для добавления интента в список інтентів
     */
     public static List<Intent> addIntentsToList(Context context, List<Intent> list, Intent intent) {
         List<ResolveInfo> resInfo = context.getPackageManager().queryIntentActivities(intent, 0);
@@ -754,11 +753,11 @@ public class MainStudentPage extends AppCompatActivity {
                     break;
 
                 case R.id.btnSendWall:
-                    if (!network.isOnline()) {
+               /*     if (!network.isOnline()) {
                         // progressBar.setVisibility(View.GONE);
                         Toast.makeText(MainStudentPage.this, " Please Connect to Internet",
                                 Toast.LENGTH_LONG).show();
-                    } else {
+                    } else {*/
 
                         String post = editTextPost.getText().toString();
                         System.out.println("post = " + post);
@@ -769,7 +768,7 @@ public class MainStudentPage extends AppCompatActivity {
                         } else {
                             Toast.makeText(MainStudentPage.this, "Введіть запис!",
                                     Toast.LENGTH_SHORT).show();
-                        }
+                   //     }
 
                     }
                     break;
@@ -787,6 +786,7 @@ public class MainStudentPage extends AppCompatActivity {
                     }
 
                     break;
+
             }
         }
     };

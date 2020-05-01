@@ -11,6 +11,7 @@ import android.os.Build;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,12 +56,14 @@ import java.util.List;
 
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
 
 public class PostHolder extends AppCompatActivity {
 
     DatabaseReference referenceMyPost;
+    DatabaseReference referenceAlienPost;
     long idTime;
     long countPost;
     String currentPostedUser;
@@ -70,6 +73,58 @@ public class PostHolder extends AppCompatActivity {
     String timePost;
     String linkFirebaseStoragePostPhoto;
     String keyPost;
+
+    public static String SeriesIDCard;
+    public String dirImages = "images/";
+    public String pathToFirebaseStorage;
+
+
+
+    public void SharePost(final Post post, String senderUserId, final String ReceiverStudentKey, final String keyPost){
+        idTime = new Date().getTime();
+        long minusIdTime = -1 * idTime;
+
+     /*   if (ReceiverStudentKey == ""){
+            ReceiverStudentKey = senderUserId;
+        }*/
+
+        referenceMyPost = FirebaseDatabase.getInstance().getReference("students").child(senderUserId).child("Posts").push();
+
+        referenceMyPost.setValue(post, minusIdTime).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                referenceMyPost.child("countShare").setValue(0)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+
+                referenceAlienPost = FirebaseDatabase.getInstance().getReference("students")
+                        .child(ReceiverStudentKey).child("Posts").child(keyPost).child("countShare");
+
+                referenceAlienPost.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() == null) {
+                            referenceAlienPost.setValue(1);
+                        }
+                        else{
+                            long countShare = (long) dataSnapshot.getValue();
+                            countShare++;
+                            referenceAlienPost.setValue(countShare);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+                            }
+                        });
+            }
+        });
+    }
+
 
     public void addPostToDatabase(String post, String senderUserId, final Uri photo, final byte[] thumb_byte, final String pathToFirebaseStorage, String ReceiverStudentKey) {
         idTime = new Date().getTime();
@@ -81,7 +136,7 @@ public class PostHolder extends AppCompatActivity {
 
         referenceMyPost = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey).child("Posts").push();
 
-        referenceMyPost.setValue(new Post(senderUserId, "text", post, idTime), minusIdTime).addOnCompleteListener(new OnCompleteListener<Void>() {
+        referenceMyPost.setValue(new Post(senderUserId, "text", post, idTime, 0), minusIdTime).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
@@ -190,6 +245,12 @@ public class PostHolder extends AppCompatActivity {
                 /////
             //    recyclerViewPost.scrollToPosition(i);
 
+                if (post.getKeySender() != senderUserId){
+                    postViewHolder.disableBtnSettingPost();
+                }
+                else {
+                    postViewHolder.setVisivbleBtnSettingPost();
+                }
 
                 if (post.getLinkFirebaseStoragePostPhoto() != null) {
                     postViewHolder.setStudentPostImage(postViewHolder.mView.getContext(), post.getLinkFirebaseStoragePostPhoto());
@@ -237,21 +298,22 @@ public class PostHolder extends AppCompatActivity {
 
 
                         postViewHolder.setStudentName(namePost, lastNamePost);
-                        postViewHolder.actionButton(senderUserId, currentKeyPost, post.getKeySender(), ReceiverStudentKey);
+                        postViewHolder.actionButton(senderUserId, currentKeyPost, post.getKeySender(), ReceiverStudentKey, post);
 
 
                         final DatabaseReference referenceMyPostLikes =FirebaseDatabase.getInstance().getReference("students")
-                                .child(ReceiverStudentKey).child("Posts").child(currentKeyPost).child("likes").child(post.getKeySender()).child("date");
+                                .child(ReceiverStudentKey).child("Posts").child(currentKeyPost).child("likes");
 
                         referenceMyPostLikes.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 try {
                                     if (dataSnapshot.exists()) {
-                                        postViewHolder.setLikeOn();
-                                    }
-                                    else {
-                                        postViewHolder.setLikeOff();
+                                        if (dataSnapshot.hasChild(senderUserId)) {
+                                            postViewHolder.setLikeOn();
+                                        } else {
+                                            postViewHolder.setLikeOff();
+                                        }
                                     }
                                 }
                                 catch (NullPointerException e){
@@ -308,6 +370,13 @@ public class PostHolder extends AppCompatActivity {
 
                                     }
                                 });
+
+                        if (post.getCountShare() != 0){
+                            postViewHolder.setPostShareCount(post.getCountShare());
+                        }
+                        else {
+                            postViewHolder.disablePostShareCount();
+                        }
 
                         if (linkFirebaseStorageMainPhoto != "" && postViewHolder.mView.getContext() != null) {
                             postViewHolder.setStudentImage(postViewHolder.mView.getContext(), linkFirebaseStorageMainPhoto);
@@ -392,7 +461,13 @@ class PostViewHolder extends RecyclerView.ViewHolder {
     RecyclerView recyclerViewComentPost;
     EmojiconEditText editTextCommentPost;
     TextView tvCountLikePost;
+    ImageView btnShareMyPost;
     public TextView tvCountComentPost;
+
+    ImageView emoji_button_comment;
+    private EmojIconActions emojIconActions;
+    RelativeLayout rlCommentPost;
+
 
     public RecyclerView getRecyclerViewComentPost(){
         recyclerViewComentPost= mView.findViewById(R.id.recyclerViewComentPost);
@@ -434,10 +509,20 @@ class PostViewHolder extends RecyclerView.ViewHolder {
         tvCountComentPost.setText("");
     }
 
+    public void disableBtnSettingPost(){
+        btnSettingsPost = mView.findViewById(R.id.btnSettingPost);
+        btnSettingsPost.setVisibility(View.GONE);
+    }
 
-    public void actionButton(final String senderUserId, final String keyPost, final String keySetterLike, final String ReceiverStudentKey) {
+    public void setVisivbleBtnSettingPost(){
+        btnSettingsPost = mView.findViewById(R.id.btnSettingPost);
+        btnSettingsPost.setVisibility(View.VISIBLE);
+    }
+
+
+    public void actionButton(final String senderUserId, final String keyPost, final String keySetterLike, final String ReceiverStudentKey, final Post post) {
         final DatabaseReference referenceMyPostLikes =FirebaseDatabase.getInstance().getReference("students")
-                .child(ReceiverStudentKey).child("Posts").child(keyPost).child("likes").child(keySetterLike).child("date");
+                .child(ReceiverStudentKey).child("Posts").child(keyPost).child("likes").child(senderUserId).child("date");
 
         btnSettingsPost = mView.findViewById(R.id.btnSettingPost);
         btnLikeMyPost =mView.findViewById(R.id.btnLikeMyPost);
@@ -469,7 +554,7 @@ class PostViewHolder extends RecyclerView.ViewHolder {
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                //         setLikeOn();
+                                                         setLikeOn();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -482,7 +567,7 @@ class PostViewHolder extends RecyclerView.ViewHolder {
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                //        setLikeOff();
+                                                       setLikeOff();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -506,28 +591,32 @@ class PostViewHolder extends RecyclerView.ViewHolder {
         });
 
         editTextCommentPost = mView.findViewById(R.id.editTextCommentPost);
+        emoji_button_comment = mView.findViewById(R.id.emoji_button_comment);
+        rlCommentPost = mView.findViewById(R.id.rlCommentPost);
+        emojIconActions = new EmojIconActions(mView.getContext(), rlCommentPost, editTextCommentPost, emoji_button_comment);
+        emojIconActions.ShowEmojIcon();
         sendComentOnPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NetworkStatus network = new NetworkStatus();
+           /*     NetworkStatus network = new NetworkStatus();
                 if (!network.isOnline()) {
                     // progressBar.setVisibility(View.GONE);
                     Toast.makeText(mView.getContext(), " Please Connect to Internet",
                             Toast.LENGTH_LONG).show();
-                } else {
+                } else {*/
 
                     String comment = editTextCommentPost.getText().toString();
                     System.out.println("comment = " + comment);
                     if (!comment.equals("")) {
                         CommentHolder commentHolder= new CommentHolder();
-                        commentHolder.addCommentToDatabase(keyPost, comment, senderUserId, ReceiverStudentKey);
+                        commentHolder.addCommentToDatabase(keyPost, comment, senderUserId, ReceiverStudentKey,null,null,null);
                         editTextCommentPost.setText("");
                     } else {
                         Toast.makeText(mView.getContext(), "Введіть запис!",
                                 Toast.LENGTH_SHORT).show();
                     }
 
-                }
+             //   }
             }
         });
 
@@ -546,6 +635,44 @@ class PostViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
+        final ImageView image = mView.findViewById(R.id.btnSendWallPhotoComment);
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProfileStudent profileStudent = new ProfileStudent();
+                profileStudent.addPhoto();
+            NetworkStatus network = new NetworkStatus();
+                if (!network.isOnline()) {
+                    // progressBar.setVisibility(View.GONE);
+                    Toast.makeText(mView.getContext(), " Please Connect to Internet",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    profileStudent.addPhoto();
+                }
+            }
+        });
+
+
+        btnShareMyPost = mView.findViewById(R.id.btnShareMyPost);
+        btnShareMyPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PostHolder postHolder = new PostHolder();
+                postHolder.SharePost(post, senderUserId, ReceiverStudentKey, keyPost);
+            }
+        });
+
+    }
+
+    public void setPostShareCount(int countSharePost){
+        TextView tvCountSharePost = mView.findViewById(R.id.tvCountSharePost);
+        tvCountSharePost.setText(String.valueOf(countSharePost));
+    }
+
+
+    public void disablePostShareCount(){
+        TextView tvCountSharePost = mView.findViewById(R.id.tvCountSharePost);
+        tvCountSharePost.setVisibility(View.GONE);
     }
 
     public void disablePostImage(){
@@ -559,16 +686,18 @@ class PostViewHolder extends RecyclerView.ViewHolder {
         timeLastMessage.setVisibility(View.GONE);
     }
 
+
     public void setStudentPostImage(final Context context, final String studentImage) {
         final ImageView image = mView.findViewById(R.id.ImagePost);
-        image.setMinimumHeight(700);
-        image.setMinimumWidth(800);
+        image.setMinimumHeight(500);
+        image.setMinimumWidth(600);
         Picasso.with(context)
                 .load(studentImage)
                 .networkPolicy(NetworkPolicy.OFFLINE)
                 .placeholder(R.drawable.com_facebook_auth_dialog_background)
                 .error(R.drawable.com_facebook_close)
                 .resize(800,700)
+                .centerCrop()
                 .into(image, new Callback() {
                     @Override
                     public void onSuccess() {
@@ -583,7 +712,7 @@ class PostViewHolder extends RecyclerView.ViewHolder {
                                         .load(studentImage)
                                         .placeholder(R.drawable.logo_pnu)
                                         .error(R.drawable.com_facebook_close)
-                                        .resize(800,1200)
+                                        .resize(800,700)
                                         .into(image);
                             }
                         } else {

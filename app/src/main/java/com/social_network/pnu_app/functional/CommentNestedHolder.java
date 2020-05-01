@@ -46,6 +46,7 @@ import java.util.Date;
 
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
 
@@ -161,17 +162,18 @@ public class CommentNestedHolder extends AppCompatActivity {
 
                         final DatabaseReference referenceMyPostLikes =FirebaseDatabase.getInstance().getReference("students")
                                 .child(ReceiverStudentKey).child("Posts").child(keyPost).child("Comments").child(keyComment).
-                                        child("Comments").child(currentKeyComment).child("likes").child(commentNested.getKeySender());
+                                        child("Comments").child(currentKeyComment).child("likes");
 
                         referenceMyPostLikes.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 try {
                                     if (dataSnapshot.exists()) {
-                                        commentNestedViewHolder.setLikeOn();
-                                    }
-                                    else {
-                                        commentNestedViewHolder.setLikeOff();
+                                        if (dataSnapshot.hasChild(senderUserId)) {
+                                            commentNestedViewHolder.setLikeOn();
+                                        } else {
+                                            commentNestedViewHolder.setLikeOff();
+                                        }
                                     }
                                 }
                                 catch (NullPointerException e){
@@ -292,7 +294,11 @@ class CommentNestedViewHolder extends RecyclerView.ViewHolder {
     LinearLayout LLCommentCommentMy;
     ImageView sendComentOnComment;
     View lineBelowEtWallComment;
+
+    private EmojIconActions emojIconActions;
     EmojiconEditText editTextCommentComment;
+    ImageView emoji_button_commentcomment;
+    RelativeLayout rlCommentComment;
 
     public void setLikeOn(){
         btnLikeMyComment.setBackground(mView.getContext().getResources().getDrawable(R.drawable.btn_like_press));
@@ -352,12 +358,12 @@ class CommentNestedViewHolder extends RecyclerView.ViewHolder {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         try {
-                            if (dataSnapshot.hasChild(ketSetterComment)) {
-                                referenceMyCommentNestedLikes.child(ketSetterComment).removeValue()
+                            if (dataSnapshot.hasChild(senderUserId)) {
+                                referenceMyCommentNestedLikes.child(senderUserId).removeValue()
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                //         setLikeOn();
+                                                         setLikeOn();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -366,11 +372,11 @@ class CommentNestedViewHolder extends RecyclerView.ViewHolder {
                                     }
                                 });
                             } else {
-                                referenceMyCommentNestedLikes.child(ketSetterComment).child("date").setValue(System.currentTimeMillis())
+                                referenceMyCommentNestedLikes.child(senderUserId).child("date").setValue(System.currentTimeMillis())
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                //        setLikeOff();
+                                                        setLikeOff();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -394,15 +400,20 @@ class CommentNestedViewHolder extends RecyclerView.ViewHolder {
         });
 
         editTextCommentComment = mView.findViewById(R.id.editTextCommentComment);
+        emoji_button_commentcomment = mView.findViewById(R.id.emoji_button_commentcomment);
+        rlCommentComment = mView.findViewById(R.id.rlCommentComment);
+        emojIconActions = new EmojIconActions(mView.getContext(), rlCommentComment, editTextCommentComment, emoji_button_commentcomment);
+        emojIconActions.ShowEmojIcon();
+
         sendComentOnComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NetworkStatus network = new NetworkStatus();
+   /*             NetworkStatus network = new NetworkStatus();
                 if (!network.isOnline()) {
                     // progressBar.setVisibility(View.GONE);
                     Toast.makeText(mView.getContext(), " Please Connect to Internet",
                             Toast.LENGTH_LONG).show();
-                } else {
+                } else {*/
 
                     String commentComment;
                     commentComment = editTextCommentComment.getText().toString();
@@ -416,7 +427,7 @@ class CommentNestedViewHolder extends RecyclerView.ViewHolder {
                                 Toast.LENGTH_SHORT).show();
                     }
 
-                }
+            //    }
             }
         });
 

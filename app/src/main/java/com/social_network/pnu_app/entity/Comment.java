@@ -7,12 +7,23 @@ public class Comment {
     String text;
     long time;
 
+
+    String linkFirebaseStoragePostPhoto;
+
     Comment(){}
     public Comment(String keySender, String type, String text, long time){
         this.keySender = keySender;
         this.type = type;
         this.text = text;
         this.time = time;
+    }
+
+    public Comment(String keySender, String type, String text, long time, String linkFirebaseStoragePostPhoto){
+        this.keySender = keySender;
+        this.type = type;
+        this.text = text;
+        this.time = time;
+        this.linkFirebaseStoragePostPhoto = linkFirebaseStoragePostPhoto;
     }
 
     public String getKeySender() {
@@ -45,5 +56,14 @@ public class Comment {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+
+    public String getLinkFirebaseStoragePostPhoto() {
+        return linkFirebaseStoragePostPhoto;
+    }
+
+    public void setLinkFirebaseStoragePostPhoto(String linkFirebaseStoragePostPhoto) {
+        this.linkFirebaseStoragePostPhoto = linkFirebaseStoragePostPhoto;
     }
 }

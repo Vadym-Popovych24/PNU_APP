@@ -112,7 +112,8 @@
         </activity>
         <activity
             android:name=".pages.ProfileStudent"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="com.social_network.pnu_app.pages.ProfileStudent" />
 

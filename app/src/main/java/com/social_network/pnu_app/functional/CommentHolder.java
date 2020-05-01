@@ -5,6 +5,7 @@ package com.social_network.pnu_app.functional;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.view.View;
 import android.widget.Button;
@@ -31,6 +32,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.social_network.pnu_app.R;
 
 import com.social_network.pnu_app.entity.Comment;
@@ -46,6 +50,7 @@ import java.util.Date;
 
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
 
@@ -59,10 +64,13 @@ public class CommentHolder extends AppCompatActivity {
     String lastNamePost;
     long time;
     String timePost;
+    String keyComment;
+    String linkFirebaseStoragePostPhoto;
 
 
 
-    public void addCommentToDatabase(String keyPost, String comment, String senderUserId, String ReceiverStudentKey) {
+    public void addCommentToDatabase(final String keyPost, String comment, String senderUserId, String ReceiverStudentKey,
+                                     final Uri photo, final byte[] thumb_byte, final String pathToFirebaseStorage) {
         idTime = new Date().getTime();
         referenceMyPostComent = FirebaseDatabase.getInstance().getReference("students").child(ReceiverStudentKey)
                 .child("Posts").child(keyPost).child("Comments").push();
@@ -70,7 +78,40 @@ public class CommentHolder extends AppCompatActivity {
         referenceMyPostComent.setValue(new Comment(senderUserId, "text", comment, idTime), idTime).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+                referenceMyPostComent.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        keyComment = dataSnapshot.getKey();
+                        if (photo != null){
+                            StorageReference mStorageRef;
+                            mStorageRef = FirebaseStorage.getInstance().getReference();
 
+
+
+                            mStorageRef.child(pathToFirebaseStorage + keyPost + keyComment).putBytes(thumb_byte).addOnCompleteListener(
+                                    new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                            String castomPathToFirebaseStorage = pathToFirebaseStorage.replace("/", "%2F");
+                                            linkFirebaseStoragePostPhoto = "https://firebasestorage.googleapis.com/v0/b/pnu-app.appspot.com/o/"
+                                                    .concat(castomPathToFirebaseStorage).concat(keyPost).concat(keyComment).concat("?alt=media&");
+
+                                            referenceMyPostComent.child("linkFirebaseStoragePostPhoto").setValue(linkFirebaseStoragePostPhoto).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+
+                                                }
+                                            });
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -123,7 +164,15 @@ public class CommentHolder extends AppCompatActivity {
                 /////
                 final String currentKeyComment = getRef(i).getKey();
 
+                // Comments with comment Image setters
+             /*   if (comment.getLinkFirebaseStoragePostPhoto() != null) {
+                    commentViewHolder.setStudentCommentContet(commentViewHolder.mView.getContext(), comment.getLinkFirebaseStoragePostPhoto());
+                }
+                else { commentViewHolder.disableCommentImage();}
 
+                if (comment.getText().equals("")){
+                    commentViewHolder.disableCommentText();
+                }*/
 
                 FirebaseDatabase.getInstance().getReference("students").child(senderUserId)
                         .child("linkFirebaseStorageMainPhoto").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -166,17 +215,19 @@ public class CommentHolder extends AppCompatActivity {
 
 
                         final DatabaseReference referenceMyPostLikes =FirebaseDatabase.getInstance().getReference("students")
-                                .child(ReceiverStudentKey).child("Posts").child(keyPost).child("Comments").child(currentKeyComment).child("likes").child(comment.getKeySender());
+                                .child(ReceiverStudentKey).child("Posts").child(keyPost).child("Comments")
+                                .child(currentKeyComment).child("likes");
 
                         referenceMyPostLikes.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 try {
                                     if (dataSnapshot.exists()) {
-                                        commentViewHolder.setLikeOn();
-                                    }
-                                    else {
-                                        commentViewHolder.setLikeOff();
+                                        if (dataSnapshot.hasChild(senderUserId)) {
+                                            commentViewHolder.setLikeOn();
+                                        } else {
+                                            commentViewHolder.setLikeOff();
+                                        }
                                     }
                                 }
                                 catch (NullPointerException e){
@@ -294,8 +345,15 @@ class CommentViewHolder extends RecyclerView.ViewHolder {
     LinearLayout LLCommentCommentMy;
     ImageView sendComentOnComment;
     View lineBelowEtWallComment;
+
+    private EmojIconActions emojIconActions;
     EmojiconEditText editTextCommentComment;
+    ImageView emoji_button_commentcomment;
+    RelativeLayout rlCommentComment;
+
+
     RecyclerView recyclerViewComentComment;
+
 
 
     public void setLikeOn(){
@@ -363,12 +421,12 @@ class CommentViewHolder extends RecyclerView.ViewHolder {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         try {
-                            if (dataSnapshot.hasChild(ketSetterComment)) {
-                                referenceMyCommentLikes.child(ketSetterComment).removeValue()
+                            if (dataSnapshot.hasChild(senderUserId)) {
+                                referenceMyCommentLikes.child(senderUserId).removeValue()
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                //         setLikeOn();
+                                                        setLikeOn();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -377,11 +435,11 @@ class CommentViewHolder extends RecyclerView.ViewHolder {
                                     }
                                 });
                             } else {
-                                referenceMyCommentLikes.child(ketSetterComment).child("date").setValue(System.currentTimeMillis())
+                                referenceMyCommentLikes.child(senderUserId).child("date").setValue(System.currentTimeMillis())
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                //        setLikeOff();
+                                                        setLikeOff();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -405,15 +463,21 @@ class CommentViewHolder extends RecyclerView.ViewHolder {
         });
 
         editTextCommentComment = mView.findViewById(R.id.editTextCommentComment);
+        emoji_button_commentcomment = mView.findViewById(R.id.emoji_button_commentcomment);
+        rlCommentComment = mView.findViewById(R.id.rlCommentComment);
+        emojIconActions = new EmojIconActions(mView.getContext(), rlCommentComment, editTextCommentComment, emoji_button_commentcomment);
+        emojIconActions.ShowEmojIcon();
+
+        editTextCommentComment = mView.findViewById(R.id.editTextCommentComment);
         sendComentOnComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NetworkStatus network = new NetworkStatus();
+         /*       NetworkStatus network = new NetworkStatus();
                 if (!network.isOnline()) {
                     // progressBar.setVisibility(View.GONE);
                     Toast.makeText(mView.getContext(), " Please Connect to Internet",
                             Toast.LENGTH_LONG).show();
-                } else {
+                } else {*/
 
                     String commentComment = editTextCommentComment.getText().toString();
                     System.out.println("comment = " + commentComment);
@@ -426,12 +490,68 @@ class CommentViewHolder extends RecyclerView.ViewHolder {
                                 Toast.LENGTH_SHORT).show();
                     }
 
-                }
+            //    }
             }
         });
 
 
+
     }
+
+
+/*    public void disableCommentImage(){
+        ImageView image = mView.findViewById(R.id.ImagePostComment);
+        image.setVisibility(View.GONE);
+    }
+
+
+    public void disableCommentText(){
+        TextView timeLastMessage = mView.findViewById(R.id.tvCommentContent);
+        timeLastMessage.setVisibility(View.GONE);
+    }*/
+
+   /* public void setStudentCommentContet(final Context context, final String studentImage) {
+        final ImageView image = mView.findViewById(R.id.ImagePostComment);
+        image.setMinimumHeight(300);
+        image.setMinimumWidth(400);
+        Picasso.with(context)
+                .load(studentImage)
+                .networkPolicy(NetworkPolicy.OFFLINE)
+                .placeholder(R.drawable.com_facebook_auth_dialog_background)
+                .error(R.drawable.com_facebook_close)
+                .resize(400,300)
+                .centerCrop()
+                .into(image, new Callback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+                        if (studentImage != null) {
+                            if (!studentImage.isEmpty()) {
+                                Picasso.with(context)
+                                        .load(studentImage)
+                                        .placeholder(R.drawable.logo_pnu)
+                                        .error(R.drawable.com_facebook_close)
+                                        .resize(800,1200)
+                                        .into(image);
+                            }
+                        } else {
+                            Picasso.with(context)
+                                    .load(R.drawable.com_facebook_profile_picture_blank_square)
+                                    .placeholder(R.drawable.logo_pnu)
+                                    .error(R.drawable.com_facebook_close)
+                                    .centerCrop()
+                                    .fit()
+                                    //.resize(1920,2560)
+                                    .into(image);
+                        }
+
+                    }
+                });
+    }*/
 
     public void setStudentComentImage(final Context context, final String studentImage) {
         final CircleImageView image = mView.findViewById(R.id.comment_profile_image_coment);

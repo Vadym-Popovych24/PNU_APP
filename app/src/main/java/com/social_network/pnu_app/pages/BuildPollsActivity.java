@@ -6,17 +6,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.social_network.pnu_app.R;
 import com.social_network.pnu_app.entity.Friends;
 import com.social_network.pnu_app.functional.QuestionAdapter;
 import com.social_network.pnu_app.functional.VariantAdapter;
+import com.social_network.pnu_app.localdatabase.AppDatabase;
 
 public class BuildPollsActivity extends AppCompatActivity {
 
@@ -26,8 +34,15 @@ public class BuildPollsActivity extends AppCompatActivity {
     Button btnAddQuestion;
     Button btnDeleteQuestion;
     Button btnFinishCreatePoll;
+    DatabaseReference refPoll;
+    MaterialEditText etNamePoll;
+    MaterialEditText etDescriptionPoll;
+
+    String namePoll;
+    String descriptionName;
    public static RecyclerView questionPoll;
 
+   String senderUserId;
 
   public static int countQuestion;
 
@@ -57,6 +72,14 @@ public class BuildPollsActivity extends AppCompatActivity {
         btnFinishCreatePoll = findViewById(R.id.btnFinishCreatePoll);
         btnFinishCreatePoll.setOnClickListener(btnlistener);
 
+        etNamePoll = findViewById(R.id.etNamePoll);
+        etDescriptionPoll = findViewById(R.id.etDescriptionPoll);
+
+        ProfileStudent profileStudent= new ProfileStudent();
+        senderUserId = profileStudent.getKeyCurrentStudend(AppDatabase.getAppDatabase(BuildPollsActivity.this));
+
+        refPoll = FirebaseDatabase.getInstance().getReference("students").child(senderUserId)
+                .child("Polls").child("Created");
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation_createdPoll);
@@ -118,16 +141,46 @@ public class BuildPollsActivity extends AppCompatActivity {
 
                 case R.id.btnCreateQuestion:
 
+                    namePoll = etNamePoll.getText().toString();
+                    refPoll.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.hasChild(namePoll) && !namePoll.equals("")){
+                                Toast.makeText(BuildPollsActivity.this, "Назва з таким опитуванням вже існує",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                if (!etNamePoll.getText().toString().equals("")){
+                                    descriptionName = String.valueOf(etDescriptionPoll.getText());
 
-                    btnCreateQuestion.setVisibility(View.GONE);
-                    questionPoll.setNestedScrollingEnabled(false);
-                    questionPoll.setAdapter(adapter);
-                    btnAddQuestion.setVisibility(View.VISIBLE);
-                    btnFinishCreatePoll.setVisibility(View.VISIBLE);
+                                    refPoll.child(namePoll).setValue(namePoll);
+
+                                    btnCreateQuestion.setVisibility(View.GONE);
+                                    questionPoll.setNestedScrollingEnabled(false);
+                                    questionPoll.setAdapter(adapter);
+                                    btnAddQuestion.setVisibility(View.VISIBLE);
+                                    btnFinishCreatePoll.setVisibility(View.VISIBLE);
+                                }
+                                else {
+                                    Toast.makeText(BuildPollsActivity.this, "Введіть назву опитування",
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+
+
+
 
                     break;
                 case R.id.btnAddQuestion:
-
 
                         questionPoll.setAdapter(adapter);
                         countQuestion= questionPoll.getChildCount()+2;

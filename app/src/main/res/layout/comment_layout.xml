@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlCommentComment"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -48,25 +49,43 @@
             android:id="@+id/comment_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Попович Вадим"
+            android:text=""
             android:textSize="15sp"
             android:textStyle=""
             android:textColor="@color/black"/>
-
 
 
         <TextView
             android:id="@+id/tvCommentContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="205dp"
-            android:layout_marginTop="5dp"
             android:layout_marginStart="0dp"
             android:layout_marginLeft="0dp"
-            android:text="Мій коментар"
-            android:textSize="16sp"
-            android:textColor="@color/black"/>
+            android:layout_marginTop="5dp"
+            android:maxWidth="205dp"
+            android:text=""
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LLPhotoComment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="0dp"
+        android:layout_centerHorizontal="false"
+        android:layout_toEndOf="@+id/comment_profile_image"
+        android:layout_toRightOf="@+id/comment_profile_image"
+        android:layout_below="@+id/LLCommentInfo">
+
+        <ImageView
+            android:id="@+id/ImagePostComment"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:visibility="gone"
+            android:background="@mipmap/logopnu"/>
     </LinearLayout>
 
     <LinearLayout
@@ -74,7 +93,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@+id/LLCommentInfo"
+        android:layout_below="@+id/LLPhotoComment"
         android:layout_toEndOf="@+id/comment_profile_image"
         android:layout_toRightOf="@+id/comment_profile_image"
         android:layout_marginStart="5dp"
@@ -86,7 +105,7 @@
         android:id="@+id/comment_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="сьогодні о 14:20"
+        android:text=""
         android:textSize="13sp"
         android:textStyle=""
         android:textColor="@color/onlineText" />
@@ -115,7 +134,7 @@
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:background="@drawable/btn_like_post"
+        android:background="@drawable/btn_like_unpress"
         android:contentDescription="@string/todo"
         android:paddingRight="10dp"
         android:paddingEnd="10dp"
@@ -127,7 +146,7 @@
         android:layout_marginEnd="40dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/LLCommentInfo"
+        android:layout_below="@+id/LLPhotoComment"
 
 
         android:textColor="@android:color/black"
@@ -198,8 +217,24 @@
             android:layout_marginLeft="5dp"
             android:src="@drawable/ic_smileemodji"
             android:contentDescription="@string/contentDescription"
-            android:layout_toRightOf="@+id/comment_profile_image_coment"
-            android:layout_toEndOf="@+id/comment_profile_image_coment" />
+             />
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="5dp"
+            android:id="@+id/btnSendWallPhotoNestedComment"
+            android:padding="0dp"
+            android:src="@drawable/btn_send_photo_wall"
+            android:background="@android:color/white"
+            android:visibility="gone"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+
+            android:contentDescription="@string/contentDescription"
+            />
 
 
         <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText

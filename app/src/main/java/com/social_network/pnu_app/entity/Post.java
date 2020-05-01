@@ -7,24 +7,28 @@ public class Post {
     String text;
     long time;
 
+    int countShare;
+
 
 
     String linkFirebaseStoragePostPhoto;
 
     public Post(){}
-    public Post(String keySender, String type, String text, long time){
+    public Post(String keySender, String type, String text, long time, int countShare){
         this.keySender = keySender;
         this.type = type;
         this.text = text;
         this.time = time;
+        this.countShare = countShare;
     }
 
-    public Post(String keySender, String type, String text, long time, String linkFirebaseStoragePostPhoto){
+    public Post(String keySender, String type, String text, long time, String linkFirebaseStoragePostPhoto, int countShare){
         this.keySender = keySender;
         this.type = type;
         this.text = text;
         this.time = time;
         this.linkFirebaseStoragePostPhoto = linkFirebaseStoragePostPhoto;
+        this.countShare = countShare;
     }
 
     public String getKeySender() {
@@ -66,4 +70,8 @@ public class Post {
     public void setLinkFirebaseStoragePostPhoto(String linkFirebaseStoragePostPhoto) {
         this.linkFirebaseStoragePostPhoto = linkFirebaseStoragePostPhoto;
     }
+
+    public int getCountShare() { return countShare; }
+
+    public void setCountShare(int countShare) { this.countShare = countShare; }
 }
