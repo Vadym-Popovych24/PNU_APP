@@ -32,10 +32,10 @@
     <string name="dateOfEntry">Рік вступу</string>
     <string name="formOfStudying">Форма навчання</string>
     <string name="btnLoadPhotoStudent">Змінити фото профілю</string>
-    <string name="btnListFriends">0 Друзі</string>
+    <string name="btnListFriends">Друзі</string>
     <string name="btnListPoll">0 Опитувань</string>
     <string name="btnListWall">0 Записи</string>
-    <string name="btnListSubscribers">0 Підписники</string>
+    <string name="btnListSubscribers">Підписники</string>
     <string name="hindEditTextAddNotes">Додати запис</string>
     <string name="contentDescription">TODO</string>
     <string name="Online">В мережі</string>
@@ -97,7 +97,7 @@
     <string name="MyOnlineFriends">В мережі друзів</string>
     <string name="MyOnlineFriends2">друзів</string>
     <string name="MyFriendOnline">Ваші друзі онлайн</string>
-    <string name="MySubscribeds">Люди на яких ви підписані</string>
+    <string name="MySubscribeds">Сторінки на які ви підписані</string>
     <string name="SearchMySubscribers">Пошук підписника</string>
     <string name="SearchMySubscribeds">Пошук підписаних</string>
     <string name="btnCancelMySubscribeds">Відписатися</string>

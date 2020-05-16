@@ -1,3 +1,4 @@
+/*
 package com.social_network.pnu_app.functional;
 
 import android.view.LayoutInflater;
@@ -34,7 +35,7 @@ public class VariantAdapter extends RecyclerView.Adapter<VariantAdapter.VariantV
 
         public VariantViewHolder(@NonNull View itemView) {
             super(itemView);
-            variantPoll = itemView.findViewById(R.id.recyclerViewVariant);
+         //   variantPoll = itemView.findViewById(R.id.recyclerViewVariant);
             editTextVariant = itemView.findViewById(R.id.etQuestionVariantPoll1);
             deleteVariant = itemView.findViewById(R.id.deleteVariant);
         }
@@ -50,7 +51,9 @@ public class VariantAdapter extends RecyclerView.Adapter<VariantAdapter.VariantV
 
     @Override
     public void onBindViewHolder(@NonNull VariantViewHolder holder, int position) {
-    /*    countVariant = 2+position;*/
+    */
+/*    countVariant = 2+position;*//*
+
         System.out.println("onBindViewHolder() countVariant = " + ++position);
         holder.editTextVariant.setHint("Варіант " + position);
 
@@ -80,3 +83,4 @@ public class VariantAdapter extends RecyclerView.Adapter<VariantAdapter.VariantV
 
     public VariantAdapter(){}
 }
+*/

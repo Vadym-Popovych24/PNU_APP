@@ -34,7 +34,7 @@ public class TabSubscribersProfileAdapter extends FragmentPagerAdapter {
                 return "Підписники";
 
             case 1:
-                return "Підписаний";
+                return "Читачі";
 
             default:
                 return null;

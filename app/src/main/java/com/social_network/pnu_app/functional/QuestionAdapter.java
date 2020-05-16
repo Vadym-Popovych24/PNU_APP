@@ -1,4 +1,4 @@
-package com.social_network.pnu_app.functional;
+/*package com.social_network.pnu_app.functional;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +35,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
 
         public QuestionViewHolder(@NonNull final View itemView) {
             super(itemView);
-            variantPoll= itemView.findViewById(R.id.recyclerViewVariant);
+          //  variantPoll= itemView.findViewById(R.id.recyclerViewVariant);
             variantPoll.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
             btnAddVariant = itemView.findViewById(R.id.btnAddVariant);
 
@@ -82,7 +82,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
             return 1;
         }
         else {
-            return BuildPollsActivity.countQuestion;
+            return (int) BuildPollsActivity.countQuestion;
         }
     }
 
@@ -92,4 +92,4 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
     }
 
     public QuestionAdapter(){}
-}
+}*/

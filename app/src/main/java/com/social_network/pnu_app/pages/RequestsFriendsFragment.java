@@ -185,7 +185,7 @@ public class RequestsFriendsFragment extends Fragment {
                             protected void populateViewHolder(final RequestsFriendsViewHolder requestsFriendsViewHolder, final RequestsFriends requestsFriends, final int i) {
                                 setTextViewForEmptyList();
                                 final String currentFriend = getRef(i).getKey();
-                                students.child(currentFriend).addValueEventListener(new ValueEventListener() {
+                                students.child(currentFriend).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         String name = dataSnapshot.child("name").getValue().toString();

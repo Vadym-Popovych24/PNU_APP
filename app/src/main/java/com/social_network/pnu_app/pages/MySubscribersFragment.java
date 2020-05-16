@@ -280,26 +280,37 @@ class MySubscribersViewHolder extends RecyclerView.ViewHolder {
 
     public void setStudentImage(final Context context, final String studentImage) {
         final CircleImageView image = mView.findViewById(R.id.mySubscribers_profile_image);
-        Picasso.with(context)
-                .load(studentImage)
-                .networkPolicy(NetworkPolicy.OFFLINE)
-                .placeholder(R.drawable.com_facebook_profile_picture_blank_square)
-                .error(R.drawable.com_facebook_close)
-                .centerCrop()
-                .fit()
-                //.resize(1920,2560)
-                .into(image, new Callback() {
-                    @Override
-                    public void onSuccess() {
+        if (!studentImage.isEmpty()){
+            Picasso.with(context)
+                    .load(studentImage)
+                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .placeholder(R.drawable.com_facebook_profile_picture_blank_square)
+                    .error(R.drawable.com_facebook_close)
+                    .centerCrop()
+                    .fit()
+                    //.resize(1920,2560)
+                    .into(image, new Callback() {
+                        @Override
+                        public void onSuccess() {
 
-                    }
+                        }
 
-                    @Override
-                    public void onError() {
-                        if (studentImage != null) {
-                            if (!studentImage.isEmpty()) {
+                        @Override
+                        public void onError() {
+                            if (studentImage != null) {
+                                if (!studentImage.isEmpty()) {
+                                    Picasso.with(context)
+                                            .load(studentImage)
+                                            .placeholder(R.drawable.logo_pnu)
+                                            .error(R.drawable.com_facebook_close)
+                                            .centerCrop()
+                                            .fit()
+                                            //.resize(1920,2560)
+                                            .into(image);
+                                }
+                            } else {
                                 Picasso.with(context)
-                                        .load(studentImage)
+                                        .load(R.drawable.com_facebook_profile_picture_blank_square)
                                         .placeholder(R.drawable.logo_pnu)
                                         .error(R.drawable.com_facebook_close)
                                         .centerCrop()
@@ -307,21 +318,23 @@ class MySubscribersViewHolder extends RecyclerView.ViewHolder {
                                         //.resize(1920,2560)
                                         .into(image);
                             }
-                        } else {
-                            Picasso.with(context)
-                                    .load(R.drawable.com_facebook_profile_picture_blank_square)
-                                    .placeholder(R.drawable.logo_pnu)
-                                    .error(R.drawable.com_facebook_close)
-                                    .centerCrop()
-                                    .fit()
-                                    //.resize(1920,2560)
-                                    .into(image);
+
                         }
-
-                    }
-                });
-
+                    });
     }
+        else {
+
+            Picasso.with(context)
+                    .load(R.drawable.com_facebook_profile_picture_blank_square)
+                    .placeholder(R.drawable.logo_pnu)
+                    .error(R.drawable.com_facebook_close)
+                    .centerCrop()
+                    .fit()
+                    //.resize(1920,2560)
+                    .into(image);
+        }
+        }
+
 }
 
 

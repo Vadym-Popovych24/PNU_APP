@@ -223,6 +223,8 @@ public class PostHolder extends AppCompatActivity {
                 }
             }
 
+
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -245,7 +247,7 @@ public class PostHolder extends AppCompatActivity {
                 /////
             //    recyclerViewPost.scrollToPosition(i);
 
-                if (post.getKeySender() != senderUserId){
+                if (!post.getKeySender().equals(senderUserId)){
                     postViewHolder.disableBtnSettingPost();
                 }
                 else {
@@ -279,7 +281,7 @@ public class PostHolder extends AppCompatActivity {
                 });
 
 
-                allStudentsReference.child(post.getKeySender()).addValueEventListener(new ValueEventListener() {
+                allStudentsReference.child(post.getKeySender()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         namePost = dataSnapshot.child("name").getValue().toString();
@@ -697,7 +699,7 @@ class PostViewHolder extends RecyclerView.ViewHolder {
                 .placeholder(R.drawable.com_facebook_auth_dialog_background)
                 .error(R.drawable.com_facebook_close)
                 .resize(800,700)
-                .centerCrop()
+                .centerInside()
                 .into(image, new Callback() {
                     @Override
                     public void onSuccess() {

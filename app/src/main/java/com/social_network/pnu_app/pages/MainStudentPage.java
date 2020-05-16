@@ -324,9 +324,6 @@ public class MainStudentPage extends AppCompatActivity {
         });
     }
 
-
-    QueriesFirebase qfd = new QueriesFirebase();
-
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void BuildStudentPage(final AppDatabase db) {
 

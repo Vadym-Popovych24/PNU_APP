@@ -44,7 +44,7 @@
             android:id="@+id/mySubscribeds_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
+            android:text="Прізвище Ім'я"
             android:textSize="16sp"
             android:textStyle=""
             android:textColor="@color/black"/>
@@ -52,7 +52,7 @@
             android:id="@+id/mySubscribeds_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
+            android:text="група"
             android:textSize="13sp"
             android:textStyle=""
             android:textColor="@color/onlineText" />

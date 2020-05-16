@@ -28,6 +28,7 @@ public class LastSeenTime {
 
         // TODO: localize
         final long diff = now - time;
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm");
         if (diff < MINUTE_MILLIS) {
             return "був у мережі прямо зараз";
         } else if (diff < 2 * MINUTE_MILLIS) {
@@ -39,7 +40,7 @@ public class LastSeenTime {
         } else if (diff < 24 * HOUR_MILLIS) {
             return "був у мережі " + diff / HOUR_MILLIS + " годин тому";
         } else if (diff < 48 * HOUR_MILLIS) {
-            return "був у мережі вчора";
+            return "був у мережі вчора о " + df.format(time);
         } else {
             return "був у мережі " + diff / DAY_MILLIS + " днів тому";
         }

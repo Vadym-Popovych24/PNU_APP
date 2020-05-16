@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".registration.Registration">
+    tools:context=".registration.Registration"
+    android:background="@color/backgroundStudentMainPage">
 <LinearLayout
 
     android:id="@+id/LinearLatoutReg"
@@ -109,15 +110,7 @@
     android:text="@string/btnConfirm"
     style="?android:attr/buttonBarButtonStyle"/>
 
-    <TextView
-        android:id="@+id/ExampleText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:text=""
-        android:textAlignment="center"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="12sp"></TextView>
+
 </LinearLayout>
 
     <ProgressBar

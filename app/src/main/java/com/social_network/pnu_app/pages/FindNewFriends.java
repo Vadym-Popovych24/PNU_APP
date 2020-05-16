@@ -95,7 +95,6 @@ public class FindNewFriends extends AppCompatActivity {
                 .equalTo(true)
                 .limitToLast(100);
 
-        allDatabaseUsersReference.keepSynced(true);
 
     }
 
@@ -117,6 +116,7 @@ public class FindNewFriends extends AppCompatActivity {
         super.onStart();
         SerieIDCard = getStudentSeriesIDCard(AppDatabase.getAppDatabase(FindNewFriends.this));
 
+
         FirebaseRecyclerAdapter<Friends, AllAuthUsersViewHolder> firebaseRecyclerAdapter
                 = new FirebaseRecyclerAdapter<Friends, AllAuthUsersViewHolder>(
                         Friends.class,
@@ -125,11 +125,13 @@ public class FindNewFriends extends AppCompatActivity {
                         allDatabaseUsersReference
 
                 ) {
+
+
             @Override
             protected void populateViewHolder(final AllAuthUsersViewHolder allAuthUsersViewHolder, final Friends allAuthUsers, final int i) {
 
                 final String currentFriend = getRef(i).getKey();
-                students.child(currentFriend).addValueEventListener(new ValueEventListener() {
+                students.child(currentFriend).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String name = dataSnapshot.child("name").getValue().toString();
@@ -153,9 +155,13 @@ public class FindNewFriends extends AppCompatActivity {
                         }
                         allAuthUsersViewHolder.setStudentName(name, lastName);
                         allAuthUsersViewHolder.setStudentGroup(grop);
-                        if (linkFirebaseStorageMainPhoto != "" && getApplicationContext() != null) {
+
+                        // TODO like below notEmpty() in all list in other classes
+
+                        if (getApplicationContext() != null) {
                             allAuthUsersViewHolder.setStudentImage(getApplicationContext(), linkFirebaseStorageMainPhoto);
                         }
+
                         final String VisitedKey = getRef(i).getKey();
                         allAuthUsersViewHolder.checkFrendships(VisitedKey, getApplicationContext());
                         allAuthUsersViewHolder.checkSendered(VisitedKey, getApplicationContext());
@@ -533,30 +539,31 @@ public class FindNewFriends extends AppCompatActivity {
       DatabaseReference myFriendsReference;
       final String senderUserId;
       senderUserId = getKeyCurrentStudend(AppDatabase.getAppDatabase(context));
-      myFriendsReference = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).
-              child("Friends");
+      if (senderUserId !=null) {
+          myFriendsReference = FirebaseDatabase.getInstance().getReference("studentsCollection").child(senderUserId).
+                  child("Friends");
 
-      myFriendsReference.addListenerForSingleValueEvent(new ValueEventListener() {
-          @Override
-          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-              if(dataSnapshot.hasChild(ReceiverKey)){
+          myFriendsReference.addListenerForSingleValueEvent(new ValueEventListener() {
+              @Override
+              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                  if (dataSnapshot.hasChild(ReceiverKey)) {
 
-                  btnAddFriendAllUsers.setVisibility(View.GONE);
-                  btnAddFriendAllUsers.setEnabled(false);
+                      btnAddFriendAllUsers.setVisibility(View.GONE);
+                      btnAddFriendAllUsers.setEnabled(false);
+                  }
               }
-          }
 
-          @Override
-          public void onCancelled(@NonNull DatabaseError databaseError) {
-              FindNewFriends findNewFriends= new FindNewFriends();
-              if (!findNewFriends.network.isOnline()) {
-                  //        progressBar.setVisibility(View.GONE);
-                  Toast.makeText(context, " Please Connect to Internet",
-                          Toast.LENGTH_LONG).show();
+              @Override
+              public void onCancelled(@NonNull DatabaseError databaseError) {
+                  FindNewFriends findNewFriends = new FindNewFriends();
+                  if (!findNewFriends.network.isOnline()) {
+                      //        progressBar.setVisibility(View.GONE);
+                      Toast.makeText(context, " Please Connect to Internet",
+                              Toast.LENGTH_LONG).show();
+                  }
               }
-          }
-      });
-
+          });
+      }
       btnAddFriendAllUsers.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
@@ -610,46 +617,59 @@ public class FindNewFriends extends AppCompatActivity {
 
      public void setStudentImage( final Context context, final String studentImage) {
          final CircleImageView image = mView.findViewById(R.id.all_users_profile_image);
-         Picasso.with(context)
-                 .load(studentImage)
-                 .networkPolicy(NetworkPolicy.OFFLINE)
-                 .placeholder(R.drawable.com_facebook_profile_picture_blank_square)
-                 .error(R.drawable.com_facebook_close)
-                 .centerCrop()
-                 .fit()
-                 //.resize(1920,2560)
-                 .into(image, new Callback() {
-                     @Override
-                     public void onSuccess() {
+         if (!studentImage.isEmpty() && studentImage != "") {
+             Picasso.with(context)
+                     .load(studentImage)
+                     .networkPolicy(NetworkPolicy.OFFLINE)
+                     .placeholder(R.drawable.com_facebook_profile_picture_blank_square)
+                     .error(R.drawable.com_facebook_close)
+                     .centerCrop()
+                     .fit()
+                     //.resize(1920,2560)
+                     .into(image, new Callback() {
+                         @Override
+                         public void onSuccess() {
 
-                     }
-
-                     @Override
-                     public void onError() {
-                         if (studentImage != null) {
-                             if (!studentImage.isEmpty()) {
-                         Picasso.with(context)
-                                 .load(studentImage)
-                                 .placeholder(R.drawable.logo_pnu)
-                                 .error(R.drawable.com_facebook_close)
-                                 .centerCrop()
-                                 .fit()
-                                 //.resize(1920,2560)
-                                 .into(image);
-                             }
-                         } else {
-                             Picasso.with(context)
-                                     .load(R.drawable.com_facebook_profile_picture_blank_square)
-                                     .placeholder(R.drawable.logo_pnu)
-                                     .error(R.drawable.com_facebook_close)
-                                     .centerCrop()
-                                     .fit()
-                                     //.resize(1920,2560)
-                                     .into(image);
                          }
 
-                     }
-                 });
+                         @Override
+                         public void onError() {
+                             if (studentImage != null) {
+                                 if (!studentImage.isEmpty()) {
+                                     Picasso.with(context)
+                                             .load(studentImage)
+                                             .placeholder(R.drawable.logo_pnu)
+                                             .error(R.drawable.com_facebook_close)
+                                             .centerCrop()
+                                             .fit()
+                                             //.resize(1920,2560)
+                                             .into(image);
+                                 }
+                             } else {
+                                 Picasso.with(context)
+                                         .load(R.drawable.com_facebook_profile_picture_blank_square)
+                                         .placeholder(R.drawable.logo_pnu)
+                                         .error(R.drawable.com_facebook_close)
+                                         .centerCrop()
+                                         .fit()
+                                         //.resize(1920,2560)
+                                         .into(image);
+                             }
+
+                         }
+                     });
+         }
+         else {
+
+             Picasso.with(context)
+                     .load(R.drawable.com_facebook_profile_picture_blank_square)
+                     .placeholder(R.drawable.logo_pnu)
+                     .error(R.drawable.com_facebook_close)
+                     .centerCrop()
+                     .fit()
+                     //.resize(1920,2560)
+                     .into(image);
+         }
 
      }
 

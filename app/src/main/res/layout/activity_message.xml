@@ -72,6 +72,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:textSize="16sp"
+            android:text="Прізвище Ім'я"
         android:layout_margin="0dp"
         android:fontFamily="sans-serif-medium"/>
 
@@ -80,6 +81,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="7dp"
+        android:text="статус онлайн або останнього візиту"
         android:textColor="@color/onlineText"
         android:textSize="14sp" />
 

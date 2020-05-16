@@ -51,7 +51,7 @@
             android:id="@+id/post_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
+            android:text="Прізвище Ім'я"
             android:textSize="16sp"
             android:textStyle=""
             android:textColor="@color/black"/>
@@ -60,7 +60,7 @@
             android:id="@+id/post_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
+            android:text="час публікації"
             android:textSize="13sp"
             android:textStyle=""
             android:textColor="@color/onlineText" />
@@ -82,6 +82,8 @@
             android:layout_marginTop="5dp"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
             android:text=""
             android:textSize="17sp"
             android:textColor="@color/black"/>
@@ -145,7 +147,7 @@
             android:paddingStart="0dp"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
-            android:text=""
+            android:text="0"
             android:textSize="16sp"
 
             android:textColor="@color/onlineText"
@@ -186,7 +188,7 @@
             android:paddingStart="0dp"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
-            android:text=""
+            android:text="0"
             android:textSize="16sp"
 
             android:textColor="@color/onlineText"
@@ -225,7 +227,7 @@
             android:paddingStart="0dp"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
-            android:text=""
+            android:text="0"
             android:textSize="16sp"
 
             android:textColor="@color/onlineText"

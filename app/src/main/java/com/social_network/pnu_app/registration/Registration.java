@@ -46,8 +46,7 @@ public class Registration extends AppCompatActivity {
     MaterialEditText EmailField;
     MaterialEditText PassField;
     MaterialEditText ConfirmPassField;
-
-    public TextView ExampleText;
+    
     private ProgressBar progressBar;
 
     String ErrorText = null;
@@ -88,12 +87,10 @@ public class Registration extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-        ExampleText = findViewById(R.id.ExampleText);
         mAuth = FirebaseAuth.getInstance();
 
         progressBar = findViewById(R.id.progressbarRegistration);
         progressBar.setVisibility(View.GONE);
-
 
         verifycationData();
 
